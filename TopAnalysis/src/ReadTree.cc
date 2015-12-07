@@ -194,6 +194,8 @@ void ReadTree(TString filename,
 	  allPlots["mttbar_"+tag]     = new TH1F("mttbar_"+tag,";#sqrt{#hat{s}} [GeV];Events" ,50,0.,1000.);
 	  allPlots["mt_"+tag]         = new TH1F("mt_"+tag,";Transverse Mass [GeV];Events" ,20,0.,200.);
 	  allPlots["minmlb_"+tag]     = new TH1F("minmlb_"+tag,";min Mass(lepton,b) [GeV];Events" ,25,0.,250.);
+	  allPlots["cos_pull_angle_q1q2_" + tag] = new TH1F("cos pull_angle q1 q2" +tag, "cos; Events", -1, 1, 100);
+	  allPlots["cos_pull_angle_q1b_" + tag] = new TH1F("cos pull_angle q1 b" +tag, "cos; Events", -1, 1, 100);
 	  if(itag==-1)
 	    {
 	      allPlots["nbtags_"+tag]     = new TH1F("nbtags_"+tag,";Category;Events" ,3,0.,3.);
@@ -375,7 +377,7 @@ void ReadTree(TString filename,
 	}
 
       //nominal selection control histograms
-      if(bJets.size()+lightJets.size()>=1)
+       if(bJets.size()+lightJets.size()>=1)
 	{
 	  int nJetsCat=TMath::Min((int)(bJets.size()+lightJets.size()),(int)4);
 	  int nBtagsCat=TMath::Min((int)(bJets.size()),(int)2);
@@ -414,6 +416,23 @@ void ReadTree(TString filename,
 		  if(bJets.size()>1) mlb=TMath::Min( (float) mlb, (float)(bJets[1]+lp4).M() );
 		  allPlots["minmlb_"+tag]->Fill(mlb,wgt);
 		}	  
+	    }
+
+	  if(bJets.size() == 2 and lightJets.size() == 2)
+	    {
+	      
+	      //const TLorentzVector * leading_jet = lightJets[0].pt() >= lightJets[1].pt() ? &lightJets[0] : &lightJets[1];
+	      //const TLorentzVector * 2nd_leading_jet =  lightJets[0].pt() >= lightJets[1].pt() ? &lightJets[1] : &lightJets[0];
+	      const float phi0 = lightJets[0].Phi(); const float phi1 = lightJets[1].Phi();
+	      const float eta0 = lightJets[0].Eta(); const float eta1 = lightJets[1].Eta();
+	      float cos_pullangle_q1q2 = (phi0*phi1 + eta0*eta1)/(sqrt(phi0*phi0 + eta0*eta0) * sqrt(phi1*phi1 + eta1*eta1));
+	
+	      for(size_t icat=0; icat<2; icat++)
+		{
+		  TString tag=catsToFill[icat];
+	  
+		  allPlots["cos_pull_angle_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
+		}
 	    }
 	}
 
