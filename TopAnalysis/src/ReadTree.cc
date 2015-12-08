@@ -194,8 +194,8 @@ void ReadTree(TString filename,
 	  allPlots["mttbar_"+tag]     = new TH1F("mttbar_"+tag,";#sqrt{#hat{s}} [GeV];Events" ,50,0.,1000.);
 	  allPlots["mt_"+tag]         = new TH1F("mt_"+tag,";Transverse Mass [GeV];Events" ,20,0.,200.);
 	  allPlots["minmlb_"+tag]     = new TH1F("minmlb_"+tag,";min Mass(lepton,b) [GeV];Events" ,25,0.,250.);
-	  allPlots["cos_pull_angle_q1q2_" + tag] = new TH1F("cos pull_angle q1 q2" +tag, "cos; Events", -1, 1, 100);
-	  allPlots["cos_pull_angle_q1b_" + tag] = new TH1F("cos pull_angle q1 b" +tag, "cos; Events", -1, 1, 100);
+	  allPlots["cos_pull_angle_q1q2_" + tag] = new TH1F("cos_pull_angle_ q1q2_" + tag, "cos; Events", -1, 1, 100);
+	  allPlots["cos_pull_angle_q1b_"  + tag] = new TH1F("cos_pull_angle_q1b_"   + tag, "cos; Events", -1, 1, 100);
 	  if(itag==-1)
 	    {
 	      allPlots["nbtags_"+tag]     = new TH1F("nbtags_"+tag,";Category;Events" ,3,0.,3.);

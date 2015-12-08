@@ -99,7 +99,6 @@ def main():
                 else:
                     task_list.append( (inF,outF,opt.channel,opt.charge,wgtH,0,opt.runSysts) )
 
-    print 'launching %d tasks in %d parallel jobs'%(len(task_list),opt.njobs)
 
     #run the analysis jobs
     if opt.queue=='local':
@@ -111,9 +110,14 @@ def main():
             pool = Pool(opt.njobs)
             pool.map(RunMethodPacked, task_list)
     else:
-        for inF,outF,channel,charge,wgt,isTT,flav,genWgtMode,runSysts in task_list:
-            localOpt='--nocompile -i %s -o $s --charge %d --tag %s --isTT %d --flav %d --genWgtMode %d --runSysts %d' % (inF,outF,charge,wgt,isTT,flav,genWgtMode,runSysts)
-            print localOpt
+        print 'launching %d tasks to submit to the %s queue'%(len(task_list),opt.queue)
+        cmsswBase=os.environ['CMSSW_BASE']
+        for inF,outF,channel,charge,tag,flav,runSysts in task_list:
+            localRun='python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py -i %s -o %s --charge %d --ch %d --tag %s --flav %d' % (cmsswBase,inF,outF,charge,channel,tag,flav)
+            if runSysts : localRun += ' --runSysts'            
+            cmd='bsub -q %s %s/src/TopLJets2015/TopAnalysis/scripts/wrapLocalAnalysisRun.sh \"%s\"' % (opt.queue,cmsswBase,localRun)
+            os.system(cmd)
+
 
 """
 for execution from another script
