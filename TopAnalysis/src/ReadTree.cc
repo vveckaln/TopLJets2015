@@ -74,6 +74,19 @@ void ReadTree(TString filename,
 	}
     }
 
+  //LEPTON EFFICIENCIES
+  TString lepEffUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/leptonEfficiencies.root");
+  gSystem->ExpandPathName(lepEffUrl);
+  std::map<TString,TH2 *> lepEffH;
+  if(!ev.isData)
+    {
+      TFile *fIn=TFile::Open(lepEffUrl);
+      lepEffH["m_sel"]=(TH2 *)fIn->Get("m_sel");
+      lepEffH["m_trig"]=(TH2 *)fIn->Get("m_trig");
+      for(auto& it : lepEffH) it.second->SetDirectory(0);
+      fIn->Close();
+    }
+
   //B-TAG CALIBRATION
   TString btagUncUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/CSVv2.csv");
   gSystem->ExpandPathName(btagUncUrl);
@@ -85,12 +98,13 @@ void ReadTree(TString filename,
   if(!ev.isData)
     {
       BTagCalibration btvcalib("csvv2", btagUncUrl.Data());
-      sfbReaders.push_back( new BTagCalibrationReader(&btvcalib,     BTagEntry::OP_MEDIUM, "mujets", "central") );
-      sfbReaders.push_back( new BTagCalibrationReader(&btvcalib,   BTagEntry::OP_MEDIUM, "mujets", "up") );
+      sfbReaders.push_back( new BTagCalibrationReader(&btvcalib, BTagEntry::OP_MEDIUM, "mujets", "central") );
       sfbReaders.push_back( new BTagCalibrationReader(&btvcalib, BTagEntry::OP_MEDIUM, "mujets", "down") ); 
-      sflReaders.push_back( new BTagCalibrationReader(&btvcalib,     BTagEntry::OP_MEDIUM, "comb", "central") );
-      sflReaders.push_back( new BTagCalibrationReader(&btvcalib,   BTagEntry::OP_MEDIUM, "comb", "up") );
+      sfbReaders.push_back( new BTagCalibrationReader(&btvcalib, BTagEntry::OP_MEDIUM, "mujets", "up") );
+
+      sflReaders.push_back( new BTagCalibrationReader(&btvcalib, BTagEntry::OP_MEDIUM, "comb", "central") );
       sflReaders.push_back( new BTagCalibrationReader(&btvcalib, BTagEntry::OP_MEDIUM, "comb", "down") ); 
+      sflReaders.push_back( new BTagCalibrationReader(&btvcalib, BTagEntry::OP_MEDIUM, "comb", "up") );
       
       TFile *beffIn=TFile::Open(btagEffExpUrl);
       expBtagEff["b"]=(TGraphAsymmErrors *)beffIn->Get("b");
@@ -100,7 +114,7 @@ void ReadTree(TString filename,
     }
 
   //JET ENERGY SCALE: https://twiki.cern.ch/twiki/bin/view/CMS/JECUncertaintySources#Summer15_uncertainties
-  TString jecUncUrl("${CMSSW_BASE}/src/UserCode/BJetEnergyPeak/data/Summer15_25nsV6M3_DATA_UncertaintySources_AK4PFchs.txt");
+  TString jecUncUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/Summer15_25nsV6M3_DATA_UncertaintySources_AK4PFchs.txt");
   gSystem->ExpandPathName(jecUncUrl);
   std::vector<TString> jecUncSrcs;
   std::vector<JetCorrectionUncertainty*> jecUncs;
@@ -142,11 +156,15 @@ void ReadTree(TString filename,
 	}
     }
 
-  //experimental systematics
-  std::vector<TString> expSysts;
+  //LIST OF SYSTEMATICS
   Int_t nGenSysts(0);
+  std::vector<TString> expSysts;
   if(runSysts)
     {
+      if(normH)
+	for(Int_t xbin=1; xbin<=normH->GetNbinsX(); xbin++) 
+	  nGenSysts += (normH->GetBinContent(xbin)!=0);	
+      
       expSysts=jecUncSrcs;
       expSysts.push_back("JER");
       expSysts.push_back("Pileup");
@@ -161,9 +179,8 @@ void ReadTree(TString filename,
       expSysts.push_back("LtagEff");
       expSysts.push_back("UncMET");
       expSysts.push_back("topPt");
-      if(normH)
-	for(Int_t xbin=1; xbin<=normH->GetXaxis()->GetNbins(); xbin++) 
-	  nGenSysts += (normH->GetBinContent(xbin)!=0);	
+      
+      cout << "\t..." << nGenSysts << "/" << expSysts.size() << " generator level/experimental systematics will be considered" << endl;
     }
 
 
@@ -182,7 +199,7 @@ void ReadTree(TString filename,
 	    allPlots["ratevsrun_"+tag]->GetXaxis()->SetBinLabel(runCtr+1,Form("%d",it->first));
 	  allPlots["lpt_"+tag]        = new TH1F("lpt_"+tag,";Transverse momentum [GeV];Events" ,20,0.,300.);
 	  allPlots["lsip3d_"+tag]     = new TH1F("lsip3d_"+tag,";3d impact parameter significance;Events" ,40,0.,20.);
-	  allPlots["lchreliso_"+tag]  = new TH1F("lchreliso_"+tag,";Charged hadron relative isolation;Events" ,25,0.,0.2);
+	  allPlots["lreliso_"+tag]     = new TH1F("lreliso_"+tag,";Relative isolation;Events" ,25,0.,0.5);
 	  allPlots["leta_"+tag]       = new TH1F("leta_"+tag,";Pseudo-rapidity;Events" ,12,0.,3.);
 	  allPlots["jpt_"+tag]        = new TH1F("jpt_"+tag,";Transverse momentum [GeV];Events" ,20,0.,300.);
 	  allPlots["jeta_"+tag]       = new TH1F("jeta_"+tag,";Pseudo-rapidity;Events" ,12,0.,3.);
@@ -194,8 +211,12 @@ void ReadTree(TString filename,
 	  allPlots["mttbar_"+tag]     = new TH1F("mttbar_"+tag,";#sqrt{#hat{s}} [GeV];Events" ,50,0.,1000.);
 	  allPlots["mt_"+tag]         = new TH1F("mt_"+tag,";Transverse Mass [GeV];Events" ,20,0.,200.);
 	  allPlots["minmlb_"+tag]     = new TH1F("minmlb_"+tag,";min Mass(lepton,b) [GeV];Events" ,25,0.,250.);
-	  allPlots["cos_pull_angle_q1q2_" + tag] = new TH1F("cos_pull_angle_ q1q2_" + tag, "cos; Events", -1, 1, 100);
-	  allPlots["cos_pull_angle_q1b_"  + tag] = new TH1F("cos_pull_angle_q1b_"   + tag, "cos; Events", -1, 1, 100);
+	  allPlots["cos_pull_angle_gen_q1q2_" + tag]      = new TH1F("cos_pull_angle_gen_q1q2_" + tag, ";cos; Events", 100, -1, 1);
+	  allPlots["cos_pull_angle_gen_q1b_"  + tag]      = new TH1F("cos_pull_angle_gen_q1b_"   + tag, ";cos; Events", 100, -1, 1);
+	  allPlots["cos_pull_angle_allconst_q1q2_" + tag] = new TH1F("cos_pull_angle_allconst_q1q2_" + tag, ";cos; Events", 100, -1, 1);
+	  allPlots["cos_pull_angle_allconst_q1b_"  + tag] = new TH1F("cos_pull_angle_allconst_q1b_"   + tag, ";cos; Events", 100, -1, 1);
+	
+
 	  if(itag==-1)
 	    {
 	      allPlots["nbtags_"+tag]     = new TH1F("nbtags_"+tag,";Category;Events" ,3,0.,3.);
@@ -207,30 +228,47 @@ void ReadTree(TString filename,
 	  //shape analysis
 	  if(runSysts)
 	    {
-	      //gen weight systematics
-	      all2dPlots["mtshapes"+tag+"_gen"]                   = new TH2F("mtshapes"+tag+"_gen",      ";Transverse Mass [GeV];Events" ,    20,0.,200., nGenSysts,0,nGenSysts);
-	      all2dPlots["minmlbshapes"+tag+"_gen"]               = new TH2F("minmlbshapes"+tag+"_gen",  ";min Mass(lepton,b) [GeV];Events" , 25,0.,250., nGenSysts,0,nGenSysts);
-	      if(itag==-1) all2dPlots["nbtagsshapes_"+tag+"_gen"] = new TH2F("nbtagsshapes_"+tag+"_gen", ";Category;Events" ,                 3, 0.,3.,   nGenSysts,0,nGenSysts);
-	      for(Int_t igen=0; igen<nGenSysts; igen++)
+	      //gen level systematics
+	      if(normH)
 		{
-		  all2dPlots["mtshapes_"+tag+"_gen"]    ->GetYaxis()->SetBinLabel(igen+1,normH->GetXaxis()->GetBinLabel(igen+1));
-		  all2dPlots["minmlbshapes_"+tag+"_gen"]->GetYaxis()->SetBinLabel(igen+1,normH->GetXaxis()->GetBinLabel(igen+1));
-		  all2dPlots["nbtagsshapes_"+tag+"_gen"]->GetYaxis()->SetBinLabel(igen+1,normH->GetXaxis()->GetBinLabel(igen+1));
+		  all2dPlots["mtshapes_"+tag+"_gen"]                   
+		    = new TH2F("mtshapes_"+tag+"_gen", ";Transverse Mass [GeV];Events" ,    20,0.,200., nGenSysts,0,nGenSysts);
+		  all2dPlots["minmlbshapes_"+tag+"_gen"]               
+		    = new TH2F("minmlbshapes_"+tag+"_gen", ";min Mass(lepton,b) [GeV];Events" , 25,0.,250., nGenSysts,0,nGenSysts);
+		  if(itag==-1) 
+		    all2dPlots["nbtagsshapes_"+tag+"_gen"] 
+		      = new TH2F("nbtagsshapes_"+tag+"_gen", ";Category;Events" , 3, 0.,3.,   nGenSysts,0,nGenSysts);		  
+		  for(Int_t igen=0; igen<nGenSysts; igen++)
+		    {
+		      TString label(normH->GetXaxis()->GetBinLabel(igen+1));
+		      all2dPlots["mtshapes_"+tag+"_gen"]    ->GetYaxis()->SetBinLabel(igen+1,label);
+		      all2dPlots["minmlbshapes_"+tag+"_gen"]->GetYaxis()->SetBinLabel(igen+1,label);
+		      if(itag!=-1) continue;
+		      all2dPlots["nbtagsshapes_"+tag+"_gen"]->GetYaxis()->SetBinLabel(igen+1,label);
+		    }
 		}
 	      
 	      //experimental systematics
 	      Int_t nExpSysts=expSysts.size();
-	      all2dPlots["mtshapes_"+tag+"_exp"]                  = new TH2F("mtshapes_"+tag+"_exp",     ";Transverse Mass [GeV];Events" ,   20,0.,200., 2*nExpSysts,0,2*nExpSysts);
-	      all2dPlots["minmlbshapes_"+tag+"_exp"]              = new TH2F("minmlbshapes_"+tag+"_exp", ";min Mass(lepton,b) [GeV];Events" ,25,0.,250., 2*nExpSysts,0,2*nExpSysts);
-	      if(itag==-1) all2dPlots["nbtagsshapes_"+tag+"_exp"] = new TH2F("nbtagsshapes_"+tag+"_exp", ";Category;Events" ,                3,0.,3.,    2*nExpSysts,0,2*nExpSysts);
-	      for(Int_t isyst=0; isyst<nExpSysts; isyst++)
+	      if(nExpSysts>0)
 		{
-		  for(Int_t ivar=0; ivar<2; ivar++)
+		  all2dPlots["mtshapes_"+tag+"_exp"]                  
+		    = new TH2F("mtshapes_"+tag+"_exp",  ";Transverse Mass [GeV];Events" ,   20,0.,200., 2*nExpSysts,0,2*nExpSysts);
+		  all2dPlots["minmlbshapes_"+tag+"_exp"]              
+		    = new TH2F("minmlbshapes_"+tag+"_exp", ";min Mass(lepton,b) [GeV];Events" ,25,0.,250., 2*nExpSysts,0,2*nExpSysts);
+		  if(itag==-1) 
+		    all2dPlots["nbtagsshapes_"+tag+"_exp"] 
+		      = new TH2F("nbtagsshapes_"+tag+"_exp", ";Category;Events" ,  3,0.,3.,    2*nExpSysts,0,2*nExpSysts);
+		  for(Int_t isyst=0; isyst<nExpSysts; isyst++)
 		    {
-		      TString label(expSysts[isyst] + (ivar==0 ? "Up" : "Down"));
-		      all2dPlots["mtshapes_"+tag+"_exp"]->GetYaxis()->SetBinLabel(2*isyst+ivar+1, label);
-		      all2dPlots["minmlbshapes_"+tag+"_exp"]->GetYaxis()->SetBinLabel(2*isyst+ivar+1,label);
-		      if(itag==-1) all2dPlots["nbtagsshapes_"+tag+"_exp"]->GetYaxis()->SetBinLabel(2*isyst+ivar+1,label);
+		      for(Int_t ivar=0; ivar<2; ivar++)
+			{
+			  TString label(expSysts[isyst] + (ivar==0 ? "Down" : "Up"));
+			  all2dPlots["mtshapes_"+tag+"_exp"]->GetYaxis()->SetBinLabel(2*isyst+ivar+1, label);
+			  all2dPlots["minmlbshapes_"+tag+"_exp"]->GetYaxis()->SetBinLabel(2*isyst+ivar+1,label);
+			  if(itag!=-1) continue;
+			  all2dPlots["nbtagsshapes_"+tag+"_exp"]->GetYaxis()->SetBinLabel(2*isyst+ivar+1,label);
+			}
 		    }
 		}
 	    }
@@ -244,12 +282,14 @@ void ReadTree(TString filename,
   for (Int_t iev=0;iev<nentries;iev++)
     {
       t->GetEntry(iev);
-      printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
+      if(iev%5000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
       
       //base kinematics
       TLorentzVector lp4;
       lp4.SetPtEtaPhiM(ev.l_pt,ev.l_eta,ev.l_phi,ev.l_mass);
       if(lp4.Pt()<30 || fabs(lp4.Eta())>2.1) continue;
+      float relIsoDeltaBeta((ev.l_chargedHadronIso
+			     +max(0.,ev.l_neutralHadronIso+ev.l_photonIso-0.5*ev.l_puChargedHadronIso))/ev.l_pt);
 
       //select according to the lepton id/charge
       if(channelSelection!=0)
@@ -257,8 +297,9 @@ void ReadTree(TString filename,
 	  if(abs(ev.l_id)!=abs(channelSelection)) continue;
 	  if(channelSelection==1300)
 	    {
-	      float relchIso = ev.l_chargedHadronIso/ev.l_pt;
-	      if(relchIso<0.4) continue;
+	      if(relIsoDeltaBeta<0.2) continue;
+	      //float relchIso = ev.l_chargedHadronIso/ev.l_pt;
+	      //if(relchIso<0.4) continue;
 	    }
 	}
 
@@ -271,28 +312,24 @@ void ReadTree(TString filename,
 	  if(!ev.isData && ((ev.muTrigger>>0)&0x1)==0) continue;
 	}
       if((abs(ev.l_id) == 11 || abs(ev.l_id) == 1100) && ((ev.elTrigger>>0)&0x1)==0) continue;
-
-      //MET and transverse mass
-      TLorentzVector met(0,0,0,0);
-      met.SetPtEtaPhiM(ev.met_pt,0,ev.met_phi,0.);
-      float mt( computeMT(lp4,met) );
-      
-      //compute neutrino kinematics
-      neutrinoPzComputer.SetMET(met);
-      neutrinoPzComputer.SetLepton(lp4);
-      float nupz=neutrinoPzComputer.Calculate();
-      TLorentzVector neutrinoHypP4(met.Px(),met.Py(),nupz ,TMath::Sqrt(TMath::Power(met.Pt(),2)+TMath::Power(nupz,2)));
       
       //select jets
       Float_t htsum(0);
+      TLorentzVector jetDiff(0,0,0,0);
       std::vector<TLorentzVector> bJets,lightJets;
-      TLorentzVector visSystem(lp4+neutrinoHypP4);
+      std::vector<unsigned char> bJets_index, lightJets_index;
+      TLorentzVector visSystem(lp4);
       int nbjets(0),ncjets(0),nljets(0),leadingJetIdx(-1);
+      std::vector<int> resolvedJetIdx;
       for (int k=0; k<ev.nj;k++)
 	{
 	  //check kinematics
 	  TLorentzVector jp4;
 	  jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
+	  if(jp4.DeltaR(lp4)<0.4) continue;
+
+	  resolvedJetIdx.push_back(k);
+	  jetDiff -= jp4;
 
 	  //smear jet energy resolution for MC
 	  float genJet_pt(ev.genj_pt[k]); 
@@ -301,9 +338,10 @@ void ReadTree(TString filename,
 	      float jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Pt(),genJet_pt)[0];
 	      jp4 *= jerSmear;
 	    }
+	  jetDiff += jp4;
 
 	  //cross clean with respect to leptons and re-inforce kinematics cuts
-	  if(jp4.DeltaR(lp4)<0.4) continue;
+
 	  if(jp4.Pt()<30) continue;
 	  if(fabs(jp4.Eta()) > 2.4) continue;
 	  
@@ -342,8 +380,16 @@ void ReadTree(TString filename,
 	    }
 
 	  //save jet
-	  if(isBTagged) bJets.push_back(jp4);
-	  else          lightJets.push_back(jp4);
+	  if(isBTagged)
+	    {
+	      bJets.push_back(jp4);
+	      bJets_index.push_back(k);
+	    }
+	  else
+	    {
+	      lightJets.push_back(jp4);
+	      lightJets_index.push_back(k);
+	    }
 	}
       
       //check if flavour splitting was required
@@ -356,36 +402,80 @@ void ReadTree(TString filename,
 	      else if(flavourSplitting==FlavourSplitting::UDSGSPLITTING) { if(nljets==0 || ncjets!=0 || nbjets!=0) continue; }
 	    }
 	}
+
+      //MET and transverse mass
+      TLorentzVector met(0,0,0,0);
+      met.SetPtEtaPhiM(ev.met_pt,0,ev.met_phi,0.);
+      met+=jetDiff;
+      met.SetPz(0.); met.SetE(met.Pt());
       
+      float mt( computeMT(lp4,met) );
+      
+      //compute neutrino kinematics
+      neutrinoPzComputer.SetMET(met);
+      neutrinoPzComputer.SetLepton(lp4);
+      float nupz=neutrinoPzComputer.Calculate();
+      TLorentzVector neutrinoHypP4(met.Px(),met.Py(),nupz ,TMath::Sqrt(TMath::Power(met.Pt(),2)+TMath::Power(nupz,2)));
+      visSystem+=neutrinoHypP4;
 
       //event weight
       float wgt(1.0);
       std::vector<float> puWeight(3,1.0),lepTriggerSF(3,1.0),lepSelSF(3,1.0);
       if(!ev.isData)
 	{
-	  lepTriggerSF = getLeptonTriggerScaleFactor  (ev.l_id,ev.l_pt,ev.l_eta,ev.isData);
-	  lepSelSF     = getLeptonSelectionScaleFactor(ev.l_id,ev.l_pt,ev.l_eta,ev.isData);
+	  //update lepton selection scale factors, if found
+	  TString prefix("m");
+	  if(abs(ev.l_id)==11 || abs(ev.l_id)==1100) prefix="e";
+	  if(lepEffH.find(prefix+"_sel")!=lepEffH.end())
+	    {
+	      float minEtaForEff( lepEffH[prefix+"_sel"]->GetXaxis()->GetXmin() ), maxEtaForEff( lepEffH[prefix+"_sel"]->GetXaxis()->GetXmax()-0.01 );
+	      float etaForEff=TMath::Max(TMath::Min(fabs(ev.l_eta),maxEtaForEff),minEtaForEff);
+	      Int_t etaBinForEff=lepEffH[prefix+"_sel"]->GetXaxis()->FindBin(etaForEff);
+	      
+	      float minPtForEff( lepEffH[prefix+"_sel"]->GetYaxis()->GetXmin() ), maxPtForEff( lepEffH[prefix+"_sel"]->GetYaxis()->GetXmax()-0.01 );
+	      float ptForEff=TMath::Max(TMath::Min(fabs(ev.l_pt),maxPtForEff),minPtForEff);
+	      Int_t ptBinForEff=lepEffH[prefix+"_sel"]->GetYaxis()->FindBin(ptForEff);
+
+	      float selSF(lepEffH[prefix+"_sel"]->GetBinContent(etaBinForEff,ptBinForEff));
+	      float selSFUnc(lepEffH[prefix+"_sel"]->GetBinError(etaBinForEff,ptBinForEff));
+
+	      float trigSF(lepEffH[prefix+"_trig"]->GetBinContent(etaBinForEff,ptBinForEff));
+	      float trigSFUnc(lepEffH[prefix+"_trig"]->GetBinError(etaBinForEff,ptBinForEff));
+
+	      lepTriggerSF[0]=trigSF; lepTriggerSF[1]=trigSF-trigSFUnc; lepTriggerSF[2]=trigSF+trigSFUnc;
+	      lepSelSF[0]=selSF;      lepSelSF[1]=selSF-selSFUnc;       lepSelSF[2]=selSF+selSFUnc;
+
+	      if(trigSF<0.5 || selSF<0.5)
+		{
+		  cout << ev.l_id << " " << ev.l_pt << " " << ptForEff << " " << ev.l_eta << " " << etaForEff << endl;
+		  cout << trigSF << " " << trigSF-trigSFUnc << " " << trigSF+trigSFUnc << endl;
+		  cout << selSF << " " << selSF-selSFUnc << " " << selSF+selSFUnc << endl;
+		}
+	    }
+
+	  //update pileup weights, if found
 	  if(puWgtGr.size())
 	    {
 	      puWeight[0]=puWgtGr[0]->Eval(ev.putrue);  
 	      puWeight[1]=puWgtGr[1]->Eval(ev.putrue); 
 	      puWeight[2]=puWgtGr[2]->Eval(ev.putrue);
 	    }
+
+	  //update nominal event weight
 	  float norm( normH ? normH->GetBinContent(1) : 1.0);
 	  wgt=lepTriggerSF[0]*lepSelSF[0]*puWeight[0]*norm;
 	  if(ev.ttbar_nw>0) wgt*=ev.ttbar_w[0];
 	}
 
       //nominal selection control histograms
-       if(bJets.size()+lightJets.size()>=1)
+      int nJetsCat=TMath::Min((int)(bJets.size()+lightJets.size()),(int)4);
+      int nBtagsCat=TMath::Min((int)(bJets.size()),(int)2);
+      std::vector<TString> catsToFill(2,Form("%dj",nJetsCat));
+      catsToFill[1]+= Form("%dt",nBtagsCat);
+      if(bJets.size()+lightJets.size()>=1)
+
 	{
-	  int nJetsCat=TMath::Min((int)(bJets.size()+lightJets.size()),(int)4);
-	  int nBtagsCat=TMath::Min((int)(bJets.size()),(int)2);
-	  std::vector<TString> catsToFill(2,Form("%dj",nJetsCat));
-	  catsToFill[1]+= Form("%dt",nBtagsCat);
-
 	  std::map<Int_t,Float_t>::iterator rIt=lumiMap.find(ev.run);	  
-
 	  for(size_t icat=0; icat<2; icat++)
 	    {
 	      TString tag=catsToFill[icat];
@@ -397,7 +487,7 @@ void ReadTree(TString filename,
 
 	      allPlots["lpt_"+tag]->Fill(ev.l_pt,wgt);
 	      allPlots["lsip3d_"+tag]->Fill(ev.l_ip3dsig,wgt);
-	      allPlots["lchreliso_"+tag]->Fill(ev.l_chargedHadronIso/ev.l_pt,wgt);
+	      allPlots["lreliso_"+tag]->Fill(relIsoDeltaBeta,wgt);
 	      allPlots["leta_"+tag]->Fill(ev.l_eta,wgt);
 	      allPlots["jpt_"+tag]->Fill(ev.j_pt[ leadingJetIdx ],wgt);
 	      allPlots["jeta_"+tag]->Fill(fabs(ev.j_eta[ leadingJetIdx ]),wgt);
@@ -421,284 +511,230 @@ void ReadTree(TString filename,
 	  if(bJets.size() == 2 and lightJets.size() == 2)
 	    {
 	      
-	      //const TLorentzVector * leading_jet = lightJets[0].pt() >= lightJets[1].pt() ? &lightJets[0] : &lightJets[1];
-	      //const TLorentzVector * 2nd_leading_jet =  lightJets[0].pt() >= lightJets[1].pt() ? &lightJets[1] : &lightJets[0];
-	      const float phi0 = lightJets[0].Phi(); const float phi1 = lightJets[1].Phi();
-	      const float eta0 = lightJets[0].Eta(); const float eta1 = lightJets[1].Eta();
-	      float cos_pullangle_q1q2 = (phi0*phi1 + eta0*eta1)/(sqrt(phi0*phi0 + eta0*eta0) * sqrt(phi1*phi1 + eta1*eta1));
-	
-	      for(size_t icat=0; icat<2; icat++)
-		{
-		  TString tag=catsToFill[icat];
-	  
-		  allPlots["cos_pull_angle_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
-		}
+	      const TString tag = "4j2t";
+	      {
+		const float phi0 = lightJets[0].Phi(); const float phi1 = lightJets[1].Phi();
+		const float eta0 = lightJets[0].Eta(); const float eta1 = lightJets[1].Eta();
+		const float cos_pullangle_q1q2 = (phi0*phi1 + eta0*eta1)/(sqrt(phi0*phi0 + eta0*eta0) * sqrt(phi1*phi1 + eta1*eta1));
+		allPlots["cos_pull_angle_gen_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
+	      }
+	      {
+		const TLorentzVector * leading_jet = lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[0] : &lightJets[1];
+		const unsigned char leading_jet_index = lightJets[0].Pt() >= lightJets[1].Pt() ? lightJets_index[0] : lightJets_index[1];
+		const TLorentzVector * second_leading_jet =  lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[1] : &lightJets[0];
+	     
+		float phi_component = 0;
+		float eta_component = 0;
+		const float jet_phi = leading_jet -> Phi();
+		const float jet_eta = leading_jet -> Eta();
+		for (unsigned char jet_const_index = 0; jet_const_index < ev.npf; jet_const_index ++)
+		  {
+		    if (ev.pf_j[jet_const_index] != leading_jet_index)
+		      continue;
+		    const float jet_energy = sqrt(
+						  ev.pf_px[jet_const_index]*ev.pf_px[jet_const_index]+
+						  ev.pf_py[jet_const_index]*ev.pf_py[jet_const_index]+
+						  ev.pf_pz[jet_const_index]*ev.pf_pz[jet_const_index]
+				  );
+		    const TLorentzVector constituent_4vector(ev.pf_px[jet_const_index], ev.pf_py[jet_const_index], ev.pf_pz[jet_const_index], jet_energy);
+		    phi_component += (constituent_4vector.Phi() - jet_phi) * constituent_4vector.Pt();
+		    eta_component += (constituent_4vector.Eta() - jet_eta) * constituent_4vector.Eta();
+		
+		  }
+		phi_component /= leading_jet -> Pt();
+		eta_component /= leading_jet -> Eta();
+		const TLorentzVector jet_difference = *leading_jet - *second_leading_jet;
+		const float phi_pull = phi_component; const float phi_dif = jet_difference.Phi();
+		const float eta_pull = eta_component; const float eta_dif = jet_difference.Eta();
+		const float cos_pullangle_q1q2 = (phi_pull*phi_dif + eta_pull*eta_dif)/
+		  (sqrt(phi_pull*phi_pull + eta_pull*eta_pull) * sqrt(phi_dif*phi_dif + eta_dif*eta_dif));
+		allPlots["cos_pull_angle_allconst_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
+	      }
 	    }
+	      
 	}
-
 
       if(!runSysts) continue;
-
-      /*
-	// work in progress
-		  allPlots["minmlb_qcdScaleDown_"+tag]->Fill(minMlb,wgtQCDScaleLo);
-		  allPlots["minmlb_qcdScaleUp_"+tag]->Fill(minMlb,wgtQCDScaleHi);
-		  allPlots["minmlb_puUp_"+tag]->Fill(minMlb,wgtPuUp);
-		  allPlots["minmlb_puDown_"+tag]->Fill(minMlb,wgtPuDown);
-		  allPlots["minmlb_muEffUp_"+tag]->Fill(minMlb,wgtMuEffUp);
-		  allPlots["minmlb_muEffDown_"+tag]->Fill(minMlb,wgtMuEffDown);
-		  allPlots["minmlb_eEffUp_"+tag]->Fill(minMlb,wgtElEffUp);
-		  allPlots["minmlb_eEffDown_"+tag]->Fill(minMlb,wgtElEffDown);
-		  allPlots["minmlb_umetUp_"+tag]->Fill(minMlb,wgt);
-		  allPlots["minmlb_umetDown_"+tag]->Fill(minMlb,wgt);
-
-
-	      allPlots["mt_qcdScaleDown_"+tag]->Fill(mt,wgtQCDScaleLo);
-	      allPlots["mt_qcdScaleUp_"+tag]->Fill(mt,wgtQCDScaleHi);
-	      allPlots["mt_puUp_"+tag]->Fill(mt,wgtPuUp);
-	      allPlots["mt_puDown_"+tag]->Fill(mt,wgtPuDown);
-	      allPlots["mt_muEffUp_"+tag]->Fill(mt,wgtMuEffUp);
-	      allPlots["mt_muEffDown_"+tag]->Fill(mt,wgtMuEffDown);
-	      allPlots["mt_eEffUp_"+tag]->Fill(mt,wgtElEffUp);
-	      allPlots["mt_eEffDown_"+tag]->Fill(mt,wgtElEffDown);	      
-	      allPlots["mt_umetUp_"+tag]->Fill(mtUMetup,wgtElEffUp);
-	      allPlots["mt_umetDown_"+tag]->Fill(mtUMetdown,wgtElEffDown);	      
-
-
-	  allPlots["njetsnbtags_nom"]->Fill(binToFill,wgt);
-	  allPlots["njetsnbtags_qcdScaleDown"]->Fill(binToFill,wgtQCDScaleLo);
-	  allPlots["njetsnbtags_qcdScaleUp"]->Fill(binToFill,wgtQCDScaleHi);
-	  allPlots["njetsnbtags_puUp"]->Fill(binToFill,wgtPuUp);
-	  allPlots["njetsnbtags_puDown"]->Fill(binToFill,wgtPuDown);
-	  allPlots["njetsnbtags_muEffUp"]->Fill(binToFill,wgtMuEffUp);
-	  allPlots["njetsnbtags_muEffDown"]->Fill(binToFill,wgtMuEffDown);
-	  allPlots["njetsnbtags_umetUp"]->Fill(binToFill,wgt);
-	  allPlots["njetsnbtags_umetDown"]->Fill(binToFill,wgt);
-
-
-      float wgtPuUp      (norm*lepSF[0]                                *puWeight[1]);
-      float wgtPuDown    (norm*lepSF[0]                                *puWeight[2]);
-      float wgtMuEffUp   (norm*(abs(ev.l_id)==13 ? lepSF[1] : lepSF[0])*puWeight[0]);
-      float wgtMuEffDown (norm*(abs(ev.l_id)==13 ? lepSF[2] : lepSF[0])*puWeight[0]);
-      float wgtElEffUp   (norm*(abs(ev.l_id)==11 ? lepSF[1] : lepSF[0])*puWeight[0]);
-      float wgtElEffDown (norm*(abs(ev.l_id)==11 ? lepSF[2] : lepSF[0])*puWeight[0]);
-      float wgtQCDScaleLo(wgt),wgtQCDScaleHi(wgt);
-      if(genWgtMode!=NOGENWGT && !ev.isData) 
-	{
-	  wgt           *= ev.ttbar_w[0];
-	  wgtPuUp       *= ev.ttbar_w[0];
-	  wgtPuDown     *= ev.ttbar_w[0];
-	  wgtMuEffUp    *= ev.ttbar_w[0];
-	  wgtMuEffDown  *= ev.ttbar_w[0];
-	  wgtElEffUp    *= ev.ttbar_w[0];
-	  wgtElEffDown  *= ev.ttbar_w[0];
-	  wgtQCDScaleLo *= ev.ttbar_w[0];
-	  wgtQCDScaleHi *= ev.ttbar_w[0];
-	}
-      if(isTTbar)
-	{
-	  wgtQCDScaleLo   = wgt*(normH->GetBinContent(10)/norm)*(ev.ttbar_w[9]/ev.ttbar_w[0]);
-	  wgtQCDScaleHi   = wgt*(normH->GetBinContent(6)/norm)*(ev.ttbar_w[5]/ev.ttbar_w[0]);	 
-	}
-
-
-      TLorentzVector metJESup( met+(jetSum-jetSumJESup)),metJESdown(met+(jetSum-jetSumJESdown));
-      TLorentzVector metJERup( met+(jetSum-jetSumJERup)),metJERdown(met+(jetSum-jetSumJERdown));
-      TLorentzVector metUMetdown(0.9*met-0.1*(jetSum+lp4)),metUMetup(1.1*met+0.1*(jetSum+lp4));
       
-
-      float mtJESup( computeMT(lp4,metJESup) ), mtJESdown( computeMT(lp4,metJESdown) );
-      float mtJERup( computeMT(lp4,metJESup) ), mtJERdown( computeMT(lp4,metJERdown) );
-      float mtUMetup( computeMT(lp4,metUMetup) ), mtUMetdown( computeMT(lp4,metUMetdown) );
-
-
-	  //jet energy resolution
-	  std::vector<float> jerScale(3,1.0);
-	  float genJet_pt(ev.genj_pt[k]);
-	  if(!ev.isData && genJet_pt>0) jerScale=getJetResolutionScales(jp4.Pt(),jp4.Pt(),genJet_pt);
-
-	  //FIXME
-	  //jet energy scale variations
-	  //jecUnc->setJetEta(fabs(jp4.Eta()));
-	  //jecUnc->setJetPt(jp4.Pt());
-	  double unc = 0; //jecUnc->getUncertainty(true);    
-
+      //gen weighting systematics
+      if(bJets.size()+lightJets.size()>=1 && normH)
+	{
+	  float mlb(bJets.size() ? (bJets[0]+lp4).M() : 0.);
+	  if(bJets.size()>1) mlb=TMath::Min( (float) mlb, (float)(bJets[1]+lp4).M() );
 	  
-	  //readout the b-tagging scale factors for this jet
-	  float csv = ev.j_csv[k];	  
-	  bool isBTagged(csv>0.890),isBTaggedUp(isBTagged),isBTaggedDown(isBTagged);
-	  if(!ev.isData)
+	  for(Int_t igen=0; igen<nGenSysts; igen++)
 	    {
-	      float jptForBtag(jp4.Pt()>1000. ? 999. : jp4.Pt()), jetaForBtag(fabs(jp4.Eta()));
-	      float expEff(1.0), jetBtagSF(1.0), jetBtagSFUp(1.0), jetBtagSFDown(1.0);
-	      if(abs(ev.j_hadflav[k])==4) 
-		{ 
-		  expEff        = expEff_c->Eval(jptForBtag); 
-		  jetBtagSF     = btagSFbReader.eval( BTagEntry::FLAV_C, jetaForBtag, jptForBtag);
-		  jetBtagSFUp   = btagSFbupReader.eval( BTagEntry::FLAV_C, jetaForBtag, jptForBtag);
-		  jetBtagSFDown = btagSFbdownReader.eval( BTagEntry::FLAV_C, jetaForBtag, jptForBtag);
+	      for(size_t icat=0; icat<2; icat++)
+		{
+		  float newWgt = wgt*(normH->GetBinContent(igen+1)*ev.ttbar_w[igen])/(normH->GetBinContent(1)*ev.ttbar_w[0]);		  
+		  TString tag=catsToFill[icat];	 
+		  all2dPlots["mtshapes_"+tag+"_gen"]->Fill(mt,igen,newWgt);
+		  all2dPlots["minmlbshapes_"+tag+"_gen"]->Fill(mlb,igen,newWgt);
+		  if(icat==0) all2dPlots["nbtagsshapes_"+tag+"_gen"]->Fill(bJets.size(),igen,newWgt);
 		}
-	      else if(abs(ev.j_hadflav[k])==5) 
-		{ 
-		  expEff=expEff_b->Eval(jptForBtag); 
-		  jetBtagSF=btagSFbReader.eval( BTagEntry::FLAV_B, jetaForBtag, jptForBtag);
-		  jetBtagSFUp=btagSFbupReader.eval( BTagEntry::FLAV_B, jetaForBtag, jptForBtag);
-		  jetBtagSFDown=btagSFbdownReader.eval( BTagEntry::FLAV_B, jetaForBtag, jptForBtag);
-		}
+	    }
+	}
+
+      //experimental systematics
+      for(size_t ivar=0; ivar<expSysts.size(); ivar++)
+	{
+	  TString varName=expSysts[ivar];
+	  bool updateJEn(ivar<=jecUncSrcs.size());
+	  bool updateBtag(varName.Contains("tagEff"));
+
+	  //update jet selection, if needed
+	  for(int isign=0; isign<2; isign++)
+	    {
+	      //weight systematics
+	      float newWgt(wgt);
+	      if(varName=="Pileup" && puWeight[0]!=0) newWgt*=(isign==0 ? puWeight[1]/puWeight[0] : puWeight[2]/puWeight[0]);
+	      if(
+		 (varName=="MuTrigger" && (abs(ev.l_id)==13 || abs(ev.l_id)==1300)) ||
+		 (varName=="EleTrigger" && (abs(ev.l_id)==11 || abs(ev.l_id)==1300))
+		 )
+		newWgt *= (isign==0 ? lepTriggerSF[1]/lepTriggerSF[0] : lepTriggerSF[2]/lepTriggerSF[0]);
+	      if(
+		 (varName=="MuEfficiency" && (abs(ev.l_id)==13 || abs(ev.l_id)==1300)) ||
+		 (varName=="EleEfficiency" && (abs(ev.l_id)==11 || abs(ev.l_id)==1300))
+		 )
+		newWgt *= (isign==0 ? lepSelSF[1]/lepSelSF[0] : lepSelSF[2]/lepSelSF[0]);
+
+	      //lepton scale systematics
+	      TLorentzVector varlp4(lp4);
+	      if(
+		 (varName=="MuScale" && (abs(ev.l_id)==13 || abs(ev.l_id)==1300)) ||
+		 (varName=="EleScale" && (abs(ev.l_id)==11 || abs(ev.l_id)==1300))
+		 )
+		varlp4 = (1.0+(isign==0?-1.:1.)*getLeptonEnergyScaleUncertainty(abs(ev.l_id),lp4.Pt(),lp4.Eta()) ) *lp4;
+	      if(varlp4.Pt()<30 || fabs(varlp4.Eta())>2.1) continue;
+
+	      //jets
+	      std::vector<TLorentzVector> varBJets,varLightJets;
+	      TLorentzVector jetDiff(0,0,0,0),jetSum(0,0,0,0);
+	      if(!(updateJEn || updateBtag)) { varBJets=bJets; varLightJets=lightJets; }
 	      else
 		{
-		  expEff=expEff_udsg->Eval(jptForBtag);
-                  jetBtagSF=btagSFlReader.eval( BTagEntry::FLAV_UDSG, jetaForBtag, jptForBtag);
-                  jetBtagSFUp=btagSFlupReader.eval( BTagEntry::FLAV_UDSG, jetaForBtag, jptForBtag);
-                  jetBtagSFDown=btagSFldownReader.eval( BTagEntry::FLAV_UDSG, jetaForBtag, jptForBtag);
+		  for (size_t ij=0; ij<resolvedJetIdx.size();ij++)
+		    {
+		      int k(resolvedJetIdx[ij]);
+		      int jflav( abs(ev.j_hadflav[k]) ),jflavForJES( abs(ev.j_flav[k]) );
+		      
+
+		      //check kinematics
+		      TLorentzVector jp4;
+		      jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
+		      jetDiff -= jp4;
+		      
+		      //smear jet energy resolution for MC
+		      float genJet_pt(ev.genj_pt[k]); 
+		      if(!ev.isData && genJet_pt>0) 
+			{
+			  std::vector<float> jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Eta(),genJet_pt);
+			  if(varName=="JER") jp4 *= jerSmear[isign+1];
+			  else               jp4 *= jerSmear[0];
+			}
+		      
+		      //update jet energy correction
+		      if(updateJEn && varName!="JER")
+			{
+			  jecUncs[ivar]->setJetEta(fabs(jp4.Eta()));
+			  jecUncs[ivar]->setJetPt(jp4.Pt());
+			  if(
+			     (jflavForJES==4 && varName=="FlavorPureCharm") || 
+			     (jflavForJES==5 && varName=="FlavorPureBottom") || 
+			     (jflavForJES==21 && varName=="FlavorPureGluon") || 
+			     (jflavForJES<4 && varName=="FlavorPureQuark") || 
+			     !varName.Contains("FlavorPure") 
+			     )
+			    {
+			      float jecuncVal=jecUncs[ivar]->getUncertainty(true);
+			      jp4 *= (1.0+(isign==0?-1.:1.)*jecuncVal);
+			    }
+			}
+		      
+		      jetDiff += jp4;
+		      jetSum += jp4;
+
+		      //re-apply kinematics
+		      if(jp4.Pt()<30) continue;
+		      if(fabs(jp4.Eta()) > 2.4) continue;
+		      
+		      //b-tag
+		      float csv = ev.j_csv[k];	  
+		      bool isBTagged(csv>0.890);
+		      if(!ev.isData)
+			{
+			  float jptForBtag(jp4.Pt()>1000. ? 999. : jp4.Pt()), jetaForBtag(fabs(jp4.Eta()));
+			  float expEff(1.0), jetBtagSF(1.0);
+			  if(jflav==4) 
+			    { 
+			      expEff        = expBtagEff["c"]->Eval(jptForBtag); 
+			      int idx(0);
+			      if(varName=="CtagEff") idx=(isign==0 ? 1 : 2);
+			      jetBtagSF     = sfbReaders[idx]->eval( BTagEntry::FLAV_C, jetaForBtag, jptForBtag);
+			    }
+			  else if(jflav==5)
+			    { 
+			      expEff=expBtagEff["b"]->Eval(jptForBtag); 
+			      int idx(0);
+			      if(varName=="BtagEff") idx=(isign==0 ? 1 : 2);
+			      jetBtagSF=sfbReaders[idx]->eval( BTagEntry::FLAV_B, jetaForBtag, jptForBtag);
+			    }
+			  else
+			    {
+			      expEff=expBtagEff["udsg"]->Eval(jptForBtag);
+			      int idx(0);
+			      if(varName=="LtagEff") idx=(isign==0 ? 1 : 2);
+			      jetBtagSF=sflReaders[idx]->eval( BTagEntry::FLAV_UDSG, jetaForBtag, jptForBtag);
+			    }
+	      
+			  //updated b-tagging decision with the data/MC scale factor
+			  myBTagSFUtil.modifyBTagsWithSF(isBTagged,    jetBtagSF,     expEff);
+			}
+
+		      //save jet
+		      if(isBTagged) varBJets.push_back(jp4);
+		      else          varLightJets.push_back(jp4);
+		    }
 		}
 	      
-	      myBTagSFUtil.modifyBTagsWithSF(isBTagged,    jetBtagSF,     expEff);
-	      myBTagSFUtil.modifyBTagsWithSF(isBTaggedUp,  jetBtagSFUp,   expEff);
-	      myBTagSFUtil.modifyBTagsWithSF(isBTaggedDown,jetBtagSFDown, expEff);
-	    }
-	  
-	  //select the jet
-	  if(jp4.Pt()>30)          
-	    { 
-	      selJetsIdx.push_back(k);
-	      nJets++;      
-	      jetSum += jp4;       
-	      htsum += jp4.Pt();
-	      if(abs(ev.j_hadflav[k])==4)      ncJets++;
-	      else if(abs(ev.j_hadflav[k])==5) nbJets++;
-	      else nudsgJets++;
-	      nBtags += isBTagged;
-	      if(!ev.isData)
+	      //MET variations
+	      TLorentzVector varMet(met);
+	      varMet += jetDiff;
+	      varMet += (varlp4-lp4);
+	      if(varName=="UncMET") 
 		{
-		  if(abs(ev.j_hadflav[k])==4)
-		    {
-		      nBtagsBeffLo   += isBTagged;        nBtagsBeffHi   += isBTagged;
-		      nBtagsCeffLo   += isBTaggedDown;    nBtagsCeffHi   += isBTaggedUp;
-		      nBtagsMistagLo += isBTagged;        nBtagsMistagHi += isBTagged;
-		    }
-		  else if(abs(ev.j_hadflav[k])==5)
-		    {
-		      nBtagsBeffLo += isBTaggedDown;	  nBtagsBeffHi += isBTaggedUp;
-		      nBtagsCeffLo += isBTagged;	  nBtagsCeffHi += isBTagged;
-		      nBtagsMistagLo += isBTagged;	  nBtagsMistagHi += isBTagged;
-		    }
-		  else
-		    {
-		      nBtagsBeffLo += isBTagged;           nBtagsBeffHi += isBTagged;
-		      nBtagsCeffLo += isBTagged;           nBtagsCeffHi += isBTagged;
-		      nBtagsMistagLo += isBTaggedDown;     nBtagsMistagHi += isBTaggedUp;
-		    }
+		  TLorentzVector uncMet(met+varlp4+jetSum);
+		  uncMet *= (1.0 + (isign==0?-1.:1.)*0.1);
+		  varMet = uncMet-varlp4-jetSum;
 		}
+	      varMet.SetPz(0.); varMet.SetE(varMet.Pt());
+	      float varmt(computeMT(varlp4,varMet) );
 
-	      if(isBTagged) minMlb = TMath::Min(minMlb,(Float_t)(jp4+lp4).M()); 
-	      if(abs(ev.j_hadflav[k])==4 || abs(ev.j_hadflav[k])==5)
-		{
-		  if(isBTaggedDown) minMlbBeffLo=TMath::Min(minMlbBeffLo,(Float_t)(jp4+lp4).M());
-		  if(isBTaggedUp)   minMlbBeffHi=TMath::Min(minMlbBeffHi,(Float_t)(jp4+lp4).M());
-		} 
-	      else
-		{
-		  if(isBTaggedDown) minMlbLeffLo=TMath::Min(minMlbLeffLo,(Float_t)(jp4+lp4).M());
-		  if(isBTaggedUp)   minMlbLeffHi=TMath::Min(minMlbLeffHi,(Float_t)(jp4+lp4).M());
+	      if(varBJets.size()+varLightJets.size()<1) continue;
+
+	      //ready to fill histograms
+	      float mlb(varBJets.size() ? (varBJets[0]+varlp4).M() : 0.);
+	      if(varBJets.size()>1) mlb=TMath::Min( (float) mlb, (float)(varBJets[1]+varlp4).M() );
+
+	      //update categories
+	      int nvarJetsCat=TMath::Min((int)(varBJets.size()+varLightJets.size()),(int)4);
+	      int nvarBtagsCat=TMath::Min((int)(varBJets.size()),(int)2);
+	      std::vector<TString> varcatsToFill(2,Form("%dj",nvarJetsCat));
+	      varcatsToFill[1]+= Form("%dt",nvarBtagsCat);
+
+	      for(size_t icat=0; icat<2; icat++)
+                {
+		  TString tag=varcatsToFill[icat];
+		  all2dPlots["mtshapes_"+tag+"_exp"]->Fill(varmt,2*ivar+isign,newWgt);
+		  all2dPlots["minmlbshapes_"+tag+"_exp"]->Fill(mlb,2*ivar+isign,newWgt);
+		  if(icat!=0) continue;
+		  all2dPlots["nbtagsshapes_"+tag+"_exp"]->Fill(varBJets.size(),2*ivar+isign,newWgt);
 		}
 	    }
-	  if((jp4.Pt())*(1+unc)>30) 
-	    { 
-	      nJetsJESHi++;
-	      jetSumJESup += (1+unc)*jp4;  
-	      if(isBTagged) minMlbJESup   = TMath::Min(minMlbJESup,(Float_t)((1+unc)*jp4+lp4).M());
-	    }
-	  if((jp4.Pt())*(1-unc)>30) 
-	    { 
-	      nJetsJESLo++; 
-	      jetSumJESdown += (1-unc)*jp4;
-	      if(isBTagged) minMlbJESdown = TMath::Min(minMlbJESdown,(Float_t)((1-unc)*jp4+lp4).M());
-	    } 
-	  if(jerScale[1]*jp4.Pt()>30) 
-	    { 
-	      nJetsJERLo++; 
-	      jetSumJERdown += jerScale[1]*jp4;
-	      if(isBTagged)  minMlbJERdown = TMath::Min(minMlbJERdown,(Float_t)( jerScale[1]*jp4+lp4).M()); 
-	    }
-	  if(jerScale[2]*jp4.Pt()>30) 
-	    { 
-	      nJetsJERHi++; 
-	      jetSumJERup += jerScale[2]*jp4;
-	      if(isBTagged)  minMlbJERup   = TMath::Min(minMlbJERup,(Float_t)( jerScale[2]*jp4+lp4).M());
-	    }
-	}
-
-      if(nJetsJESHi>=1)
-	{
-	  int nJetsCat=TMath::Min((int)nJetsJESHi,(int)4);
-          int nBtagsCat=TMath::Min((int)nBtags,(int)2);
-	  if(nBtagsCat>nJetsCat) nBtagsCat=nJetsCat;
-	  int binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);
-	  allPlots["njetsnbtags_jesUp"]->Fill(binToFill,wgt);
-	  TString tag(Form("%dj%dt",nJetsCat,nBtagsCat));
-	  allPlots["mt_jesUp_"+tag]->Fill(mtJESup,wgt);
-	  allPlots["minmlb_jesUp_"+tag]->Fill(minMlbJESup,wgt);
-	}
-      if(nJetsJESLo>=1)
-	{
-	  int nJetsCat=TMath::Min((int)nJetsJESLo,(int)4);
-          int nBtagsCat=TMath::Min((int)nBtags,(int)2);
-	  if(nBtagsCat>nJetsCat) nBtagsCat=nJetsCat;
-	  int binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);
-	  allPlots["njetsnbtags_jesDown"]->Fill(binToFill,wgt);
-	  TString tag(Form("%dj%dt",nJetsCat,nBtagsCat));
-	  allPlots["mt_jesDown_"+tag]->Fill(mtJESdown,wgt);
-	  allPlots["minmlb_jesDown_"+tag]->Fill(minMlbJESdown,wgt);
-	}
-      if(nJetsJERHi>=1)
-	{
-	  int nJetsCat=TMath::Min((int)nJetsJERHi,(int)4);
-          int nBtagsCat=TMath::Min((int)nBtags,(int)2);
-	  if(nBtagsCat>nJetsCat) nBtagsCat=nJetsCat;
-	  int binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);
-	  allPlots["njetsnbtags_jerUp"]->Fill(binToFill,wgt);
-	  TString tag(Form("%dj%dt",nJetsCat,nBtagsCat));
-	  allPlots["mt_jerUp_"+tag]->Fill(mtJERup,wgt);
-	  allPlots["minmlb_jerUp_"+tag]->Fill(minMlbJERup,wgt);
-	}
-      if(nJetsJERLo>=1)
-	{
-	  int nJetsCat=TMath::Min((int)nJetsJERLo,(int)4);
-          int nBtagsCat=TMath::Min((int)nBtags,(int)2);
-	  if(nBtagsCat>nJetsCat) nBtagsCat=nJetsCat;
-	  int binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);
-	  allPlots["njetsnbtags_jerDown"]->Fill(binToFill,wgt);
-	  TString tag(Form("%dj%dt",nJetsCat,nBtagsCat));
-	  allPlots["mt_jerDown_"+tag]->Fill(mtJERdown,wgt);
-	  allPlots["minmlb_jerDown_"+tag]->Fill(minMlbJERdown,wgt);
-	}
-      if(nJets>=1)
-	{
-	  int nJetsCat=TMath::Min((int)nJets,(int)4);
-          
-	  int nBtagsCat=TMath::Min((int)nBtagsBeffLo,(int)2);
-          int binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);
-	  allPlots["njetsnbtags_beffDown"]->Fill(binToFill,wgt); 
-	  
-	  nBtagsCat=TMath::Min((int)nBtagsBeffHi,(int)2);
-	  binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);          
-	  allPlots["njetsnbtags_beffUp"]->Fill(binToFill,wgt); 
-
-	  nBtagsCat=TMath::Min((int)nBtagsMistagLo,(int)2);
-	  binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);          
-	  allPlots["njetsnbtags_mistagDown"]->Fill(binToFill,wgt); 
-
-	  nBtagsCat=TMath::Min((int)nBtagsMistagHi,(int)2);
-	  binToFill=0;//getBtagCatBinToFill(nBtagsCat,nJetsCat);          
-	  allPlots["njetsnbtags_mistagUp"]->Fill(binToFill,wgt); 
-
-	  cout << nBtagsCat << " " << nJetsCat << endl;
-	}
-      */
-
+	
     }
-  
+
   //close input file
   f->Close();
 
@@ -708,7 +744,11 @@ void ReadTree(TString filename,
   TString baseName=gSystem->BaseName(outname); 
   TString dirName=gSystem->DirName(outname);
   TFile *fOut=TFile::Open(dirName+"/"+selPrefix+baseName,"RECREATE");
+  fOut->cd();
   for (auto& it : allPlots)  { 
+    it.second->SetDirectory(fOut); it.second->Write(); 
+  }
+  for (auto& it : all2dPlots)  { 
     it.second->SetDirectory(fOut); it.second->Write(); 
   }
   fOut->Close();
@@ -829,18 +869,31 @@ std::map<Int_t,Float_t> lumiPerRun()
   return lumiMap;
 };
 
-//
-std::vector<float> getLeptonTriggerScaleFactor(int id,float pt,float eta,bool isData)
+// 
+float getLeptonEnergyScaleUncertainty(int l_id,float l_pt,float l_eta)
 {
-  std::vector<float> lepTrigSF(3,1.0);
-  return lepTrigSF;
-}
+  float unc(0.02);
+  
+  // electron uncertainties for 8 TeV cf. AN-14-145   
+  if(abs(l_id)==11)
+    {
+      float par0(-2.27e-02), par1(-7.01e-02), par2(-3.71e-04);
+      if (fabs(l_eta) > 0.8 && fabs(l_eta)<1.5)
+        {
+          par0 = -2.92e-02;
+          par1 = -6.59e-02;
+          par2 = -7.22e-04;
+        }
+      else if(fabs(l_eta)>1.5)
+        {
+          par0 = -2.27e-02;
+          par1 = -7.01e-02;
+          par2 = -3.71e-04;
+        }
+      unc=fabs(par0 * TMath::Exp(par1 * l_pt) + par2);
+    }
 
-//
-std::vector<float> getLeptonSelectionScaleFactor(int id,float pt,float eta,bool isData)
-{
-  std::vector<float> lepSelSF(3,1.0);
-  return lepSelSF;
+  return unc;
 }
 
 //Sources :  https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution

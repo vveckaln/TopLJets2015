@@ -78,15 +78,16 @@ class Plot(object):
 
     def show(self, outDir,lumi,noScale=False,saveTeX=False):
 
-        if len(self.mc)<2 and self.data is None:
+        if len(self.mc)<2 and self.dataH is None:
             print '%s has 0 or 1 MC!' % self.name
             return
 
-        if self.mc.values()[0].InheritsFrom('TH2') :
+        if len(self.mc)>0 and self.mc.values()[0].InheritsFrom('TH2') :
             print 'Skipping TH2'
             return
 
-        c = ROOT.TCanvas('c','c',500,500)
+        cwid=1000 if 'ratevsrun' in self.name else 500
+        c = ROOT.TCanvas('c','c',cwid,500)
         c.SetBottomMargin(0.0)
         c.SetLeftMargin(0.0)
         c.SetTopMargin(0)
@@ -94,7 +95,7 @@ class Plot(object):
 
         #holds the main plot
         c.cd()
-        p1 = ROOT.TPad('p1','p1',0.0,0.85,1.0,0.0)
+        p1 = ROOT.TPad('p1','p1',0.0,0.85,1.0,0.0) if cwid!=1000 else ROOT.TPad('p1','p1',0.0,0.0,1.0,1.0)
         p1.Draw()
         p1.SetRightMargin(0.05)
         p1.SetLeftMargin(0.12)
@@ -118,7 +119,6 @@ class Plot(object):
             leg.AddEntry( self.data, self.data.GetTitle(),'p')
             nlegCols += 1
         for h in self.mc:
-            if not noScale and not '(data)' in self.mc[h].GetTitle(): self.mc[h].Scale(lumi)
             leg.AddEntry(self.mc[h], self.mc[h].GetTitle(), 'f')
             nlegCols += 1
         if nlegCols ==0 :
@@ -151,9 +151,12 @@ class Plot(object):
         frame.Reset('ICE')
         if totalMC:
             maxY = totalMC.GetMaximum() 
-        if self.dataH:
-            if maxY<self.dataH.GetMaximum():
-                maxY=self.dataH.GetMaximum()
+            if self.dataH:
+                if maxY<self.dataH.GetMaximum():
+                    maxY=self.dataH.GetMaximum()
+        else:
+            maxY=self.dataH.GetMaximum()
+
         frame.GetYaxis().SetRangeUser(0.1,maxY*1.45)                
 
         frame.SetDirectory(0)
@@ -181,43 +184,44 @@ class Plot(object):
 
         #holds the ratio
         c.cd()
-        p2 = ROOT.TPad('p2','p2',0.0,0.85,1.0,1.0)
-        p2.Draw()
-        p2.SetBottomMargin(0.01)
-        p2.SetRightMargin(0.05)
-        p2.SetLeftMargin(0.12)
-        p2.SetTopMargin(0.05)
-        p2.SetGridx(False)
-        p2.SetGridy(True)
-        self._garbageList.append(p2)
-        p2.cd()
-        ratioframe=frame.Clone('ratioframe')
-        ratioframe.GetYaxis().SetTitle('Ratio')
-        ratioframe.GetYaxis().SetRangeUser(self.ratiorange[0], self.ratiorange[1])
-        self._garbageList.append(frame)
-        ratioframe.GetYaxis().SetNdivisions(5)
-        ratioframe.GetYaxis().SetLabelSize(0.18)        
-        ratioframe.GetYaxis().SetTitleSize(0.2)
-        ratioframe.GetYaxis().SetTitleOffset(0.2)
-        ratioframe.GetXaxis().SetLabelSize(0)
-        ratioframe.GetXaxis().SetTitleSize(0)
-        ratioframe.GetXaxis().SetTitleOffset(0)
-        ratioframe.Draw()
+        if len(self.mc)>0 and self.dataH:
+            p2 = ROOT.TPad('p2','p2',0.0,0.85,1.0,1.0)
+            p2.Draw()
+            p2.SetBottomMargin(0.01)
+            p2.SetRightMargin(0.05)
+            p2.SetLeftMargin(0.12)
+            p2.SetTopMargin(0.05)
+            p2.SetGridx(False)
+            p2.SetGridy(True)
+            self._garbageList.append(p2)
+            p2.cd()
+            ratioframe=frame.Clone('ratioframe')
+            ratioframe.GetYaxis().SetTitle('Ratio')
+            ratioframe.GetYaxis().SetRangeUser(self.ratiorange[0], self.ratiorange[1])
+            self._garbageList.append(frame)
+            ratioframe.GetYaxis().SetNdivisions(5)
+            ratioframe.GetYaxis().SetLabelSize(0.18)        
+            ratioframe.GetYaxis().SetTitleSize(0.2)
+            ratioframe.GetYaxis().SetTitleOffset(0.2)
+            ratioframe.GetXaxis().SetLabelSize(0)
+            ratioframe.GetXaxis().SetTitleSize(0)
+            ratioframe.GetXaxis().SetTitleOffset(0)
+            ratioframe.Draw()
 
-        try:
-            ratio=self.dataH.Clone('ratio')
-            ratio.SetDirectory(0)
-            self._garbageList.append(ratio)
-            ratio.Divide(totalMC)
-            gr=ROOT.TGraphAsymmErrors(ratio)
-            gr.SetMarkerStyle(self.data.GetMarkerStyle())
-            gr.SetMarkerSize(self.data.GetMarkerSize())
-            gr.SetMarkerColor(self.data.GetMarkerColor())
-            gr.SetLineColor(self.data.GetLineColor())
-            gr.SetLineWidth(self.data.GetLineWidth())
-            gr.Draw('p')
-        except:
-            pass
+            try:
+                ratio=self.dataH.Clone('ratio')
+                ratio.SetDirectory(0)
+                self._garbageList.append(ratio)
+                ratio.Divide(totalMC)
+                gr=ROOT.TGraphAsymmErrors(ratio)
+                gr.SetMarkerStyle(self.data.GetMarkerStyle())
+                gr.SetMarkerSize(self.data.GetMarkerSize())
+                gr.SetMarkerColor(self.data.GetMarkerColor())
+                gr.SetLineColor(self.data.GetLineColor())
+                gr.SetLineWidth(self.data.GetLineWidth())
+                gr.Draw('p')
+            except:
+                pass
 
         #all done
         c.cd()
@@ -329,14 +333,15 @@ def main():
     #configuration
     usage = 'usage: %prog [options]'
     parser = optparse.OptionParser(usage)
-    parser.add_option('-j', '--json',        dest='json'  ,      help='json with list of files',        default=None,    type='string')
-    parser.add_option('-i', '--inDir',       dest='inDir' ,      help='input directory',                default=None,    type='string')
-    parser.add_option(      '--saveLog',     dest='saveLog' ,    help='save log versions of the plots', default=False,   action='store_true')
-    parser.add_option(      '--silent',      dest='silent' ,     help='only dump to ROOT file',         default=False,   action='store_true')
-    parser.add_option(      '--saveTeX',     dest='saveTeX' ,    help='save as tex file as well',       default=False,   action='store_true')
-    parser.add_option(      '--rebin',       dest='rebin',       help='rebin factor',                   default=1,       type=int)
-    parser.add_option('-l', '--lumi',        dest='lumi' ,       help='lumi to print out',              default=41.6,    type=float)
-    parser.add_option(      '--only',        dest='only',        help='plot only these (csv)',          default='',      type='string')
+    parser.add_option('-j', '--json',        dest='json'  ,      help='json with list of files',        default=None,              type='string')
+    parser.add_option('-i', '--inDir',       dest='inDir' ,      help='input directory',                default=None,              type='string')
+    parser.add_option('-o', '--outName',     dest='outName' ,    help='name of the output file',        default='plotter.root',    type='string')
+    parser.add_option(      '--saveLog',     dest='saveLog' ,    help='save log versions of the plots', default=False,             action='store_true')
+    parser.add_option(      '--silent',      dest='silent' ,     help='only dump to ROOT file',         default=False,             action='store_true')
+    parser.add_option(      '--saveTeX',     dest='saveTeX' ,    help='save as tex file as well',       default=False,             action='store_true')
+    parser.add_option(      '--rebin',       dest='rebin',       help='rebin factor',                   default=1,                 type=int)
+    parser.add_option('-l', '--lumi',        dest='lumi' ,       help='lumi to print out',              default=41.6,              type=float)
+    parser.add_option(      '--only',        dest='only',        help='plot only these (csv)',          default='',                type='string')
     (opt, args) = parser.parse_args()
 
     #read list of samples
@@ -368,8 +373,10 @@ def main():
                     if not keep: continue
                     obj=fIn.Get(key)
                     if not obj.InheritsFrom('TH1') : continue
+                    if not isData and not '(data)' in sp[1]:
+                        obj.Scale(xsec)
+                        obj.Scale(opt.lumi)
                     if opt.rebin>1:  obj.Rebin(opt.rebin)
-                    if not isData : obj.Scale(xsec)
                     if not key in plots : plots[key]=Plot(key)
                     plots[key].add(h=obj,title=sp[1],color=sp[2],isData=sample[1])
             except:
@@ -384,7 +391,7 @@ def main():
     for p in plots : 
         if opt.saveLog    : plots[p].savelog=True
         if not opt.silent : plots[p].show(outDir=outDir,lumi=opt.lumi,saveTeX=opt.saveTeX)
-        plots[p].appendTo(outDir+'/plotter.root')
+        plots[p].appendTo('%s/%s'%(outDir,opt.outName))
         plots[p].reset()
 
     print '-'*50
