@@ -211,10 +211,12 @@ void ReadTree(TString filename,
 	  allPlots["mttbar_"+tag]     = new TH1F("mttbar_"+tag,";#sqrt{#hat{s}} [GeV];Events" ,50,0.,1000.);
 	  allPlots["mt_"+tag]         = new TH1F("mt_"+tag,";Transverse Mass [GeV];Events" ,20,0.,200.);
 	  allPlots["minmlb_"+tag]     = new TH1F("minmlb_"+tag,";min Mass(lepton,b) [GeV];Events" ,25,0.,250.);
-	  allPlots["cos_pull_angle_gen_q1q2_" + tag]      = new TH1F("cos_pull_angle_gen_q1q2_" + tag, ";cos; Events", 100, -1, 1);
-	  allPlots["cos_pull_angle_gen_q1b_"  + tag]      = new TH1F("cos_pull_angle_gen_q1b_"   + tag, ";cos; Events", 100, -1, 1);
-	  allPlots["cos_pull_angle_allconst_q1q2_" + tag] = new TH1F("cos_pull_angle_allconst_q1q2_" + tag, ";cos; Events", 100, -1, 1);
-	  allPlots["cos_pull_angle_allconst_q1b_"  + tag] = new TH1F("cos_pull_angle_allconst_q1b_"   + tag, ";cos; Events", 100, -1, 1);
+	  allPlots["cos_pull_angle_gen_q1q2_" + tag]      = new TH1F("cos_pull_angle_gen_q1q2_" + tag, ";cos; Events", 100, -1.2, 1.2);
+	  allPlots["cos_pull_angle_gen_q1b_"  + tag]      = new TH1F("cos_pull_angle_gen_q1b_"   + tag, ";cos; Events", 100, -1.2, 1.2);
+	  allPlots["cos_pull_angle_allconst_q1q2_" + tag] = new TH1F("cos_pull_angle_allconst_q1q2_" + tag, ";cos; Events", 100, -1.2, 1.2);
+	  allPlots["cos_pull_angle_allconst_q1b_"  + tag] = new TH1F("cos_pull_angle_allconst_q1b_"   + tag, ";cos; Events", 100, -1.2, 1.2);
+	  allPlots["pull_angle_allconst_q1q2_"  + tag] = new TH1F("pull_angle_allconst_q1q2_"   + tag, ";radians ; Events", 100, -TMath::Pi() *1.2, TMath::Pi()*1.2);
+	  allPlots["mag_pull_vector_q1q2_"  + tag] = new TH1F("mag_pull_vector_q1q2_"   + tag, ";a.u.; Events", 100, 0, 8);
 	
 
 	  if(itag==-1)
@@ -507,52 +509,62 @@ void ReadTree(TString filename,
 		  allPlots["minmlb_"+tag]->Fill(mlb,wgt);
 		}	  
 	    }
-
-	  if(bJets.size() == 2 and lightJets.size() == 2)
-	    {
-	      
-	      const TString tag = "4j2t";
-	      {
-		const float phi0 = lightJets[0].Phi(); const float phi1 = lightJets[1].Phi();
-		const float eta0 = lightJets[0].Eta(); const float eta1 = lightJets[1].Eta();
-		const float cos_pullangle_q1q2 = (phi0*phi1 + eta0*eta1)/(sqrt(phi0*phi0 + eta0*eta0) * sqrt(phi1*phi1 + eta1*eta1));
-		allPlots["cos_pull_angle_gen_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
-	      }
-	      {
-		const TLorentzVector * leading_jet = lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[0] : &lightJets[1];
-		const unsigned char leading_jet_index = lightJets[0].Pt() >= lightJets[1].Pt() ? lightJets_index[0] : lightJets_index[1];
-		const TLorentzVector * second_leading_jet =  lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[1] : &lightJets[0];
-	     
-		float phi_component = 0;
-		float eta_component = 0;
-		const float jet_phi = leading_jet -> Phi();
-		const float jet_eta = leading_jet -> Eta();
-		for (unsigned char jet_const_index = 0; jet_const_index < ev.npf; jet_const_index ++)
-		  {
-		    if (ev.pf_j[jet_const_index] != leading_jet_index)
-		      continue;
-		    const float jet_energy = sqrt(
-						  ev.pf_px[jet_const_index]*ev.pf_px[jet_const_index]+
-						  ev.pf_py[jet_const_index]*ev.pf_py[jet_const_index]+
-						  ev.pf_pz[jet_const_index]*ev.pf_pz[jet_const_index]
-				  );
-		    const TLorentzVector constituent_4vector(ev.pf_px[jet_const_index], ev.pf_py[jet_const_index], ev.pf_pz[jet_const_index], jet_energy);
-		    phi_component += (constituent_4vector.Phi() - jet_phi) * constituent_4vector.Pt();
-		    eta_component += (constituent_4vector.Eta() - jet_eta) * constituent_4vector.Eta();
-		
-		  }
-		phi_component /= leading_jet -> Pt();
-		eta_component /= leading_jet -> Eta();
-		const TLorentzVector jet_difference = *leading_jet - *second_leading_jet;
-		const float phi_pull = phi_component; const float phi_dif = jet_difference.Phi();
-		const float eta_pull = eta_component; const float eta_dif = jet_difference.Eta();
-		const float cos_pullangle_q1q2 = (phi_pull*phi_dif + eta_pull*eta_dif)/
-		  (sqrt(phi_pull*phi_pull + eta_pull*eta_pull) * sqrt(phi_dif*phi_dif + eta_dif*eta_dif));
-		allPlots["cos_pull_angle_allconst_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
-	      }
-	    }
-	      
 	}
+      if(bJets.size() == 2 and lightJets.size() == 2)
+	{
+	      
+	  const TString tag = "4j2t";
+	  {
+	    const float phi0 = lightJets[0].Phi(); const float phi1 = lightJets[1].Phi();
+	    const float eta0 = lightJets[0].Eta(); const float eta1 = lightJets[1].Eta();
+	    const float cos_pullangle_q1q2 = (phi0*phi1 + eta0*eta1)/(sqrt(phi0*phi0 + eta0*eta0) * sqrt(phi1*phi1 + eta1*eta1));
+	    allPlots["cos_pull_angle_gen_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
+	  }
+	  {
+	    const TLorentzVector * leading_jet = lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[0] : &lightJets[1];
+	    const unsigned char leading_jet_index = lightJets[0].Pt() >= lightJets[1].Pt() ? lightJets_index[0] : lightJets_index[1];
+	    const TLorentzVector * second_leading_jet =  lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[1] : &lightJets[0];
+	     
+	    float phi_component = 0;
+	    float eta_component = 0;
+	    const float jet_phi = leading_jet -> Phi();
+	    const float jet_eta = leading_jet -> Eta();
+	    for (unsigned char jet_const_index = 0; jet_const_index < ev.npf; jet_const_index ++)
+	      {
+		if (ev.pf_j[jet_const_index] != leading_jet_index)
+		  continue;
+		const float jet_energy = sqrt(
+					      ev.pf_px[jet_const_index]*ev.pf_px[jet_const_index]+
+					      ev.pf_py[jet_const_index]*ev.pf_py[jet_const_index]+
+					      ev.pf_pz[jet_const_index]*ev.pf_pz[jet_const_index]					                                                   );
+		const TLorentzVector constituent_4vector(ev.pf_px[jet_const_index], ev.pf_py[jet_const_index], ev.pf_pz[jet_const_index], jet_energy);
+		phi_component += (constituent_4vector.Phi() - jet_phi) * constituent_4vector.Pt();
+		eta_component += (constituent_4vector.Eta() - jet_eta) * constituent_4vector.Pt();
+		
+	      }
+	    phi_component /= leading_jet -> Pt();
+	    eta_component /= leading_jet -> Pt();
+	    const TLorentzVector jet_difference = *leading_jet - *second_leading_jet;
+	    const float phi_pull = phi_component; const float phi_dif = jet_difference.Phi();
+	    const float eta_pull = eta_component; const float eta_dif = jet_difference.Eta();
+	    const float magnitude_pull = sqrt(phi_pull*phi_pull + eta_pull*eta_pull);
+	    const float magnitude_dif = sqrt(phi_dif*phi_dif + eta_dif*eta_dif);
+	    allPlots["mag_pull_vector_q1q2_" + tag] -> Fill(magnitude_pull, wgt); 
+	    if (magnitude_pull > 0 and magnitude_dif > 0)
+	      {
+		const float cos_pullangle_q1q2 = (phi_pull*phi_dif + eta_pull*eta_dif)/
+		  (magnitude_pull * magnitude_dif);
+		allPlots["cos_pull_angle_allconst_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
+		float pullangle_q1q2 = TMath::ACos(cos_pullangle_q1q2);
+		if (eta_pull - eta_dif < 0) 
+		  pullangle_q1q2 *= -1;
+		allPlots["pull_angle_allconst_q1q2_" + tag] -> Fill(pullangle_q1q2, wgt);
+		
+	      }
+	  }
+	}
+	      
+	
 
       if(!runSysts) continue;
       
@@ -731,8 +743,9 @@ void ReadTree(TString filename,
 		  if(icat!=0) continue;
 		  all2dPlots["nbtagsshapes_"+tag+"_exp"]->Fill(varBJets.size(),2*ivar+isign,newWgt);
 		}
-	    }
-	
+	    }//
+	}      //Closing for(size_t ivar=0; ivar<expSysts.size(); ivar++)
+
     }
 
   //close input file
