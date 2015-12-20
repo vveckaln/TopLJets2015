@@ -16,6 +16,9 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 
+#include "TopLJets2015/TopAnalysis/interface/JetConstituentAnalysisTool.hh"
+#include "TopLJets2015/TopAnalysis/interface/ColourFlowAnalysisTool.hh"
+
 
 #include <vector>
 #include <iostream>
@@ -23,6 +26,7 @@
 
 #include "TMath.h"
 #include "TopQuarkAnalysis/TopTools/interface/MEzCalculator.h"
+#include "TopLJets2015/TopAnalysis/interface/timeval_private.hh"
 
 using namespace std;
 
@@ -40,7 +44,9 @@ void ReadTree(TString filename,
 	      TH1F *normH, 
 	      Bool_t runSysts)
 {
+  system("date | tee /dev/stderr");
 
+  timeval_private global_start;
   //READ TREE FROM FILE
   MiniEvent_t ev;
   TFile *f = TFile::Open(filename);
@@ -211,12 +217,6 @@ void ReadTree(TString filename,
 	  allPlots["mttbar_"+tag]     = new TH1F("mttbar_"+tag,";#sqrt{#hat{s}} [GeV];Events" ,50,0.,1000.);
 	  allPlots["mt_"+tag]         = new TH1F("mt_"+tag,";Transverse Mass [GeV];Events" ,20,0.,200.);
 	  allPlots["minmlb_"+tag]     = new TH1F("minmlb_"+tag,";min Mass(lepton,b) [GeV];Events" ,25,0.,250.);
-	  allPlots["cos_pull_angle_gen_q1q2_" + tag]      = new TH1F("cos_pull_angle_gen_q1q2_" + tag, ";cos; Events", 100, -1.2, 1.2);
-	  allPlots["cos_pull_angle_gen_q1b_"  + tag]      = new TH1F("cos_pull_angle_gen_q1b_"   + tag, ";cos; Events", 100, -1.2, 1.2);
-	  allPlots["cos_pull_angle_allconst_q1q2_" + tag] = new TH1F("cos_pull_angle_allconst_q1q2_" + tag, ";cos; Events", 100, -1.2, 1.2);
-	  allPlots["cos_pull_angle_allconst_q1b_"  + tag] = new TH1F("cos_pull_angle_allconst_q1b_"   + tag, ";cos; Events", 100, -1.2, 1.2);
-	  allPlots["pull_angle_allconst_q1q2_"  + tag] = new TH1F("pull_angle_allconst_q1q2_"   + tag, ";radians ; Events", 100, -TMath::Pi() *1.2, TMath::Pi()*1.2);
-	  allPlots["mag_pull_vector_q1q2_"  + tag] = new TH1F("mag_pull_vector_q1q2_"   + tag, ";a.u.; Events", 100, 0, 8);
 	
 
 	  if(itag==-1)
@@ -277,153 +277,52 @@ void ReadTree(TString filename,
 	}
     }
 
+  JetConstituentAnalysisTool jet_constituent_analysis_tool;
+  ColourFlowAnalysisTool colour_flow_analysis_tool;
+  jet_constituent_analysis_tool.event_ptr_ = & ev;
+  jet_constituent_analysis_tool.plots_ptr_ = & allPlots;
+  jet_constituent_analysis_tool.plots2D_ptr_ = & all2dPlots;
+  colour_flow_analysis_tool.event_ptr_ = & ev;
+  colour_flow_analysis_tool.plots_ptr_ = & allPlots;
+  jet_constituent_analysis_tool.AssignHistograms();
+  colour_flow_analysis_tool.AssignHistograms();
+    
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
 
+  
   //LOOP OVER EVENTS
-  for (Int_t iev=0;iev<nentries;iev++)
+  float estimate = nentries*1.5E-5;
+  printf("number of events %u time estimate %f\n", nentries, nentries * 1.5E-5);
+  
+  timeval_private previous;
+  timeval_private start_read;
+  float total_lapse = 0.0;
+  for (Int_t iev = 0; iev < nentries; iev ++)
     {
+      timeval_private start;
+      float lapse = (start - previous).return_sec();
+      total_lapse += lapse;
+      
+      printf("lapse %f\n", lapse);
+      printf("total_lapse %f iev %u\n", total_lapse, iev);
+      if (lapse > 1E-3)
+	{
+	  printf("==============================================================\n");
+	}
+     
+      previous = start;
+      float dif1(0), dif2(0), dif3(0), dif4(0);
+      timeval_private start_read;
       t->GetEntry(iev);
+      printf("time to read event %f\n", (timeval_private() - start_read).return_sec());
+      printf("npf %u ngen %u nj %u ngenj %u\n", ev.npf, ev.ngen, ev.nj, ev.ngenj);
+      
       if(iev%5000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
-      
-      //base kinematics
-      TLorentzVector lp4;
-      lp4.SetPtEtaPhiM(ev.l_pt,ev.l_eta,ev.l_phi,ev.l_mass);
-      if(lp4.Pt()<30 || fabs(lp4.Eta())>2.1) continue;
-      float relIsoDeltaBeta((ev.l_chargedHadronIso
-			     +max(0.,ev.l_neutralHadronIso+ev.l_photonIso-0.5*ev.l_puChargedHadronIso))/ev.l_pt);
 
-      //select according to the lepton id/charge
-      if(channelSelection!=0)
-	{
-	  if(abs(ev.l_id)!=abs(channelSelection)) continue;
-	  if(channelSelection==1300)
-	    {
-	      if(relIsoDeltaBeta<0.2) continue;
-	      //float relchIso = ev.l_chargedHadronIso/ev.l_pt;
-	      //if(relchIso<0.4) continue;
-	    }
-	}
-
-      if(chargeSelection!=0 &&  ev.l_charge!=chargeSelection) continue;
-
-      //apply trigger requirement
-      if((abs(ev.l_id) == 13 || abs(ev.l_id) == 1300))
-	{
-	  if(ev.isData  && ((ev.muTrigger>>2)&0x1)==0) continue;
-	  if(!ev.isData && ((ev.muTrigger>>0)&0x1)==0) continue;
-	}
-      if((abs(ev.l_id) == 11 || abs(ev.l_id) == 1100) && ((ev.elTrigger>>0)&0x1)==0) continue;
-      
-      //select jets
-      Float_t htsum(0);
-      TLorentzVector jetDiff(0,0,0,0);
-      std::vector<TLorentzVector> bJets,lightJets;
-      std::vector<unsigned char> bJets_index, lightJets_index;
-      TLorentzVector visSystem(lp4);
-      int nbjets(0),ncjets(0),nljets(0),leadingJetIdx(-1);
-      std::vector<int> resolvedJetIdx;
-      for (int k=0; k<ev.nj;k++)
-	{
-	  //check kinematics
-	  TLorentzVector jp4;
-	  jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
-	  if(jp4.DeltaR(lp4)<0.4) continue;
-
-	  resolvedJetIdx.push_back(k);
-	  jetDiff -= jp4;
-
-	  //smear jet energy resolution for MC
-	  float genJet_pt(ev.genj_pt[k]); 
-	  if(!ev.isData && genJet_pt>0) 
-	    {
-	      float jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Pt(),genJet_pt)[0];
-	      jp4 *= jerSmear;
-	    }
-	  jetDiff += jp4;
-
-	  //cross clean with respect to leptons and re-inforce kinematics cuts
-
-	  if(jp4.Pt()<30) continue;
-	  if(fabs(jp4.Eta()) > 2.4) continue;
-	  
-	  if(leadingJetIdx<0) leadingJetIdx=k;
-	  htsum     += jp4.Pt();
-	  if(bJets.size()+lightJets.size()<=4) visSystem += jp4;
-
-	  //b-tag
-	  float csv = ev.j_csv[k];	  
-	  bool isBTagged(csv>0.890);
-	  if(!ev.isData)
-	    {
-	      float jptForBtag(jp4.Pt()>1000. ? 999. : jp4.Pt()), jetaForBtag(fabs(jp4.Eta()));
-	      float expEff(1.0), jetBtagSF(1.0);
-	      if(abs(ev.j_hadflav[k])==4) 
-		{ 
-		  ncjets++;
-		  expEff        = expBtagEff["c"]->Eval(jptForBtag); 
-		  jetBtagSF     = sfbReaders[0]->eval( BTagEntry::FLAV_C, jetaForBtag, jptForBtag);
-		}
-	      else if(abs(ev.j_hadflav[k])==5) 
-		{ 
-		  nbjets++;
-		  expEff=expBtagEff["b"]->Eval(jptForBtag); 
-		  jetBtagSF=sfbReaders[0]->eval( BTagEntry::FLAV_B, jetaForBtag, jptForBtag);
-		}
-	      else
-		{
-		  nljets++;
-		  expEff=expBtagEff["udsg"]->Eval(jptForBtag);
-                  jetBtagSF=sflReaders[0]->eval( BTagEntry::FLAV_UDSG, jetaForBtag, jptForBtag);
-		}
-	      
-	      //updated b-tagging decision with the data/MC scale factor
-	      myBTagSFUtil.modifyBTagsWithSF(isBTagged,    jetBtagSF,     expEff);
-	    }
-
-	  //save jet
-	  if(isBTagged)
-	    {
-	      bJets.push_back(jp4);
-	      bJets_index.push_back(k);
-	    }
-	  else
-	    {
-	      lightJets.push_back(jp4);
-	      lightJets_index.push_back(k);
-	    }
-	}
-      
-      //check if flavour splitting was required
-      if(!ev.isData)
-	{
-	  if(flavourSplitting!=FlavourSplitting::NOFLAVOURSPLITTING)
-	    {
-	      if(flavourSplitting==FlavourSplitting::BSPLITTING)         { if(nbjets==0)    continue; }
-	      else if(flavourSplitting==FlavourSplitting::CSPLITTING)    { if(ncjets==0 || nbjets!=0)    continue; }
-	      else if(flavourSplitting==FlavourSplitting::UDSGSPLITTING) { if(nljets==0 || ncjets!=0 || nbjets!=0) continue; }
-	    }
-	}
-
-      //MET and transverse mass
-      TLorentzVector met(0,0,0,0);
-      met.SetPtEtaPhiM(ev.met_pt,0,ev.met_phi,0.);
-      met+=jetDiff;
-      met.SetPz(0.); met.SetE(met.Pt());
-      
-      float mt( computeMT(lp4,met) );
-      
-      //compute neutrino kinematics
-      neutrinoPzComputer.SetMET(met);
-      neutrinoPzComputer.SetLepton(lp4);
-      float nupz=neutrinoPzComputer.Calculate();
-      TLorentzVector neutrinoHypP4(met.Px(),met.Py(),nupz ,TMath::Sqrt(TMath::Power(met.Pt(),2)+TMath::Power(nupz,2)));
-      visSystem+=neutrinoHypP4;
-
-      //event weight
       float wgt(1.0);
       std::vector<float> puWeight(3,1.0),lepTriggerSF(3,1.0),lepSelSF(3,1.0);
-      if(!ev.isData)
+       if(!ev.isData)
 	{
 	  //update lepton selection scale factors, if found
 	  TString prefix("m");
@@ -469,6 +368,170 @@ void ReadTree(TString filename,
 	  if(ev.ttbar_nw>0) wgt*=ev.ttbar_w[0];
 	}
 
+      jet_constituent_analysis_tool.weight_ = wgt;
+      colour_flow_analysis_tool.weight_ = wgt;
+      printf("probe A\n");
+      //base kinematics
+      TLorentzVector lp4;
+      lp4.SetPtEtaPhiM(ev.l_pt,ev.l_eta,ev.l_phi,ev.l_mass);
+      printf("probe A01\n");
+      if(lp4.Pt()<30 || fabs(lp4.Eta())>2.1) continue;
+      float relIsoDeltaBeta((ev.l_chargedHadronIso
+			     +max(0.,ev.l_neutralHadronIso+ev.l_photonIso-0.5*ev.l_puChargedHadronIso))/ev.l_pt);
+      printf("probe A1\n");
+            //select according to the lepton id/charge
+      if(channelSelection!=0)
+	{
+	  if(abs(ev.l_id)!=abs(channelSelection)) continue;
+	  if(channelSelection==1300)
+	    {
+	      if(relIsoDeltaBeta<0.2) continue;
+	      //float relchIso = ev.l_chargedHadronIso/ev.l_pt;
+	      //if(relchIso<0.4) continue;
+	    }
+	}
+      	printf("probe A2\n");
+     
+      if(chargeSelection!=0 &&  ev.l_charge!=chargeSelection) continue;
+
+      //apply trigger requirement
+      if((abs(ev.l_id) == 13 || abs(ev.l_id) == 1300))
+	{
+	  if(ev.isData  && ((ev.muTrigger>>2)&0x1)==0) continue;
+	  if(!ev.isData && ((ev.muTrigger>>0)&0x1)==0) continue;
+	}
+      	printf("probe A3\n");
+     
+      if((abs(ev.l_id) == 11 || abs(ev.l_id) == 1100) && ((ev.elTrigger>>0)&0x1)==0) continue;
+      	printf("Print B\n");
+      //select jets
+      Float_t htsum(0);
+      TLorentzVector jetDiff(0,0,0,0);
+      std::vector<TLorentzVector> bJets,lightJets;
+      std::vector<unsigned char> bJets_index, lightJets_index;
+      colour_flow_analysis_tool.light_jets_ptr_         = &lightJets;
+      colour_flow_analysis_tool.b_jets_ptr_             = &bJets;
+      colour_flow_analysis_tool.light_jets_indices_ptr_ = &lightJets_index;
+      colour_flow_analysis_tool.b_jets_indices_ptr_     = &bJets_index;
+      colour_flow_analysis_tool.Do();
+      TLorentzVector visSystem(lp4);
+      int nbjets(0),ncjets(0),nljets(0),leadingJetIdx(-1);
+      std::vector<int> resolvedJetIdx;
+      for (int k = 0; k < ev.nj; k++)
+	{
+	  //check kinematics
+	  TLorentzVector jp4;
+	  
+	  jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
+	  if(jp4.DeltaR(lp4)<0.4) continue;
+
+	  resolvedJetIdx.push_back(k);
+	  jetDiff -= jp4;
+
+	  //smear jet energy resolution for MC
+	  float genJet_pt(ev.genj_pt[k]); 
+	  if(!ev.isData && genJet_pt>0) 
+	    {
+	      float jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Pt(),genJet_pt)[0];
+	      jp4 *= jerSmear;
+	    }
+	  jetDiff += jp4;
+
+	  //cross clean with respect to leptons and re-inforce kinematics cuts
+
+	  if(jp4.Pt()<30) continue;
+	  if(fabs(jp4.Eta()) > 2.4) continue;
+	  
+	  if(leadingJetIdx<0) leadingJetIdx=k;
+	  htsum     += jp4.Pt();
+	  if(bJets.size()+lightJets.size()<=4) visSystem += jp4;
+	  jet_constituent_analysis_tool.jet_ptr_ = &jp4;
+	  jet_constituent_analysis_tool.index_ = k;
+	  //b-tag
+	  float csv = ev.j_csv[k];	  
+	  bool isBTagged(csv>0.890);
+	  if(!ev.isData)
+	    {
+	      float jptForBtag(jp4.Pt()>1000. ? 999. : jp4.Pt()), jetaForBtag(fabs(jp4.Eta()));
+	      float expEff(1.0), jetBtagSF(1.0);
+	      if(abs(ev.j_hadflav[k])==4) 
+		{ 
+		  ncjets++;
+		  expEff        = expBtagEff["c"]->Eval(jptForBtag); 
+		  jetBtagSF     = sfbReaders[0]->eval( BTagEntry::FLAV_C, jetaForBtag, jptForBtag);
+		}
+	      else if(abs(ev.j_hadflav[k])==5) 
+		{ 
+		  nbjets++;
+		  expEff=expBtagEff["b"]->Eval(jptForBtag); 
+		  jetBtagSF=sfbReaders[0]->eval( BTagEntry::FLAV_B, jetaForBtag, jptForBtag);
+		}
+	      else
+		{
+		  nljets++;
+		  expEff=expBtagEff["udsg"]->Eval(jptForBtag);
+                  jetBtagSF=sflReaders[0]->eval( BTagEntry::FLAV_UDSG, jetaForBtag, jptForBtag);
+		}
+	      
+	      //updated b-tagging decision with the data/MC scale factor
+	      myBTagSFUtil.modifyBTagsWithSF(isBTagged,    jetBtagSF,     expEff);
+	    }
+	  timeval_private start1;
+	  jet_constituent_analysis_tool.AnalyseAllJets();
+	  float dif1_add = (timeval_private() - start1).return_sec();
+	  printf("dif1_add %f\n", dif1_add);
+	  dif1 += dif1_add;
+	  
+	  //save jet
+	  if(isBTagged)
+	    {
+	      bJets.push_back(jp4);
+	      bJets_index.push_back(k);
+	      timeval_private start2;
+	      jet_constituent_analysis_tool.AnalyseBJets();
+	      timeval_private end2;
+	      dif2 += (timeval_private() - start2).return_sec();
+	    }
+	  else
+	    {
+	      lightJets.push_back(jp4);
+	      lightJets_index.push_back(k);
+	      timeval_private start3;
+	      jet_constituent_analysis_tool.AnalyseLightJets();
+	      dif3 += (timeval_private() - start3).return_sec();
+	      
+	    }
+	}
+      printf("%f %f %f\n", dif1, dif2, dif3);
+      
+      //check if flavour splitting was required
+      if(!ev.isData)
+	{
+	  if(flavourSplitting!=FlavourSplitting::NOFLAVOURSPLITTING)
+	    {
+	      if(flavourSplitting==FlavourSplitting::BSPLITTING)         { if(nbjets==0)    continue; }
+	      else if(flavourSplitting==FlavourSplitting::CSPLITTING)    { if(ncjets==0 || nbjets!=0)    continue; }
+	      else if(flavourSplitting==FlavourSplitting::UDSGSPLITTING) { if(nljets==0 || ncjets!=0 || nbjets!=0) continue; }
+	    }
+	}
+
+      //MET and transverse mass
+      TLorentzVector met(0,0,0,0);
+      met.SetPtEtaPhiM(ev.met_pt,0,ev.met_phi,0.);
+      met+=jetDiff;
+      met.SetPz(0.); met.SetE(met.Pt());
+      
+      float mt( computeMT(lp4,met) );
+      
+      //compute neutrino kinematics
+      neutrinoPzComputer.SetMET(met);
+      neutrinoPzComputer.SetLepton(lp4);
+      float nupz=neutrinoPzComputer.Calculate();
+      TLorentzVector neutrinoHypP4(met.Px(),met.Py(),nupz ,TMath::Sqrt(TMath::Power(met.Pt(),2)+TMath::Power(nupz,2)));
+      visSystem+=neutrinoHypP4;
+
+      //event weight moved from here
+      
       //nominal selection control histograms
       int nJetsCat=TMath::Min((int)(bJets.size()+lightJets.size()),(int)4);
       int nBtagsCat=TMath::Min((int)(bJets.size()),(int)2);
@@ -510,62 +573,17 @@ void ReadTree(TString filename,
 		}	  
 	    }
 	}
-      if(bJets.size() == 2 and lightJets.size() == 2)
-	{
-	      
-	  const TString tag = "4j2t";
-	  {
-	    const float phi0 = lightJets[0].Phi(); const float phi1 = lightJets[1].Phi();
-	    const float eta0 = lightJets[0].Eta(); const float eta1 = lightJets[1].Eta();
-	    const float cos_pullangle_q1q2 = (phi0*phi1 + eta0*eta1)/(sqrt(phi0*phi0 + eta0*eta0) * sqrt(phi1*phi1 + eta1*eta1));
-	    allPlots["cos_pull_angle_gen_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
-	  }
-	  {
-	    const TLorentzVector * leading_jet = lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[0] : &lightJets[1];
-	    const unsigned char leading_jet_index = lightJets[0].Pt() >= lightJets[1].Pt() ? lightJets_index[0] : lightJets_index[1];
-	    const TLorentzVector * second_leading_jet =  lightJets[0].Pt() >= lightJets[1].Pt() ? &lightJets[1] : &lightJets[0];
-	     
-	    float phi_component = 0;
-	    float eta_component = 0;
-	    const float jet_phi = leading_jet -> Phi();
-	    const float jet_eta = leading_jet -> Eta();
-	    for (unsigned char jet_const_index = 0; jet_const_index < ev.npf; jet_const_index ++)
-	      {
-		if (ev.pf_j[jet_const_index] != leading_jet_index)
-		  continue;
-		const float jet_energy = sqrt(
-					      ev.pf_px[jet_const_index]*ev.pf_px[jet_const_index]+
-					      ev.pf_py[jet_const_index]*ev.pf_py[jet_const_index]+
-					      ev.pf_pz[jet_const_index]*ev.pf_pz[jet_const_index]					                                                   );
-		const TLorentzVector constituent_4vector(ev.pf_px[jet_const_index], ev.pf_py[jet_const_index], ev.pf_pz[jet_const_index], jet_energy);
-		phi_component += (constituent_4vector.Phi() - jet_phi) * constituent_4vector.Pt();
-		eta_component += (constituent_4vector.Eta() - jet_eta) * constituent_4vector.Pt();
-		
-	      }
-	    phi_component /= leading_jet -> Pt();
-	    eta_component /= leading_jet -> Pt();
-	    const TLorentzVector jet_difference = *leading_jet - *second_leading_jet;
-	    const float phi_pull = phi_component; const float phi_dif = jet_difference.Phi();
-	    const float eta_pull = eta_component; const float eta_dif = jet_difference.Eta();
-	    const float magnitude_pull = sqrt(phi_pull*phi_pull + eta_pull*eta_pull);
-	    const float magnitude_dif = sqrt(phi_dif*phi_dif + eta_dif*eta_dif);
-	    allPlots["mag_pull_vector_q1q2_" + tag] -> Fill(magnitude_pull, wgt); 
-	    if (magnitude_pull > 0 and magnitude_dif > 0)
-	      {
-		const float cos_pullangle_q1q2 = (phi_pull*phi_dif + eta_pull*eta_dif)/
-		  (magnitude_pull * magnitude_dif);
-		allPlots["cos_pull_angle_allconst_q1q2_" + tag] -> Fill(cos_pullangle_q1q2, wgt);
-		float pullangle_q1q2 = TMath::ACos(cos_pullangle_q1q2);
-		if (eta_pull - eta_dif < 0) 
-		  pullangle_q1q2 *= -1;
-		allPlots["pull_angle_allconst_q1q2_" + tag] -> Fill(pullangle_q1q2, wgt);
-		
-	      }
-	  }
-	}
-	      
-	
+      timeval_private start4;
+      colour_flow_analysis_tool.Work();
+      dif4 += (timeval_private() - start4).return_sec();
 
+
+      timeval_private dif_timeval = timeval_private() - start;
+      float dif = dif_timeval.return_sec();
+      dif_timeval.print_sec();
+  
+      printf("%f %f %f %f\n", dif1/dif, dif2/dif, dif3/dif, dif4/dif);
+      
       if(!runSysts) continue;
       
       //gen weighting systematics
@@ -745,9 +763,8 @@ void ReadTree(TString filename,
 		}
 	    }//
 	}      //Closing for(size_t ivar=0; ivar<expSysts.size(); ivar++)
-
     }
-
+  printf("time to read %f total_lapse %f\n", (timeval_private() - start_read).return_sec(), total_lapse);
   //close input file
   f->Close();
 
@@ -756,15 +773,24 @@ void ReadTree(TString filename,
   if(flavourSplitting!=NOFLAVOURSPLITTING) selPrefix=Form("%d_",flavourSplitting);
   TString baseName=gSystem->BaseName(outname); 
   TString dirName=gSystem->DirName(outname);
+  printf("%s\n", (dirName+"/"+selPrefix+baseName).Data());
   TFile *fOut=TFile::Open(dirName+"/"+selPrefix+baseName,"RECREATE");
+  printf("%p %s\n", fOut, fOut -> GetName());
   fOut->cd();
-  for (auto& it : allPlots)  { 
-    it.second->SetDirectory(fOut); it.second->Write(); 
-  }
-  for (auto& it : all2dPlots)  { 
-    it.second->SetDirectory(fOut); it.second->Write(); 
-  }
+  for (auto& it : allPlots) 
+    { 
+    
+      it.second -> SetDirectory(fOut); 
+      it.second -> Write(); 
+    }
+  for (auto& it : all2dPlots) 
+    { 
+      it.second->SetDirectory(fOut); 
+      it.second->Write(); 
+    }
   fOut->Close();
+  printf("estimate %f, entries %u, total time of execution %f\n", estimate, nentries, (timeval_private() - global_start).return_sec());
+  getchar();
 }
 
 //
