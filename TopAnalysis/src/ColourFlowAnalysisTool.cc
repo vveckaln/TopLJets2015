@@ -11,11 +11,11 @@ void ColourFlowAnalysisTool::AssignHistograms() const
   static const char* tag2[2]                     = {"allconst", "chconst"};
   static const char* tag3[2]                     = {"q1q2", "q1b"};
   static const unsigned char ncategories         = 3;
-  static const char * cat_title[ncategories]     = {"pull_angle",    "cos_pull_angle", "mag_pull_vector"  };
-  static const unsigned short nbins[ncategories] = {100,             100,              100               };
-  static const double min[ncategories]           = {-1.2,            -1.2*TMath::Pi(), 0                 };
-  static const double max[ncategories]           = {- min[0],        -min[1],          8                 };
-  static const char* axes[ncategories]           = {"; cos; Events", "; rad; Events",  "; a.u.; Events"  };
+  static const char * cat_title[ncategories]     = {"pull_angle",     "cos_pull_angle", "mag_pull_vector"  };
+  static const unsigned short nbins[ncategories] = {100,              100,              100               };
+  static const double min[ncategories]           = {-1.2*TMath::Pi(), -1.2,             0                 };
+  static const double max[ncategories]           = {- min[0],         -min[1],          3                 };
+  static const char* axes[ncategories]           = {"; rad; Events",  "; cos; Events",  "; a.u.; Events"  };
   for (unsigned char cat_index = 0; cat_index < ncategories; cat_index++)
     {
       for (unsigned char tag2_index = 0; tag2_index < 2; tag2_index ++)
@@ -118,7 +118,7 @@ float ColourFlowAnalysisTool::PullAngle(const PullVector & pull_vector, const TL
   const float jet_phi = jet.Phi();
   const float jet_eta = jet.Eta();
   float Pt_jet_constituents = 0;
-  for (unsigned char jet_const_index = 0; jet_const_index < event_ptr_ -> npf; jet_const_index ++)
+  for (int jet_const_index = 0; jet_const_index < event_ptr_ -> npf; jet_const_index ++)
     {
       if (event_ptr_ -> pf_j[jet_const_index] != index)
 	continue;

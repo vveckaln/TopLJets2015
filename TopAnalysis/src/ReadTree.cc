@@ -27,6 +27,7 @@
 #include "TMath.h"
 #include "TopQuarkAnalysis/TopTools/interface/MEzCalculator.h"
 #include "TopLJets2015/TopAnalysis/interface/timeval_private.hh"
+#include "TopLJets2015/TopAnalysis/interface/timing.h"
 
 using namespace std;
 
@@ -46,7 +47,8 @@ void ReadTree(TString filename,
 {
   system("date | tee /dev/stderr");
 
-  timeval_private global_start;
+  double global_start_real = getRealTime();
+  double global_start_CPU = getCPUTime();
   //READ TREE FROM FILE
   MiniEvent_t ev;
   TFile *f = TFile::Open(filename);
@@ -284,6 +286,7 @@ void ReadTree(TString filename,
   jet_constituent_analysis_tool.plots2D_ptr_ = & all2dPlots;
   colour_flow_analysis_tool.event_ptr_ = & ev;
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
+  
   jet_constituent_analysis_tool.AssignHistograms();
   colour_flow_analysis_tool.AssignHistograms();
     
@@ -292,32 +295,31 @@ void ReadTree(TString filename,
 
   
   //LOOP OVER EVENTS
-  float estimate = nentries*1.5E-5;
-  printf("number of events %u time estimate %f\n", nentries, nentries * 1.5E-5);
-  
-  timeval_private previous;
-  timeval_private start_read;
-  float total_lapse = 0.0;
+  double read_real_total = 0;
+  double read_CPU_total = 0;
+  double JA_real_total = 0;
+  double JA_CPU_total = 0;
+  double lapse_real_total = 0;
+  double lapse_CPU_total = 0;
+  double lapse_real_previous = getRealTime();
+  double lapse_CPU_previous = getCPUTime();
+  printf("nentries %u\n", nentries);
   for (Int_t iev = 0; iev < nentries; iev ++)
     {
-      timeval_private start;
-      float lapse = (start - previous).return_sec();
-      total_lapse += lapse;
       
-      printf("lapse %f\n", lapse);
-      printf("total_lapse %f iev %u\n", total_lapse, iev);
-      if (lapse > 1E-3)
-	{
-	  printf("==============================================================\n");
-	}
-     
-      previous = start;
-      float dif1(0), dif2(0), dif3(0), dif4(0);
-      timeval_private start_read;
+      double lapse_real_current = getRealTime();
+      double lapse_CPU_current = getCPUTime();
+      lapse_real_total += lapse_real_current - lapse_real_previous;
+      lapse_CPU_total += lapse_CPU_current - lapse_CPU_previous;
+
+      lapse_real_previous = lapse_real_current;
+      lapse_CPU_previous = lapse_CPU_current;
+      double read_real_start = getRealTime();
+      double read_CPU_start = getCPUTime();
       t->GetEntry(iev);
-      printf("time to read event %f\n", (timeval_private() - start_read).return_sec());
-      printf("npf %u ngen %u nj %u ngenj %u\n", ev.npf, ev.ngen, ev.nj, ev.ngenj);
-      
+      //printf("read real %f, read CPU %f\n", getRealTime() - read_real_start,  getCPUTime() - read_CPU_start);
+      read_real_total += getRealTime() - read_real_start;
+      read_CPU_total += getCPUTime() - read_CPU_start;
       if(iev%5000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
 
       float wgt(1.0);
@@ -370,15 +372,12 @@ void ReadTree(TString filename,
 
       jet_constituent_analysis_tool.weight_ = wgt;
       colour_flow_analysis_tool.weight_ = wgt;
-      printf("probe A\n");
       //base kinematics
       TLorentzVector lp4;
       lp4.SetPtEtaPhiM(ev.l_pt,ev.l_eta,ev.l_phi,ev.l_mass);
-      printf("probe A01\n");
       if(lp4.Pt()<30 || fabs(lp4.Eta())>2.1) continue;
       float relIsoDeltaBeta((ev.l_chargedHadronIso
 			     +max(0.,ev.l_neutralHadronIso+ev.l_photonIso-0.5*ev.l_puChargedHadronIso))/ev.l_pt);
-      printf("probe A1\n");
             //select according to the lepton id/charge
       if(channelSelection!=0)
 	{
@@ -390,7 +389,6 @@ void ReadTree(TString filename,
 	      //if(relchIso<0.4) continue;
 	    }
 	}
-      	printf("probe A2\n");
      
       if(chargeSelection!=0 &&  ev.l_charge!=chargeSelection) continue;
 
@@ -400,10 +398,8 @@ void ReadTree(TString filename,
 	  if(ev.isData  && ((ev.muTrigger>>2)&0x1)==0) continue;
 	  if(!ev.isData && ((ev.muTrigger>>0)&0x1)==0) continue;
 	}
-      	printf("probe A3\n");
      
       if((abs(ev.l_id) == 11 || abs(ev.l_id) == 1100) && ((ev.elTrigger>>0)&0x1)==0) continue;
-      	printf("Print B\n");
       //select jets
       Float_t htsum(0);
       TLorentzVector jetDiff(0,0,0,0);
@@ -476,33 +472,28 @@ void ReadTree(TString filename,
 	      //updated b-tagging decision with the data/MC scale factor
 	      myBTagSFUtil.modifyBTagsWithSF(isBTagged,    jetBtagSF,     expEff);
 	    }
-	  timeval_private start1;
+	  double JA_real_start_dif = getRealTime();
+	  double JA_CPU_start_dif = getCPUTime();
 	  jet_constituent_analysis_tool.AnalyseAllJets();
-	  float dif1_add = (timeval_private() - start1).return_sec();
-	  printf("dif1_add %f\n", dif1_add);
-	  dif1 += dif1_add;
-	  
+	  JA_real_total += getRealTime() - JA_real_start_dif;
+	  JA_CPU_total += getCPUTime() - JA_CPU_start_dif;
 	  //save jet
 	  if(isBTagged)
 	    {
 	      bJets.push_back(jp4);
 	      bJets_index.push_back(k);
-	      timeval_private start2;
 	      jet_constituent_analysis_tool.AnalyseBJets();
-	      timeval_private end2;
-	      dif2 += (timeval_private() - start2).return_sec();
 	    }
 	  else
 	    {
 	      lightJets.push_back(jp4);
 	      lightJets_index.push_back(k);
-	      timeval_private start3;
 	      jet_constituent_analysis_tool.AnalyseLightJets();
-	      dif3 += (timeval_private() - start3).return_sec();
 	      
 	    }
 	}
-      printf("%f %f %f\n", dif1, dif2, dif3);
+      /* printf("JA real %f JA CPU %f\n", ja_real_total, ja_CPU_total);
+	 getchar();*/
       
       //check if flavour splitting was required
       if(!ev.isData)
@@ -573,16 +564,9 @@ void ReadTree(TString filename,
 		}	  
 	    }
 	}
-      timeval_private start4;
       colour_flow_analysis_tool.Work();
-      dif4 += (timeval_private() - start4).return_sec();
 
 
-      timeval_private dif_timeval = timeval_private() - start;
-      float dif = dif_timeval.return_sec();
-      dif_timeval.print_sec();
-  
-      printf("%f %f %f %f\n", dif1/dif, dif2/dif, dif3/dif, dif4/dif);
       
       if(!runSysts) continue;
       
@@ -764,7 +748,6 @@ void ReadTree(TString filename,
 	    }//
 	}      //Closing for(size_t ivar=0; ivar<expSysts.size(); ivar++)
     }
-  printf("time to read %f total_lapse %f\n", (timeval_private() - start_read).return_sec(), total_lapse);
   //close input file
   f->Close();
 
@@ -773,9 +756,7 @@ void ReadTree(TString filename,
   if(flavourSplitting!=NOFLAVOURSPLITTING) selPrefix=Form("%d_",flavourSplitting);
   TString baseName=gSystem->BaseName(outname); 
   TString dirName=gSystem->DirName(outname);
-  printf("%s\n", (dirName+"/"+selPrefix+baseName).Data());
   TFile *fOut=TFile::Open(dirName+"/"+selPrefix+baseName,"RECREATE");
-  printf("%p %s\n", fOut, fOut -> GetName());
   fOut->cd();
   for (auto& it : allPlots) 
     { 
@@ -789,8 +770,14 @@ void ReadTree(TString filename,
       it.second->Write(); 
     }
   fOut->Close();
-  printf("estimate %f, entries %u, total time of execution %f\n", estimate, nentries, (timeval_private() - global_start).return_sec());
-  getchar();
+  double global_end_real = getRealTime();
+  double global_end_CPU = getCPUTime();
+  printf("global real time %f CPU %f\n", global_end_real - global_start_real, global_end_CPU - global_start_CPU);
+  printf("read real %f,  CPU %f\n", read_real_total, read_CPU_total);
+  printf("JA real %f, CPU %f\n", JA_real_total, JA_CPU_total);
+  printf("lapse real %f, CPU %f\n", lapse_real_total, lapse_CPU_total);
+
+  //    getchar();
 }
 
 //
