@@ -7,9 +7,9 @@ void JetConstituentAnalysisTool::AssignHistograms() const
   plots_ptr_ -> operator[]("JetChargeContent")               = new TH1F("JetChargeContent",           "; Percentage; Events", 100, 0, 1.2);
   plots_ptr_ -> operator[]("NoAllConstituents")              = new TH1F("NoAllConstituents",          "; No; Events", 301, -0.5, 300.5);
   plots_ptr_ -> operator[]("NoChargedConstituents")          = new TH1F("NoChargedConstituents",      "; No; Events", 301, -0.5, 300.5);
-  plots2D_ptr_ -> operator[]("ConstituentFlavours")          = new TH2F("ConstituentFlavours",        "; Flavour; Charge", 41, -20.5, 20.5, 7, -1 - 1/6, 1 + 1/6);
-  plots2D_ptr_ -> operator[]("ConstituentFlavoursLightJets") = new TH2F("ConstituentFlavoursLightJets", "; Flavour; Charge", 41, -20.5, 20.5, 7, -1 - 1/6, 1 + 1/6);
-  plots2D_ptr_ -> operator[]("ConstituentFlavoursBJets") = new TH2F("ConstituentFlavoursBJets",       "; Flavour; Charge", 41, -20.5, 20.5, 7, -1 - 1/6, 1 + 1/6);
+  plots2D_ptr_ -> operator[]("ConstituentFlavours")          = new TH2F("ConstituentFlavours",        "; Flavour; Charge", 41, -20.5, 20.5, 7, -1 - 1/6.0, 1 + 1/6.0);
+  plots2D_ptr_ -> operator[]("ConstituentFlavoursLightJets") = new TH2F("ConstituentFlavoursLightJets", "; Flavour; Charge", 41, -20.5, 20.5, 7, -1 - 1/6.0, 1 + 1/6.0);
+  plots2D_ptr_ -> operator[]("ConstituentFlavoursBJets") = new TH2F("ConstituentFlavoursBJets",       "; Flavour; Charge", 41, -20.5, 20.5, 7, -1 - 1/6.0, 1 + 1/6.0);
   
 }
 

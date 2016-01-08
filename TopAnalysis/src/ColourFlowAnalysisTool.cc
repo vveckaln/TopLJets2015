@@ -133,11 +133,14 @@ float ColourFlowAnalysisTool::PullAngle(const PullVector & pull_vector, const TL
 					       event_ptr_ -> pf_pz[jet_const_index], 
 					       jet_const_energy);
       Pt_jet_constituents += constituent_4vector.Pt();
-      phi_component += TVector2::Phi_mpi_pi(constituent_4vector.Phi() - jet_phi) * constituent_4vector.Pt();
-      eta_component += (constituent_4vector.Eta() - jet_eta) * constituent_4vector.Pt();
+      const float delta_phi = TVector2::Phi_mpi_pi(constituent_4vector.Phi() - jet_phi);
+      const float delta_eta = constituent_4vector.Eta() - jet_eta;
+      const float mag = sqrt(delta_phi*delta_phi + delta_eta*delta_eta);
+      phi_component += mag * delta_phi * constituent_4vector.Pt();
+      eta_component += mag * delta_eta * constituent_4vector.Pt();
 		
     }
-  const float scale = OnlyChargedConstituents ? Pt_jet_constituents : jet.Pt();
+  const float scale = /*OnlyChargedConstituents ? Pt_jet_constituents : */jet.Pt();
   phi_component /= scale;
   eta_component /= scale;
   return PullVector(phi_component, eta_component);
