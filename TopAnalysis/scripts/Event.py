@@ -1,30 +1,5 @@
 from Particle import *
 
-    
-class ColourPair:
-    particle1 = 0
-    particle2 = 0
-    def __init__(self, particle1, particle2):
-        self.particle1 = particle1
-        self.particle2 = particle2
-    def ConnectColourFlow(self):
-        self.particle2.ICOLUP1 = self.particle1.ICOLUP1
-
-class HadronicW:
-    parent_t = 0
-    daughter_b = 0
-    daughter_light1 = 0
-    daughter_light2 = 0
-    colourpair      = 0
-    anticolourpair  = 0
-    def __init__(self):
-        parent_t = 0
-        daugher_b = 0
-        daughter_light1 = 0
-        daughter_light2 = 0
-        colourpair     = 0
-        anticolourpair  = 0
-
 class Event:
     Header        = ""
     Particles     = []
