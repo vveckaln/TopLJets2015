@@ -306,7 +306,8 @@ void ReadTree(TString filename,
   printf("nentries %u\n", nentries);
   for (Int_t iev = 0; iev < nentries; iev ++)
     {
-      
+
+      //      printf("entry %u\n", iev);
       double lapse_real_current = getRealTime();
       double lapse_CPU_current = getCPUTime();
       lapse_real_total += lapse_real_current - lapse_real_previous;

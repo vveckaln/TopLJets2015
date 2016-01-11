@@ -70,7 +70,7 @@ def main():
         inF=opt.input
         if '/store/' in inF and not 'root:' in inF : inF='root://eoscms//eos/cms'+opt.input        
         outF=opt.output
-        wgt=None
+        wgtH=None
         if opt.tag :
             if opt.tag in genWgts:
                 wgtH=genWgts[opt.tag]
@@ -107,8 +107,9 @@ def main():
     if opt.queue=='local':
         print 'launching %d tasks in %d parallel jobs'%(len(task_list),opt.njobs)
         if opt.njobs == 0:
-            for inF,outF,channel,charge,wgtH,flav,runSysts in task_list:
-                ROOT.ReadTree(str(inF),str(outF),channel,charge,flav,wgtH,runSysts)
+            for inF, outF, channel, charge, wgtH, flav, runSysts in task_list:
+                print str(inF), str(outF), channel, charge, flav, wgtH, runSysts
+                ROOT.ReadTree(str(inF), str(outF), channel, charge, flav, wgtH, runSysts)
         else:
             from multiprocessing import Pool
             pool = Pool(opt.njobs)
@@ -119,7 +120,7 @@ def main():
         for inF,outF,channel,charge,tag,flav,runSysts in task_list:
             localRun='python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py -i %s -o %s --charge %d --ch %d --tag %s --flav %d' % (cmsswBase,inF,outF,charge,channel,tag,flav)
             if runSysts : localRun += ' --runSysts'            
-            cmd='bsub -oo LSF_outputs -eo LSF_outputs -q %s %s/src/TopLJets2015/TopAnalysis/scripts/wrapLocalAnalysisRun.sh \"%s\"' % (opt.queue,cmsswBase,localRun)
+            cmd='bsub -q %s %s/src/TopLJets2015/TopAnalysis/scripts/wrapLocalAnalysisRun.sh \"%s\"' % (opt.queue,cmsswBase,localRun)
             os.system(cmd)
 
 """

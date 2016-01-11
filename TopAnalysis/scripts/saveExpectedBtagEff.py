@@ -3,7 +3,8 @@ from array import array
 from TopLJets2015.TopAnalysis.storeTools import *
 
 csvWP='j_csv>0.890'
-inputDir='/store/cmst3/user/psilva/LJets2015/552ed48/MC13TeV_TTJets'
+#inputDir='/store/cmst3/user/psilva/LJets2015/552ed48/MC13TeV_TTJets'
+inputDir='/store/cmst3/user/psilva/LJets2015/b18c191/MC13TeV_TTJets'
 
 #open a ttbar file
 input_list=getEOSlslist(directory=inputDir)

@@ -3,7 +3,7 @@
 
 # "grep vischia" selects only the lines corresponding to a job. It might as well be "grep job-" or stuff like that.
 user=`whoami`
-echo "RUNNING        PENDING"
+echo "RUNNING        PENDING      TOTAL"
 if [ `hostname | cut -d "." -f2-4` == "ncg.ingrid.pt" ] ; then  
 
     if [ "$1" == "" ]; then
@@ -75,8 +75,8 @@ elif [ `hostname | cut -d "." -f2-3` == "cern.ch" ] ; then
 	    fi
 	    ((i++))
 	done <<< "$buffer" #so-called "here variable"
-
-	echo $R"       "$P
+	
+	echo $R"       "$P"     "$(($R+$P))
     done
 fi
 
