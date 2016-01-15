@@ -375,6 +375,7 @@ void ReadTree(TString filename,
       colour_flow_analysis_tool.weight_ = wgt;
       //base kinematics
       TLorentzVector lp4;
+      colour_flow_analysis_tool.lepton_ptr_ = &lp4;
       lp4.SetPtEtaPhiM(ev.l_pt,ev.l_eta,ev.l_phi,ev.l_mass);
       if(lp4.Pt()<30 || fabs(lp4.Eta())>2.1) continue;
       float relIsoDeltaBeta((ev.l_chargedHadronIso
@@ -520,6 +521,7 @@ void ReadTree(TString filename,
       neutrinoPzComputer.SetLepton(lp4);
       float nupz=neutrinoPzComputer.Calculate();
       TLorentzVector neutrinoHypP4(met.Px(),met.Py(),nupz ,TMath::Sqrt(TMath::Power(met.Pt(),2)+TMath::Power(nupz,2)));
+      colour_flow_analysis_tool.neutrino_ptr_ = &neutrinoHypP4;
       visSystem+=neutrinoHypP4;
 
       //event weight moved from here
