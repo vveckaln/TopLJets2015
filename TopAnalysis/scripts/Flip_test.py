@@ -17,13 +17,10 @@ def WriteLHE():
     event = 0
     for line in INPUTFILE:
         #print "line %s length %u"% (line, len(line.split()))
-        if (event_count == 0 and not '<event>' in line):
-            OUTPUTFILE.write(line)
         start_line = False
         if '<event>' in line:
             event_count += 1
             event = Event()
-            print "resetting event, particles", len(event.Particles)
             start_line = True
         if event:
             
@@ -37,10 +34,13 @@ def WriteLHE():
                 event.Particles.append(particle)
                 particle_line = True
             if not start_line and not header_line and not particle_line:
+                print "   **** LISTING ORIGINAL **** "
                 event.ls()
-                print "   ---------------------- "
                 leptons = event.Flip()
+                
+                print "   **** LISTING FLIPPED **** "
                 event.ls()
+                print " DONE DONE DONE DONE DONE DONE DONE DONE DONE "
  #               raw_input("Press Enter")
                 if leptons == 0:
                     jjcount += 1
@@ -51,6 +51,9 @@ def WriteLHE():
                 event.write(OUTPUTFILE)
                 event = 0
 #            print start_line, header_line, particle_line
+        if not event:
+            OUTPUTFILE.write(line)
+
     OUTPUTFILE.write('</LesHouchesEvents>\n')
     print "semileptonic",   jlcount
     print "fully hadronic", jjcount

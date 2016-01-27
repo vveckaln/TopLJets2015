@@ -47,8 +47,6 @@ void ReadTree(TString filename,
 {
   system("date | tee /dev/stderr");
 
-  double global_start_real = getRealTime();
-  double global_start_CPU = getCPUTime();
   //READ TREE FROM FILE
   MiniEvent_t ev;
   TFile *f = TFile::Open(filename);
@@ -295,32 +293,10 @@ void ReadTree(TString filename,
 
   
   //LOOP OVER EVENTS
-  double read_real_total = 0;
-  double read_CPU_total = 0;
-  double JA_real_total = 0;
-  double JA_CPU_total = 0;
-  double lapse_real_total = 0;
-  double lapse_CPU_total = 0;
-  double lapse_real_previous = getRealTime();
-  double lapse_CPU_previous = getCPUTime();
   printf("nentries %u\n", nentries);
   for (Int_t iev = 0; iev < nentries; iev ++)
     {
-
-      //      printf("entry %u\n", iev);
-      double lapse_real_current = getRealTime();
-      double lapse_CPU_current = getCPUTime();
-      lapse_real_total += lapse_real_current - lapse_real_previous;
-      lapse_CPU_total += lapse_CPU_current - lapse_CPU_previous;
-
-      lapse_real_previous = lapse_real_current;
-      lapse_CPU_previous = lapse_CPU_current;
-      double read_real_start = getRealTime();
-      double read_CPU_start = getCPUTime();
       t->GetEntry(iev);
-      //printf("read real %f, read CPU %f\n", getRealTime() - read_real_start,  getCPUTime() - read_CPU_start);
-      read_real_total += getRealTime() - read_real_start;
-      read_CPU_total += getCPUTime() - read_CPU_start;
       if(iev%5000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
 
       float wgt(1.0);
@@ -405,13 +381,15 @@ void ReadTree(TString filename,
       //select jets
       Float_t htsum(0);
       TLorentzVector jetDiff(0,0,0,0);
-      std::vector<TLorentzVector> bJets,lightJets;
-      std::vector<unsigned char> bJets_index, lightJets_index;
-      colour_flow_analysis_tool.light_jets_ptr_         = &lightJets;
-      colour_flow_analysis_tool.b_jets_ptr_             = &bJets;
+      vector<TLorentzVector> bJets, lightJets;
+      vector<TLorentzVector> gen_bJets,gen_lightJets;
+
+      vector<TLorentzVector> bJets_gen,lightJets_gen;
+
+      vector<unsigned char> bJets_index, lightJets_index;
+      
       colour_flow_analysis_tool.light_jets_indices_ptr_ = &lightJets_index;
       colour_flow_analysis_tool.b_jets_indices_ptr_     = &bJets_index;
-      colour_flow_analysis_tool.Do();
       TLorentzVector visSystem(lp4);
       int nbjets(0),ncjets(0),nljets(0),leadingJetIdx(-1);
       std::vector<int> resolvedJetIdx;
@@ -419,8 +397,9 @@ void ReadTree(TString filename,
 	{
 	  //check kinematics
 	  TLorentzVector jp4;
-	  
 	  jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
+	  TLorentzVector gen_jp4;
+	  gen_jp4.SetPtEtaPhiM(ev.genj_pt[k], ev.genj_eta[k], ev.genj_phi[k], ev.genj_mass[k]);
 	  if(jp4.DeltaR(lp4)<0.4) continue;
 
 	  resolvedJetIdx.push_back(k);
@@ -474,21 +453,19 @@ void ReadTree(TString filename,
 	      //updated b-tagging decision with the data/MC scale factor
 	      myBTagSFUtil.modifyBTagsWithSF(isBTagged,    jetBtagSF,     expEff);
 	    }
-	  double JA_real_start_dif = getRealTime();
-	  double JA_CPU_start_dif = getCPUTime();
 	  jet_constituent_analysis_tool.AnalyseAllJets();
-	  JA_real_total += getRealTime() - JA_real_start_dif;
-	  JA_CPU_total += getCPUTime() - JA_CPU_start_dif;
 	  //save jet
 	  if(isBTagged)
 	    {
 	      bJets.push_back(jp4);
+	      gen_bJets.push_back(gen_jp4);
 	      bJets_index.push_back(k);
 	      jet_constituent_analysis_tool.AnalyseBJets();
 	    }
 	  else
 	    {
 	      lightJets.push_back(jp4);
+	      gen_lightJets.push_back(gen_jp4);
 	      lightJets_index.push_back(k);
 	      jet_constituent_analysis_tool.AnalyseLightJets();
 	      
@@ -567,8 +544,17 @@ void ReadTree(TString filename,
 		}	  
 	    }
 	}
+      colour_flow_analysis_tool.work_mode_              = 0;
+      colour_flow_analysis_tool.light_jets_ptr_         = &lightJets;
+      colour_flow_analysis_tool.b_jets_ptr_             = &bJets;
       colour_flow_analysis_tool.Work();
-
+      if (not ev.isData)
+	{
+	  colour_flow_analysis_tool.light_jets_ptr_         = &gen_lightJets;
+	  colour_flow_analysis_tool.b_jets_ptr_             = &gen_bJets;
+	  colour_flow_analysis_tool.work_mode_              = 1;
+	  colour_flow_analysis_tool.Work();
+	}
 
       
       if(!runSysts) continue;
@@ -773,14 +759,6 @@ void ReadTree(TString filename,
       it.second->Write(); 
     }
   fOut->Close();
-  double global_end_real = getRealTime();
-  double global_end_CPU = getCPUTime();
-  printf("global real time %f CPU %f\n", global_end_real - global_start_real, global_end_CPU - global_start_CPU);
-  printf("read real %f,  CPU %f\n", read_real_total, read_CPU_total);
-  printf("JA real %f, CPU %f\n", JA_real_total, JA_CPU_total);
-  printf("lapse real %f, CPU %f\n", lapse_real_total, lapse_CPU_total);
-
-  //    getchar();
 }
 
 //

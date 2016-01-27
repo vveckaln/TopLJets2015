@@ -3,39 +3,26 @@ from Particle import *
 class Event:
     Header        = ""
     Particles     = []
-    Wbosons       = []
 
     def __init__(self):
         self.Header = ""
         self.Particles = []
-        self.Wbosons   = []
 
     def ls(self):
         print self.Header + '\n'
         for ind in range(0, len(self.Particles)):
-            line = self.Particles[ind].string_orig()
+            line = self.Particles[ind].string_for_ls()
             print ind, "\t", line 
-
-    def ls_after_flipping(self):
-        print self.Header + '\n'
-        for ind in range(0, len(self.Particles)):
-            if self.Particles[ind].ISTUP == '1':
-                line = self.Particles[ind].string_orig()
-                print ind, "\t", line 
-            if self.Particles[ind].ISTUP == '-1':
-                line = self.Particles[ind].string_orig()
-                print ind, "\t", line 
-
 
     def write(self, FILE):
         FILE.write('<event>\n')
+        self.PrepareHeaderFor_write()
         FILE.write(self.Header + '\n')
         for ind in range(0, len(self.Particles)):
-            if self.Particles[ind].ISTUP == '1':
-                line = self.Particles[ind].string()
+            line = self.Particles[ind].string_for_write()
+            if line != "":
                 FILE.write(line + '\n')
-        FILE.write('</event>\n')    
-
+        
     def ConnectToParents(self, daughter_ind):
         daughter = self.Particles[daughter_ind]
         if (daughter.ISTUP == '-1'):
@@ -99,3 +86,13 @@ class Event:
                 
                          
         return lepton_count
+    def PrepareHeaderFor_write(self):
+        N_INOUT_particles = 0
+        for ind in range(0, len(self.Particles)) :
+            if self.Particles[ind].ISTUP == '1' or self.Particles[ind].ISTUP == '-1':
+                N_INOUT_particles += 1
+        Header = str(N_INOUT_particles) + ' '
+        self.Header = self.Header.lstrip()
+        self.Header = Header + self.Header[len(self.Header.split()[0]):]
+        
+        

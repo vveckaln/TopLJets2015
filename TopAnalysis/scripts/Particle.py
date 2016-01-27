@@ -25,7 +25,7 @@ class Particle:
         self.ICOLUP2 = line.split()[5]
         self.PX      = line.split()[6]
         self.PY      = line.split()[7]
-        self.PX      = line.split()[8]
+        self.PZ      = line.split()[8]
         self.E       = line.split()[9]
         self.M       = line.split()[10]
         self.VTIMUP  = line.split()[11]
@@ -33,26 +33,29 @@ class Particle:
         self.parent_ind  = 0
         self.daughter1_ind = 0
         self.daughter2_ind = 0
-    def string(self):
-        line = self.IDUP + '\t'
-        line += self.ISTUP + '\t'
-        line += '1\t'
-        line += '2\t'
-        line += str(self.parent_ind) + '\t'
-        line += str(self.daughter1_ind) + '\t'
-        line += str(self.daughter2_ind) + '\t'
+    def string_for_write(self):
+        if self.ISTUP == '2':
+            return ""
+        line = self.IDUP     + '\t'
+        line += self.ISTUP   + '\t'
+        if self.ISTUP == '1':
+            line += '1\t'
+            line += '2\t'
+        else:
+            line += self.MOTHUP1 + '\t'
+            line += self.MOTHUP2 + '\t'
         line += self.ICOLUP1 + '\t'
         line += self.ICOLUP2 + '\t'
-        line += self.PX + ' '
-        line += self.PY + ' '
-        line += self.PZ + ' '
-        line += self.E + ' '
-        line += self.M + ' '
-        line += self.VTIMUP + ' '
-        line += self.SPINUP + ' '
+        line += self.PX      + '\t'
+        line += self.PY      + '\t'
+        line += self.PZ      + '\t'
+        line += self.E       + '\t'
+        line += self.M       + '\t '
+        line += self.VTIMUP  + '\t'
+        line += self.SPINUP  + '\t'
         return line
 
-    def string_orig(self):
+    def string_for_ls(self):
         line = self.IDUP + '\t'
         line += self.ISTUP + '\t'
         line += str(int(self.MOTHUP1) - 1) + '\t'
