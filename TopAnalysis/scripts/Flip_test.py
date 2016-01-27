@@ -54,7 +54,6 @@ def WriteLHE():
         if not event:
             OUTPUTFILE.write(line)
 
-    OUTPUTFILE.write('</LesHouchesEvents>\n')
     print "semileptonic",   jlcount
     print "fully hadronic", jjcount
     print "dileptonic",     llcount
