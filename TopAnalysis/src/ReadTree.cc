@@ -286,8 +286,9 @@ void ReadTree(TString filename,
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
   
   jet_constituent_analysis_tool.AssignHistograms();
+  colour_flow_analysis_tool.PtRadiation_mode_ = 0;  
+
   colour_flow_analysis_tool.AssignHistograms();
-    
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
 
@@ -544,6 +545,8 @@ void ReadTree(TString filename,
 		}	  
 	    }
 	}
+      colour_flow_analysis_tool.event_number_ = iev;
+      //      printf("*** event %u ***** \n", iev);
       colour_flow_analysis_tool.work_mode_              = 0;
       colour_flow_analysis_tool.light_jets_ptr_         = &lightJets;
       colour_flow_analysis_tool.b_jets_ptr_             = &bJets;
@@ -555,8 +558,6 @@ void ReadTree(TString filename,
 	  colour_flow_analysis_tool.work_mode_              = 1;
 	  colour_flow_analysis_tool.Work();
 	}
-
-      
       if(!runSysts) continue;
       
       //gen weighting systematics
@@ -738,6 +739,7 @@ void ReadTree(TString filename,
 	}      //Closing for(size_t ivar=0; ivar<expSysts.size(); ivar++)
     }
   //close input file
+  colour_flow_analysis_tool.EndPtRadiationProfile();
   f->Close();
 
   //save histos to file  

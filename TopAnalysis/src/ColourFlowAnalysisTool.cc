@@ -1,129 +1,35 @@
 #include "TopLJets2015/TopAnalysis/interface/ColourFlowAnalysisTool.hh"
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
-
-const char* ColourFlowAnalysisTool::tag_channel_                    = "4j2t";
-const char * ColourFlowAnalysisTool::tag_charge_types_[2]           = {"allconst", "chconst"};
-const unsigned char ColourFlowAnalysisTool::N_jet_types_            = 7;
-const char* ColourFlowAnalysisTool::tag_jet_types_[N_jet_types_]    = {"leading_jet", "2nd_leading_jet", "had_b", "lept_b", "had_t", "lept_t", "beam"};
-const unsigned char ColourFlowAnalysisTool::N_DeltaR_types_         = 3;
-const char * ColourFlowAnalysisTool::DeltaR_types_[N_DeltaR_types_] = {"DeltaRle1.0", "DeltaRgt1.0", "DeltaRTotal"}; 
-const char * ColourFlowAnalysisTool::tag_levels_[2]                 = {"reco", "gen"};
-const TLorentzVector ColourFlowAnalysisTool::beam_                   = TLorentzVector(1E-2, 0, 1E10, sqrt(1E-4 + 1E20)+1E-6);
+#include "TH2F.h"
+#include "TCanvas.h"
+#include "TROOT.h"
+#include "TStyle.h"
 ColourFlowAnalysisTool::PullVector::PullVector(Double_t phi, Double_t eta): TVector2(phi, eta)
 {
 }
 
-void ColourFlowAnalysisTool::AssignHistograms() const
+ColourFlowAnalysisTool::ColourFlowAnalysisTool()
 {
-  static const unsigned char ncategories_PA         = 2;
-  static const char * cat_title_PA[ncategories_PA]     = {"pull_angle",     "cos_pull_angle" };
-  static const unsigned short nbins_PA[ncategories_PA] = {25,               100              };
-  static const double min_PA[ncategories_PA]           = {-1.2*TMath::Pi(), -1.2             };
-  static const double max_PA[ncategories_PA]           = {- min_PA[0],         -min_PA[1]          };
-  static const char* axes_PA[ncategories_PA]           = {"; rad; Events",  "; cos; Events"  };
-  for (unsigned char cat_index = 0; cat_index < ncategories_PA; cat_index++)
-    {
-      for (unsigned char level_index = 0; level_index < 2; level_index ++)
-	{
-	  for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
-	    {
-	      for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
-		{
-		  for (unsigned char jet2_index = 0; jet2_index < N_jet_types_; jet2_index ++)
-		    {
-		      for (unsigned char DeltaR_index = 0; DeltaR_index < N_DeltaR_types_; DeltaR_index ++)
-			{
-	
-			  if (jet1_index == jet2_index)
-			    continue;
-			  const TString hash_key = TString(cat_title_PA[cat_index]) + "_" + 
-			    tag_charge_types_[charge_index] + "_" + 
-			    tag_levels_[level_index] + "_" +
-			    tag_jet_types_[jet1_index] + "_:_" + 
-			    tag_jet_types_[jet2_index] + "_" + 
-			    DeltaR_types_[DeltaR_index] + "_" + 
-			    tag_channel_;
-			  plots_ptr_ -> operator[](hash_key) = new TH1F(hash_key, 
-									hash_key + axes_PA[cat_index], 
-									nbins_PA[cat_index], 
-									min_PA[cat_index], 
-									max_PA[cat_index]);
-			}
-		    }
-		}
-    
-	    }
-	}
-    }
-  static const unsigned char ncategories_PV = 3;
-  static const char * cat_title_PV[ncategories_PV]     = {"phi_PV",         "eta_PV",         "mag_PV"      };
-  static const unsigned short nbins_PV[ncategories_PV] = {100,              100,              100           };
-  static const double min_PV[ncategories_PV]           = {-0.01*TMath::Pi(), -0.05,               0             };
-  static const double max_PV[ncategories_PV]           = {- min_PV[0],         -min_PV[1],    0.05             };
-  static const char* axes_PV[ncategories_PV]           = {"; rad; Events",  "; a.u.; Events", ";a.u.; Events"};
-  for (unsigned char cat_index = 0; cat_index < ncategories_PV; cat_index++)
-    {
-      for (unsigned char level_index = 0; level_index < 2; level_index ++)
-	{ 
-	  for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
-	    {
-	      for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
-		{
-		  const TString hash_key = TString(cat_title_PV[cat_index]) + "_" + 
-		    tag_charge_types_[charge_index] + "_" + 
-		    tag_levels_[level_index] + "_" +
-		    tag_jet_types_[jet1_index] + "_" + 
-		    tag_channel_;
-		  plots_ptr_ -> operator[](hash_key) = new TH1F(hash_key, 
-								hash_key + axes_PV[cat_index], 
-								nbins_PV[cat_index], 
-								min_PV[cat_index], 
-								max_PV[cat_index]);
-    
-		
-		}
-	    }
-	}
-    }
-  
-  static const unsigned char ncategories_CTRL              = 2;
-  static const char * branch[2]                            = {"had", "lept"};
-  static const char * cat_title_CTRL[ncategories_CTRL]     = {"W_mass",         "t_mass"    };
-  static const unsigned short nbins_CTRL[ncategories_CTRL] = {100,              100         };
-  static const double min_CTRL[ncategories_CTRL]           = {0,                50          };
-  static const double max_CTRL[ncategories_CTRL]           = {150,              400         };
-  static const char* axes_CTRL[ncategories_CTRL]           = {"; GeV; Events",  "; GeV; Events"};
-  for (unsigned char branch_index = 0; branch_index < 2; branch_index ++)
-    {
-      for (unsigned char level_index = 0; level_index < 2; level_index ++)
-	{
-	  for (unsigned char cat_index = 0; cat_index < ncategories_CTRL; cat_index ++)
-	    { 
-	      const TString hash_key = TString(branch[branch_index]) + "_" + tag_levels_[level_index] + "_" + cat_title_CTRL[cat_index]; 
-	      plots_ptr_ -> operator[](hash_key) = new TH1F(hash_key, hash_key + axes_CTRL[cat_index], nbins_CTRL[cat_index], min_CTRL[cat_index], max_CTRL[cat_index]);
-	    }
-	}
-    }
-  plots_ptr_ -> operator[]("had_b_flavour")              = new TH1F("had_b_flavour", "had_b_flavour; flavour; Events", 21, -10.5, 10.5);
-  plots_ptr_ -> operator[]("lept_b_flavour")             = new TH1F("lept_b_flavour", "lept_b_flavour; flavour; Events", 21, -10.5, 10.5);
-
-  plots_ptr_ -> operator[]("leading_jet_flavour")        = new TH1F("leading_jet_flavour", "leading_jet_flavour; flavour; Events", 21, -10.5, 10.5);
-  plots_ptr_ -> operator[]("second_leading_jet_flavour") = new TH1F("second_leading_jet_flavour", "second_leadiing_jet_flavour; flavour; Events", 21, -10.5, 10.5);
-
+  event_display_mode_ = 0;
+  canvas_ = 0;
+  PtRadProf_ = 0;
+  PtRadiation_mode_ = 0;
 }
 
 void ColourFlowAnalysisTool::Work()
 {
+  leading_light_jet_ptr_ = NULL;
+  second_leading_light_jet_ptr_ = NULL;
   if( b_jets_ptr_ -> size() != 2 or light_jets_ptr_ -> size() != 2)
     return;
   static const bool OnlyChargedConstituents[2] = {false, true};
   
-  const vector<const TLorentzVector *> vect_jets = IdentifyJets();
-     
+  vect_jets_ = IdentifyJets();
+  PlotAngleBetweenJets();   
   for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
     {
       const TLorentzVector charged_jet = GetChargedJet(jet_indices_[jet1_index]);
-      const TLorentzVector * jet1_array[2] = {vect_jets[jet1_index], &charged_jet};
+      const TLorentzVector * jet1_array[2] = {vect_jets_[jet1_index], &charged_jet};
       for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
 	{
 	  const TLorentzVector * jet1 = jet1_array[charge_index];
@@ -143,16 +49,46 @@ void ColourFlowAnalysisTool::Work()
 		{
 		  if (jet2_index == jet1_index)
 		    continue;
-		  const TLorentzVector * jet2 = vect_jets[jet2_index];
+		  const TLorentzVector * jet2 = vect_jets_[jet2_index];
 		  if (not jet2)
 		    continue;
-		  const float DeltaR = jet1 -> DeltaR(*jet2);
-		  const char * DeltaR_tag = DeltaR <= 1.0 ? DeltaR_types_[0] : DeltaR_types_[1];
-		  const TVector2 jet_difference(TVector2::Phi_mpi_pi(jet2 -> Phi() - jet1 -> Phi()), jet2 -> Rapidity() - jet1 -> Rapidity());
+		  //		  printf("jet1 %u jet2 %u\n", jet1_index, jet2_index);
+		  float DeltaR = 0;
+		  if (jet2_index != 6)
+		    DeltaR = jet1 -> DeltaR(*jet2);
+		  else
+		    {
+		      const float Theta = jet2 -> Theta();
+		      const float Eta = -0.5 * TMath::Log(TMath::Tan(Theta/2));
+		      DeltaR = (pow(jet1 -> Phi() - jet2 -> Phi(), 2) + pow(jet1 -> Eta() - Eta, 2));
+
+		    }
+		  const char * DeltaR_tag = DeltaR <= 1.0 ? tag_DeltaR_types_[0] : tag_DeltaR_types_[1];
+		  const TVector2 jet_difference(/*TVector2::Phi_mpi_pi*/(jet2 -> Phi() - jet1 -> Phi()), jet2 -> Rapidity() - jet1 -> Rapidity());
+		  if (jet1_index == 0 and jet2_index == 1 )
+		    {
+		      const TString suffix =  TString("_") + tag_charge_types_[charge_index] + "_" + 
+			tag_levels_[work_mode_] + "_" + 
+			tag_jet_types_[jet1_index] + "_" + 
+			tag_channel_;
+		      plots_ptr_ -> operator[](TString("phi_jet_dif") + suffix) -> Fill(jet_difference.Px(), weight_);
+		      plots_ptr_ -> operator[](TString("eta_jet_dif") + suffix) -> Fill(jet_difference.Py(), weight_);
+		      plots_ptr_ -> operator[](TString("mag_jet_dif") + suffix) -> Fill(jet_difference.Mod(), weight_);
+		    }
 		  try
 		    {
 		      const float pull_angle = PullAngle(pull_vector, jet_difference);
-		     
+		      static unsigned short count = 0;
+
+		      if (count < 60 )
+			if (jet1_index == 0 and jet2_index == 1)
+			  {
+			    //	    event_display_mode_ = 1;
+			    EventDisplay(pull_vector, pull_angle, jet_difference, OnlyChargedConstituents[charge_index]);
+			    count ++;
+			    //  getchar();
+			  }
+		      
 		      const float cos_pull_angle = TMath::Cos(pull_angle);
 		      const TString infix = TString("_") + tag_charge_types_[charge_index] + "_" + 
 			tag_levels_[work_mode_] + "_" + 
@@ -163,11 +99,13 @@ void ColourFlowAnalysisTool::Work()
 			-> Fill(pull_angle, weight_);
 		      plots_ptr_ -> operator[](TString("cos_pull_angle") + infix + DeltaR_tag       + "_" + tag_channel_) 
 			-> Fill(cos_pull_angle, weight_);
-		      plots_ptr_ -> operator[](TString("pull_angle")     + infix + DeltaR_types_[2] + "_" + tag_channel_) 
+		      plots_ptr_ -> operator[](TString("pull_angle")     + infix + tag_DeltaR_types_[2] + "_" + tag_channel_) 
 			-> Fill(pull_angle, weight_);
-		      plots_ptr_ -> operator[](TString("cos_pull_angle") + infix + DeltaR_types_[2] + "_" + tag_channel_) 
+		      plots_ptr_ -> operator[](TString("cos_pull_angle") + infix + tag_DeltaR_types_[2] + "_" + tag_channel_) 
 			-> Fill(cos_pull_angle, weight_);
-		    }catch (const char * e)
+		      
+		    }
+		  catch (const char * e)
 		    {
 		      printf("%s\n", e);
 		    }
@@ -180,6 +118,8 @@ void ColourFlowAnalysisTool::Work()
 	    }
 	}
     }
+  AnalyseParticleFlow();
+  PtRadiationProfile();
   
 }
 
@@ -191,6 +131,7 @@ vector<const TLorentzVector*> ColourFlowAnalysisTool::IdentifyJets()
     &(*light_jets_ptr_)[0] : &(*light_jets_ptr_)[1];
   const unsigned char leading_jet_index =  (*light_jets_ptr_)[0].Pt() >= (*light_jets_ptr_)[1].Pt() ? 
     (*light_jets_indices_ptr_)[0] : (*light_jets_indices_ptr_)[1];
+  leading_light_jet_index_ = leading_jet_index;
   jet_indices_[0] = leading_jet_index;
   if (work_mode_ == 0)
     plots_ptr_ -> operator[]("leading_jet_flavour") -> Fill(event_ptr_ -> j_hadflav[leading_jet_index], weight_);
@@ -202,6 +143,10 @@ vector<const TLorentzVector*> ColourFlowAnalysisTool::IdentifyJets()
   const unsigned char second_leading_jet_index =  (*light_jets_ptr_)[0].Pt() >= (*light_jets_ptr_)[1].Pt() ? 
     (*light_jets_indices_ptr_)[1] : (*light_jets_indices_ptr_)[0];
   jet_indices_[1] = second_leading_jet_index;
+  leading_light_jet_ptr_ = leading_jet;
+  second_leading_light_jet_ptr_ = second_leading_jet;
+  second_leading_light_jet_index_ = second_leading_jet_index;
+
   if (work_mode_ == 0)
     plots_ptr_ -> operator[]("second_leading_jet_flavour") -> Fill(event_ptr_ -> j_hadflav[second_leading_jet_index], weight_);
   vect_jets.push_back(second_leading_jet);
@@ -336,7 +281,7 @@ float ColourFlowAnalysisTool::PullAngle(const PullVector & pull_vector, const TV
   const float jet_phi = jet.Phi();
   const float jet_eta = jet.Rapidity();
   float Pt_jet_constituents = 0;
-  unsigned int size = work_mode_ == 0 ? event_ptr_ -> npf : event_ptr_ -> ngen;
+   unsigned int size = work_mode_ == 0 ? event_ptr_ -> npf : event_ptr_ -> ngen;
   for (unsigned int jet_const_index = 0; jet_const_index < size; jet_const_index ++)
     {
       TLorentzVector constituent_4vector;
@@ -372,7 +317,7 @@ float ColourFlowAnalysisTool::PullAngle(const PullVector & pull_vector, const TV
 
 	}
       Pt_jet_constituents += constituent_4vector.Pt();
-      const float delta_phi = TVector2::Phi_mpi_pi(constituent_4vector.Phi() - jet_phi);
+      const float delta_phi = /*TVector2::Phi_mpi_pi*/(constituent_4vector.Phi() - jet_phi);
       const float delta_eta = constituent_4vector.Rapidity() - jet_eta;
       const float mag = sqrt(delta_phi*delta_phi + delta_eta*delta_eta);
       phi_component += mag * delta_phi * constituent_4vector.Pt();
@@ -385,6 +330,123 @@ float ColourFlowAnalysisTool::PullAngle(const PullVector & pull_vector, const TV
   phi_component /= scale;
   eta_component /= scale;
   return PullVector(phi_component, eta_component);
+}
+
+
+
+void ColourFlowAnalysisTool::PlotAngleBetweenJets() const
+{
+  for (unsigned char jet1_index = 0; jet1_index < vect_jets_.size(); jet1_index ++)
+    {
+      const TLorentzVector * jet1 = vect_jets_[jet1_index];
+      if (not jet1)
+	continue;
+      for (unsigned char jet2_index = jet1_index + 1; jet2_index < vect_jets_.size(); jet2_index ++)
+	{
+	  const TLorentzVector * jet2 = vect_jets_[jet2_index];
+	  if (not jet2)
+	    continue;
+	  float DeltaR = 0;
+	  if (jet2_index != 6)
+	    DeltaR = jet1 -> DeltaR(*jet2);
+	  else
+	    {
+	      const float Theta = jet2 -> Theta();
+	      const float Eta = -0.5 * TMath::Log(TMath::Tan(Theta/2));
+	      DeltaR = (pow(jet1 -> Phi() - jet2 -> Phi(), 2) + pow(jet1 -> Eta() - Eta, 2));
+
+	    }
+	  const unsigned char DeltaR_index = DeltaR < 1 ? 0 : 1;
+	  const float angle = jet1 -> Angle(jet2 -> Vect());
+	  const TString hash_key1 = TString("angle_") + 
+	    tag_jet_types_[jet1_index] + "_:_" + 
+	    tag_jet_types_[jet2_index] + "_" + 
+	    tag_levels_[work_mode_] + "_" + 
+	    tag_DeltaR_types_[DeltaR_index];
+	  plots_ptr_ -> operator[](hash_key1) -> Fill(angle, weight_);
+	  const TString hash_key2 = TString("angle_") + 
+	    tag_jet_types_[jet1_index] + "_:_" + 
+	    tag_jet_types_[jet2_index] + "_" + 
+	    tag_levels_[work_mode_] + "_" + 
+	    tag_DeltaR_types_[N_DeltaR_types_ - 1];
+	  plots_ptr_ -> operator[](hash_key2) -> Fill(angle, weight_);
+	  
+	}
+    }
+}
+
+void ColourFlowAnalysisTool::ConfigurePtRadiationProfileTool()
+{
+  if (PtRadiation_mode_ == 0)
+    return;
+  gROOT -> SetBatch(kTRUE);
+  gStyle -> SetOptStat(0);
+  canvas_ = new TCanvas("canvas", "canvas");
+  PtRadProf_ = new TH2F("Pt_radiation_profile", "Pt_radiation_profile; X [a.u.]; Y [a.u]", 100, -0.2, 0.2, 50, -0.2, 0.2);
+  //  PtRadProf_ -> Draw();
+  
+}
+
+void ColourFlowAnalysisTool::PtRadiationProfile() const
+{
+  if (PtRadiation_mode_ == 0)
+    return;
+  unsigned int size = work_mode_ == 0 ? event_ptr_ -> npf : event_ptr_ -> ngen;
+  const TLorentzVector * jets[2] = {leading_light_jet_ptr_, second_leading_light_jet_ptr_};
+  const float indices[2] = {leading_light_jet_index_, second_leading_light_jet_index_};
+  const TVector2 jet_difference(jets[1] -> Phi() - jets[0] -> Phi(), jets[1] -> Rapidity() - jets[0] -> Rapidity());
+  //const float mag = jet_difference.Mod();
+  //  const TVector2 jet_difference_norm = jet_difference *2/mag;
+  const float tan = jet_difference.Py()/jet_difference.Px();
+  const TVector2 normal(-tan/sqrt(1 + tan*tan), 1/sqrt(1 + tan*tan));
+  const char direction[2] = {1, -1};
+  const float coordinates[2][2] = {{-0.05, 0}, {0.05, 0}};
+  for (unsigned char jet_index = 0; jet_index < 2; jet_index ++)
+    {
+      const unsigned char index = indices[jet_index];
+      for (unsigned int jet_const_index = 0; jet_const_index < size; jet_const_index ++)
+	{
+	  TLorentzVector constituent_4vector;
+	  if (work_mode_ == 0)
+	    {
+	      if (event_ptr_ -> pf_j[jet_const_index] != index)
+		continue;
+	      /* if (OnlyChargedConstituents and event_ptr_ -> pf_charge[jet_const_index] == 0)
+		 continue;*/
+	      const float jet_const_energy = sqrt(pow(event_ptr_ -> pf_px[jet_const_index], 2) +
+						  pow(event_ptr_ -> pf_py[jet_const_index], 2) + 
+						  pow(event_ptr_ -> pf_pz[jet_const_index], 2));
+	      constituent_4vector = TLorentzVector    (event_ptr_ -> pf_px[jet_const_index], 
+						       event_ptr_ -> pf_py[jet_const_index], 
+						       event_ptr_ -> pf_pz[jet_const_index], 
+						       jet_const_energy);
+	      const float Pt = constituent_4vector.Pt();
+	      TVector2 jet_const_phi_eta = TVector2(constituent_4vector.Phi(), constituent_4vector.Rapidity());
+	      const TVector2 jet_const_phi_eta_from_jet(jet_const_phi_eta.Px() - jets[jet_index] -> Phi(), 
+							jet_const_phi_eta.Py() - jets[jet_index] -> Rapidity());
+	      const float parallel_projection = direction[jet_index]*
+		(jet_const_phi_eta_from_jet.Px()*jet_difference.Px() + jet_const_phi_eta_from_jet.Py()*jet_difference.Py())/(jet_difference.Mod());
+	      const float perpendicular_projection = jet_const_phi_eta_from_jet.Px()*normal.Px() + jet_const_phi_eta_from_jet.Py()*normal.Py();
+	      PtRadProf_ -> Fill(coordinates[jet_index][0] + parallel_projection, coordinates[jet_index][1] + perpendicular_projection, Pt*weight_);
+	    }
+	}
+    }
+  /*  printf("weight %.8f\n", weight_);
+  if (weight_ < 0)
+    printf("************************\n");
+  */
+}
+
+void ColourFlowAnalysisTool::EndPtRadiationProfile() 
+{
+  if (not canvas_)
+    return;
+  canvas_ -> cd();
+  PtRadProf_ -> Draw("COLZ");
+  
+  canvas_ -> SaveAs("Radiation_profile.png");
+  delete canvas_;
+
 }
 
 void ColourFlowAnalysisTool::Do()
