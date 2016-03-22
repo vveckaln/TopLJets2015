@@ -1,5 +1,4 @@
 #include "TopLJets2015/TopAnalysis/interface/ColourFlowAnalysisTool.hh"
-#include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TROOT.h"
