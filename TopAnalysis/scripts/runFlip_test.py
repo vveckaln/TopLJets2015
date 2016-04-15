@@ -2,7 +2,7 @@
 import os,sys
 from Flip_test import *
 
-#inF=sys.argv[1]
+INPUTFILE_name = sys.argv[1]
 
-WriteLHE()
+WriteLHE(INPUTFILE_name)
 

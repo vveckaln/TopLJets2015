@@ -6,13 +6,13 @@ from Event import *
 
 #flip=True
 
-def WriteLHE():
+def WriteLHE(INPUTFILE_name):
     jlcount = 0
     jjcount = 0
     llcount = 0
     event_count = 0
-    OUTPUTFILE = open('events_flipped_powheg_test.lhe', 'w')
-    INPUTFILE = open('/afs/cern.ch/user/m/mseidel/public/TT_13TeV_powheg.lhe', 'r')
+    OUTPUTFILE = open(INPUTFILE_name.replace('.lhe', '') + '_flipped.lhe', 'w')
+    INPUTFILE = open(INPUTFILE_name, 'r')
     event_count = 0
     event = 0
     for line in INPUTFILE:
@@ -34,13 +34,13 @@ def WriteLHE():
                 event.Particles.append(particle)
                 particle_line = True
             if not start_line and not header_line and not particle_line:
-                print "   **** LISTING ORIGINAL **** "
-                event.ls()
+#                print "   **** LISTING ORIGINAL **** "
+#                event.ls()
                 leptons = event.Flip()
                 
-                print "   **** LISTING FLIPPED **** "
-                event.ls()
-                print " DONE DONE DONE DONE DONE DONE DONE DONE DONE "
+#                print "   **** LISTING FLIPPED **** "
+#                event.ls()
+#                print " **** DONE DONE DONE DONE DONE DONE DONE DONE DONE **** "
  #               raw_input("Press Enter")
                 if leptons == 0:
                     jjcount += 1
