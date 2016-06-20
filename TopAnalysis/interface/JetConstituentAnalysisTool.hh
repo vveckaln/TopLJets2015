@@ -24,7 +24,7 @@ public:
   void AnalyseAllJets()    const;
   void AnalyseLightJets()  const;
   void AnalyseBJets()      const;
-  void Do(){};
+  void Do();
 
 };
 

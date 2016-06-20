@@ -9,11 +9,8 @@
 
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
 #include "TopLJets2015/TopAnalysis/interface/ColourFlowAnalysisTool.hh"
-#include "TopLJets2015/TopAnalysis/interface/JetConstituentAnalysisTool.hh"
 
 #include "TopLJets2015/TopAnalysis/interface/TOP-16-006.h"
-#include "TopLJets2015/TopAnalysis/interface/CFAT_Event.hh"
-
 #include "TopLJets2015/TopAnalysis/interface/BtagUncertaintyComputer.h"
 
 #include "CondFormats/BTauObjects/interface/BTagCalibration.h"
@@ -46,6 +43,9 @@ void RunTop16006(TString filename,
 		 TH1F *normH, 
 		 Bool_t runSysts)
 {
+  TApplication app("myapp", 0, 0);
+  test = new TH1F("test", "test", 100, -TMath::Pi() - 0.2, TMath::Pi() + 0.2);
+  test -> SetDirectory(0);
   bool isTTbar( filename.Contains("_TTJets") );
   
   //READ TREE FROM FILE
@@ -327,16 +327,11 @@ void RunTop16006(TString filename,
 	    }
 	}
     }
-  JetConstituentAnalysisTool JCAT;
-  JCAT.plots_ptr_ = & allPlots;
-  JCAT.plots2D_ptr_ = & all2dPlots;
   ColourFlowAnalysisTool colour_flow_analysis_tool; 
+  colour_flow_analysis_tool.event_ptr_ = & ev;
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
-  colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
-
   colour_flow_analysis_tool.PtRadiation_mode_ = 0;  
 
-  JCAT.AssignHistograms();
   colour_flow_analysis_tool.AssignHistograms();
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
@@ -345,7 +340,7 @@ void RunTop16006(TString filename,
   for (Int_t iev=0;iev<nentries;iev++)
     {
 
-      //      printf("PROCESSING event %u\n", iev);
+      
       t->GetEntry(iev);
       if(iev%5000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
 
@@ -425,6 +420,8 @@ void RunTop16006(TString filename,
       TLorentzVector lp4;
       lp4.SetPtEtaPhiM(ev.l_pt[lepIdx],ev.l_eta[lepIdx],ev.l_phi[lepIdx],ev.l_mass[lepIdx]);
 
+      colour_flow_analysis_tool.lepton_ptr_ = &lp4;
+
       //select jets
       Float_t htsum(0);
       TLorentzVector jetDiff(0,0,0,0);
@@ -434,13 +431,14 @@ void RunTop16006(TString filename,
       std::vector<int> resolvedJetIdx;
       std::vector<TLorentzVector> resolvedJetP4;
       vector<TLorentzVector> gen_bJets,gen_lightJets;
- 
-      //     vector<TLorentzVector> bJets_gen,lightJets_gen;
 
-      vector<unsigned short> bJets_index, lightJets_index;
-      JCAT.event_ptr_ = &ev;
+      vector<TLorentzVector> bJets_gen,lightJets_gen;
+
+      vector<unsigned char> bJets_index, lightJets_index;
       
-      
+      colour_flow_analysis_tool.light_jets_indices_ptr_ = &lightJets_index;
+      colour_flow_analysis_tool.b_jets_indices_ptr_     = &bJets_index;
+
       for (int k=0; k<ev.nj;k++)
 	{
 	  //check kinematics
@@ -519,7 +517,6 @@ void RunTop16006(TString filename,
 	      gen_lightJets.push_back(gen_jp4);
 	      lightJets_index.push_back(k);
 	    }
-	  
 	}
       
       //check if flavour splitting was required
@@ -549,8 +546,7 @@ void RunTop16006(TString filename,
       float nupz=neutrinoPzComputer.Calculate();
       TLorentzVector neutrinoHypP4(met.Px(),met.Py(),nupz ,TMath::Sqrt(TMath::Power(met.Pt(),2)+TMath::Power(nupz,2)));
       visSystem+=neutrinoHypP4;
-      
-      
+      colour_flow_analysis_tool.neutrino_ptr_ = &neutrinoHypP4;
       //balancing variable and ISR control variable
       float RMPF(0.0),alpha(0.0);
       TVector2 metT(met.Px(),met.Py());
@@ -628,6 +624,8 @@ void RunTop16006(TString filename,
 	  wgt=lepTriggerSF[0]*lepSelSF[0]*puWeight[0]*norm;
 	  if(ev.ttbar_nw>0) wgt*=ev.ttbar_w[0];
 	}
+      colour_flow_analysis_tool.weight_ = wgt;
+
 
       //nominal selection control histograms
       int nJetsCat=TMath::Min((int)(bJets.size()+lightJets.size()),(int)4);
@@ -686,40 +684,17 @@ void RunTop16006(TString filename,
 	      allPlots["drlb_"+tag]->Fill(drlb,wgt);		 		 
 	    }	  
 	}
-      JCAT.weight_ = wgt;
-      JCAT.AnalyseAllJets();
-      
-
-      CFAT_Event event_reco;
-      event_reco.SetEvent(&ev);
-      event_reco.AddLightJets(lightJets, lightJets_index);
-      event_reco.AddVector(LEPTON, &lp4);
-      event_reco.AddVector(NEUTRINO, &neutrinoHypP4);
-
-      event_reco.AddBJets(bJets, bJets_index);
-      event_reco.SetWeight(wgt);
-      event_reco.SetEventNumber(iev);
+      colour_flow_analysis_tool.event_number_ = iev;
       //      printf("*** event %u ***** \n", iev);
-      colour_flow_analysis_tool.cfat_event_ptr_         = &event_reco;
-      colour_flow_analysis_tool.SetWorkMode(RECO);
-      
+      colour_flow_analysis_tool.work_mode_              = 0;
+      colour_flow_analysis_tool.light_jets_ptr_         = &lightJets;
+      colour_flow_analysis_tool.b_jets_ptr_             = &bJets;
       colour_flow_analysis_tool.Work();
       if (not ev.isData)
 	{
-
-	  CFAT_Event event_gen;
-	  event_gen.SetEvent(&ev);
-	  
-	  event_gen.AddLightJets(gen_lightJets, lightJets_index);
-	  event_gen.AddVector(LEPTON, &lp4);
-	  event_gen.AddVector(NEUTRINO, &neutrinoHypP4);
-     
-	  event_gen.AddBJets(gen_bJets, bJets_index);
-	  event_gen.SetWeight(wgt);
-	  event_gen.SetEventNumber(iev);
-	  colour_flow_analysis_tool.cfat_event_ptr_         = & event_gen;
- 	  colour_flow_analysis_tool.SetWorkMode(GEN);
-
+	  colour_flow_analysis_tool.light_jets_ptr_         = &gen_lightJets;
+	  colour_flow_analysis_tool.b_jets_ptr_             = &gen_bJets;
+	  colour_flow_analysis_tool.work_mode_              = 1;
 	  colour_flow_analysis_tool.Work();
 	}
       //ANALYSIS WITH SYSTEMATICS
@@ -932,20 +907,10 @@ void RunTop16006(TString filename,
 	}
     }
 
-  /* printf("DONE\n");
   TCanvas c;
-  test2 -> Draw("HIST");
-  
-  //  test -> Draw("HISTSAME");
-  TCanvas c2;
-  test2D -> Draw("COLZ");
-  TCanvas c3;
-  eta -> Draw("HIST");
-
-  TCanvas c4;
-  phi -> Draw("HIST");
+  test -> Draw("HIST");
   app.Run();
-  */  //close input file
+  //close input file
   f->Close();
 
   //save histos to file  

@@ -1,14 +1,25 @@
+
+#include "TopLJets2015/TopAnalysis/interface/CFAT_Event.hh"
+
 #include "TopLJets2015/TopAnalysis/interface/ColourFlowAnalysisTool.hh"
 
 const char* ColourFlowAnalysisTool::tag_channel_                    = "4j2t";
 const char * ColourFlowAnalysisTool::tag_charge_types_[2]           = {"allconst", "chconst"};
-const unsigned char ColourFlowAnalysisTool::N_jet_types_            = 10;
-const char* ColourFlowAnalysisTool::tag_jet_types_[N_jet_types_]    = {"leading_jet", "2nd_leading_jet", "had_b", "lept_b", "had_t", "lept_t", "beam", "lepton", "neutrino", "fake"};
-const unsigned char ColourFlowAnalysisTool::N_DeltaR_types_         = 3;
-const char * ColourFlowAnalysisTool::tag_DeltaR_types_[N_DeltaR_types_] = {"DeltaRle1.0", "DeltaRgt1.0", "DeltaRTotal"}; 
-const char * ColourFlowAnalysisTool::tag_levels_[2]                 = {"reco", "gen"};
-const TLorentzVector ColourFlowAnalysisTool::beam_                   = TLorentzVector(1E-2, 0, 1E10, sqrt(1E-4 + 1E20)+1E-6);
+const char* ColourFlowAnalysisTool::tag_jet_types_[CFAT_Event::N_jet_types_]    = {"leading_jet", "2nd_leading_jet", "had_b", "had_w", "had_t", "lepton", "neutrino", "lept_b", "lept_w", "lept_t", "beam", "fake"};
 
+const unsigned char ColourFlowAnalysisTool::N_DeltaR_types_         = 3;
+const char * ColourFlowAnalysisTool::tag_DeltaR_types_[N_DeltaR_types_] = {"DeltaRTotal", "DeltaRle1.0", "DeltaRgt1.0"}; 
+const char * ColourFlowAnalysisTool::tag_levels_[2]                 = {"reco", "gen"};
+
+const char          * ColourFlowAnalysisTool::PF_Pt_cuts_types_[N_PF_Pt_cuts_] = {"PFPtTotal", "PFPtle0p5GeV", "PFPtgt0p5GeV"};
+const char          * ColourFlowAnalysisTool::HadW_Pt_cuts_types_[N_PF_Pt_cuts_] = {"hadWPtTotal", "hadWPtle50p0GeV", "hadWPtGt50p0GeV"}; 
+const char          * ColourFlowAnalysisTool::PF_N_cuts_types_[N_PF_N_cuts_] = {"PFN_Total", "PFNle20", "PFNgt20"};
+const char          * ColourFlowAnalysisTool::PVMag_cuts_types_[N_PVMag_cuts_] = { "PVMag_Total", "PVMag_le_0p005", "PVMag_gt_0p005"};
+void ColourFlowAnalysisTool::CreateHistogram1D(const char * title, const char * axes, unsigned int nbins, double min , double max) const
+{
+  
+  plots_ptr_ -> operator[](title) = new TH1F(title, TString(title) + axes, nbins, min, max);
+}
 
 void ColourFlowAnalysisTool::AssignHistograms() 
 {
@@ -22,17 +33,16 @@ void ColourFlowAnalysisTool::AssignHistograms()
     {
       for (unsigned char level_index = 0; level_index < 2; level_index ++)
 	{
-	  for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
+	  for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
 	    {
-	      for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
+	      for (unsigned char jet2_index = 0; jet2_index < CFAT_Event::N_jet_types_; jet2_index ++)
 		{
-		  for (unsigned char jet2_index = 0; jet2_index < N_jet_types_; jet2_index ++)
+		  if (jet1_index == jet2_index)
+		    continue;
+		  for (unsigned char DeltaR_index = 0; DeltaR_index < N_DeltaR_types_; DeltaR_index ++)
 		    {
-		      for (unsigned char DeltaR_index = 0; DeltaR_index < N_DeltaR_types_; DeltaR_index ++)
+		      for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
 			{
-	
-			  if (jet1_index == jet2_index)
-			    continue;
 			  const TString hash_key = TString(cat_title_PA[cat_index]) + "_" + 
 			    tag_charge_types_[charge_index] + "_" + 
 			    tag_levels_[level_index] + "_" +
@@ -41,12 +51,62 @@ void ColourFlowAnalysisTool::AssignHistograms()
 			    tag_DeltaR_types_[DeltaR_index] + "_" + 
 			    tag_channel_;
 			  
-			  plots_ptr_ -> operator[](hash_key) = new TH1F(hash_key, 
-									hash_key + axes_PA[cat_index], 
-									nbins_PA[cat_index], 
-									min_PA[cat_index], 
-									max_PA[cat_index]);
+			  CreateHistogram1D(hash_key, axes_PA[cat_index], nbins_PA[cat_index], min_PA[cat_index], max_PA[cat_index]);
 			}
+		      for (unsigned char PF_Pt_cut_index = 1; PF_Pt_cut_index < 3; PF_Pt_cut_index ++)
+			{
+			  const TString hash_key = TString(cat_title_PA[cat_index]) + "_" + 
+			    PF_Pt_cuts_types_[PF_Pt_cut_index] + "_" + 
+			    tag_levels_[level_index] + "_" +
+			    tag_jet_types_[jet1_index] + "_:_" + 
+			    tag_jet_types_[jet2_index] + "_" + 
+			    tag_DeltaR_types_[DeltaR_index] + "_" + 
+			    tag_channel_;
+			  
+			  CreateHistogram1D(hash_key, axes_PA[cat_index], nbins_PA[cat_index], min_PA[cat_index], max_PA[cat_index]);
+			}
+
+		      for (unsigned char HadW_Pt_cut_index = 1; HadW_Pt_cut_index < 3; HadW_Pt_cut_index ++)
+			{
+			  const TString hash_key = TString(cat_title_PA[cat_index]) + "_" + 
+			    HadW_Pt_cuts_types_[HadW_Pt_cut_index] + "_" + 
+			    tag_levels_[level_index] + "_" +
+			    tag_jet_types_[jet1_index] + "_:_" + 
+			    tag_jet_types_[jet2_index] + "_" + 
+			    tag_DeltaR_types_[DeltaR_index] + "_" + 
+			    tag_channel_;
+			  
+			  CreateHistogram1D(hash_key, axes_PA[cat_index], nbins_PA[cat_index], min_PA[cat_index], max_PA[cat_index]);
+			}
+
+		      for (unsigned char PF_N_cut_index = 1; PF_N_cut_index < 3; PF_N_cut_index ++)
+			{
+			  const TString hash_key = TString(cat_title_PA[cat_index]) + "_" + 
+			    PF_N_cuts_types_[PF_N_cut_index] + "_" + 
+			    tag_levels_[level_index] + "_" +
+			    tag_jet_types_[jet1_index] + "_:_" + 
+			    tag_jet_types_[jet2_index] + "_" + 
+			    tag_DeltaR_types_[DeltaR_index] + "_" + 
+			    tag_channel_;
+			  
+			  CreateHistogram1D(hash_key, axes_PA[cat_index], nbins_PA[cat_index], min_PA[cat_index], max_PA[cat_index]);
+			}
+		      
+		      for (unsigned char PVMag_cut_index = 1; PVMag_cut_index < 3; PVMag_cut_index ++)
+			{
+			  const TString hash_key = TString(cat_title_PA[cat_index]) + "_" + 
+			    PVMag_cuts_types_[PVMag_cut_index] + "_" + 
+			    tag_levels_[level_index] + "_" +
+			    tag_jet_types_[jet1_index] + "_:_" + 
+			    tag_jet_types_[jet2_index] + "_" + 
+			    tag_DeltaR_types_[DeltaR_index] + "_" + 
+			    tag_channel_;
+			  
+			  CreateHistogram1D(hash_key, axes_PA[cat_index], nbins_PA[cat_index], min_PA[cat_index], max_PA[cat_index]);
+			}
+
+
+
 		    }
 		}
     
@@ -57,33 +117,80 @@ void ColourFlowAnalysisTool::AssignHistograms()
   static const unsigned char ncategories_PV = 6;
   static const char * cat_title_PV[ncategories_PV]     = {"phi_PV",                "eta_PV",               "mag_PV",                 "phi_PV_bckg",           "eta_PV_bckg",            "mag_PV_bckg"};
   static const unsigned short nbins_PV[ncategories_PV] = {100,                     100,                     100,                      100,                     100,                      100          };
-  static const double min_PV[ncategories_PV]           = {-0.01*TMath::Pi(),       -0.05,                   0.0,                      - TMath::Pi() -0.2,      - 5.0,                    0.0          };
+  static const double min_PV[ncategories_PV]           = {-0.008*TMath::Pi(),       -0.02,                   0.0,                      - TMath::Pi() -0.2,      - 5.0,                    0.0          };
   static const double max_PV[ncategories_PV]           = {- min_PV[0],             -min_PV[1],              0.05,                     TMath::Pi() + 0.2,       5.0,                      6.0          };
   static const char* axes_PV[ncategories_PV]           = {"; #phi [rad]; Events",  "; #eta [a.u.]; Events", "; magn. [a.u.]; Events", "; #phi [rad]; Events",   "; #eta [a.u.]; Events", "; magn. [a.u.]; Events"};
   for (unsigned char cat_index = 0; cat_index < ncategories_PV; cat_index++)
     {
       for (unsigned char level_index = 0; level_index < 2; level_index ++)
 	{ 
-	  for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
+	  for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
 	    {
-	      for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
+
+	      for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
 		{
 		  const TString hash_key = TString(cat_title_PV[cat_index]) + "_" + 
 		    tag_charge_types_[charge_index] + "_" + 
 		    tag_levels_[level_index] + "_" +
 		    tag_jet_types_[jet1_index] + "_" + 
 		    tag_channel_;
-		  plots_ptr_ -> operator[](hash_key) = new TH1F(hash_key, 
-								hash_key + axes_PV[cat_index], 
-								nbins_PV[cat_index], 
-								min_PV[cat_index], 
-								max_PV[cat_index]);
-    
+		  CreateHistogram1D(hash_key, axes_PV[cat_index], nbins_PV[cat_index], min_PV[cat_index], max_PV[cat_index]);
+		}
+	      for (unsigned char PF_Pt_cut_index = 1; PF_Pt_cut_index < 3; PF_Pt_cut_index ++)
+		{
+		  const TString hash_key = TString(cat_title_PV[cat_index]) + "_" + 
+		    PF_Pt_cuts_types_[PF_Pt_cut_index] + "_" + 
+		    tag_levels_[level_index] + "_" +
+		    tag_jet_types_[jet1_index] + "_" + 
+		    tag_channel_;
+		  CreateHistogram1D(hash_key, axes_PV[cat_index], nbins_PV[cat_index], min_PV[cat_index], max_PV[cat_index]);
+		}
+	      for (unsigned char HadW_Pt_cut_index = 1; HadW_Pt_cut_index < 3; HadW_Pt_cut_index ++)
+		{
+		  const TString hash_key = TString(cat_title_PV[cat_index]) + "_" + 
+		    HadW_Pt_cuts_types_[HadW_Pt_cut_index] + "_" + 
+		    tag_levels_[level_index] + "_" +
+		    tag_jet_types_[jet1_index] + "_" + 
+		    tag_channel_;
+		  CreateHistogram1D(hash_key, axes_PV[cat_index], nbins_PV[cat_index], min_PV[cat_index], max_PV[cat_index]);
+		}
+	      for (unsigned char PF_N_cut_index = 1; PF_N_cut_index < 3; PF_N_cut_index ++)
+		{
+		  const TString hash_key = TString(cat_title_PV[cat_index]) + "_" + 
+		    PF_N_cuts_types_[PF_N_cut_index] + "_" + 
+		    tag_levels_[level_index] + "_" +
+		    tag_jet_types_[jet1_index] + "_" + 
+		    tag_channel_;
+		  CreateHistogram1D(hash_key, axes_PV[cat_index], nbins_PV[cat_index], min_PV[cat_index], max_PV[cat_index]);
+		}
+
+
+	    }
+	}
+    }
+
+      for (unsigned char level_index = 0; level_index < 2; level_index ++)
+	{ 
+	  for (unsigned char charge_index = 0; charge_index < 2; charge_index ++)
+	    {
+	      for (unsigned char jet1_index = 0; jet1_index < 2; jet1_index ++)
+		{
+		  const TString hash_key = TString("phi_eta_PV_") + 
+		    tag_charge_types_[charge_index] + "_" + 
+		    tag_levels_[level_index] + "_" +
+		    tag_jet_types_[jet1_index] + "_" + 
+		    tag_channel_;
+		  plots2D_ptr_ -> operator[](hash_key) = new TH2F(hash_key, 
+								hash_key + "; #phi[rad]; #eta[a.u.]", 
+								  100, -0.016, 0.016,  
+								  100, -0.016, 0.016 
+							        );
+
 		
 		}
 	    }
 	}
-    }
+
 
   
   static const unsigned char ncategories_CTRL              = 2;
@@ -111,9 +218,9 @@ void ColourFlowAnalysisTool::AssignHistograms()
     {
       for (unsigned char level_index = 0; level_index < 2; level_index ++)
 	{ 
-	  for (unsigned char jet1_index = 0; jet1_index < N_jet_types_; jet1_index ++)
+	  for (unsigned char jet1_index = 0; jet1_index < CFAT_Event::N_jet_types_; jet1_index ++)
 	    {
-	      for (unsigned char jet2_index = jet1_index + 1; jet2_index < N_jet_types_; jet2_index ++)
+	      for (unsigned char jet2_index = jet1_index + 1; jet2_index < CFAT_Event::N_jet_types_; jet2_index ++)
 		{
 		  {
 		    const TString hash_key = TString("angle_") + tag_jet_types_[jet1_index] + "_:_" + tag_jet_types_[jet2_index] + "_" + tag_levels_[level_index] + "_" + tag_DeltaR_types_[DeltaR_index];
@@ -183,7 +290,7 @@ void ColourFlowAnalysisTool::AssignHistograms()
 
   for (unsigned char level_index = 0; level_index < 2; level_index ++)
     { 
-      for (unsigned char jet1_index = 0; jet1_index < N_jet_types_; jet1_index ++)
+      for (unsigned char jet1_index = 0; jet1_index < CFAT_Event::N_jet_types_; jet1_index ++)
 	{
 	  const TString hash_key_phi = TString("jet_phi_") +
 		tag_levels_[level_index] + "_" +
