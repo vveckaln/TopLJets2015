@@ -8,11 +8,14 @@
 #include <TGraphAsymmErrors.h>
 
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
-#include "TopLJets2015/TopAnalysis/interface/ColourFlowAnalysisTool.hh"
+#include "ColourFlowAnalysisTool.hh"
 #include "TopLJets2015/TopAnalysis/interface/JetConstituentAnalysisTool.hh"
 
 #include "TopLJets2015/TopAnalysis/interface/TOP-16-006.h"
-#include "TopLJets2015/TopAnalysis/interface/CFAT_Event.hh"
+#include "CFAT_Event.hh"
+#include "TopLJets2015/TopAnalysis/interface/CFAT_AssignHistograms.hh"
+#include "TopLJets2015/TopAnalysis/interface/CFAT_Core_cmssw.hh"
+#include "TopLJets2015/TopAnalysis/interface/Definitions_cmssw.hh"
 
 #include "TopLJets2015/TopAnalysis/interface/BtagUncertaintyComputer.h"
 
@@ -331,13 +334,13 @@ void RunTop16006(TString filename,
   JCAT.plots_ptr_ = & allPlots;
   JCAT.plots2D_ptr_ = & all2dPlots;
   ColourFlowAnalysisTool colour_flow_analysis_tool; 
+  AssignHistograms(allPlots);
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
   colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
 
-  colour_flow_analysis_tool.PtRadiation_mode_ = 0;  
+  //colour_flow_analysis_tool.PtRadiation_mode_ = 0;  
 
   JCAT.AssignHistograms();
-  colour_flow_analysis_tool.AssignHistograms();
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
 
@@ -689,36 +692,51 @@ void RunTop16006(TString filename,
       JCAT.weight_ = wgt;
       JCAT.AnalyseAllJets();
       
-
+      CFAT_Core_cmssw core_reco;
       CFAT_Event event_reco;
-      event_reco.SetEvent(&ev);
-      event_reco.AddLightJets(lightJets, lightJets_index);
-      event_reco.AddVector(LEPTON, &lp4);
-      event_reco.AddVector(NEUTRINO, &neutrinoHypP4);
+      core_reco.SetEvent(ev);
+      event_reco.SetCore(core_reco);
+      core_reco.AddLightJets(lightJets, lightJets_index);
+ 
+      core_reco.AddVector(Definitions::LEPTON, lp4);
+      core_reco.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
 
-      event_reco.AddBJets(bJets, bJets_index);
+      core_reco.AddBJets(bJets, bJets_index);
+ 
+      event_reco.CompleteVectors();
       event_reco.SetWeight(wgt);
       event_reco.SetEventNumber(iev);
+
+
+      colour_flow_analysis_tool.SetEvent(event_reco);
+
+      colour_flow_analysis_tool.SetWorkMode(Definitions::RECO);
+
       //      printf("*** event %u ***** \n", iev);
-      colour_flow_analysis_tool.cfat_event_ptr_         = &event_reco;
-      colour_flow_analysis_tool.SetWorkMode(RECO);
       
       colour_flow_analysis_tool.Work();
       if (not ev.isData)
 	{
 
+	  CFAT_Core_cmssw core_gen;
 	  CFAT_Event event_gen;
-	  event_gen.SetEvent(&ev);
-	  
-	  event_gen.AddLightJets(gen_lightJets, lightJets_index);
-	  event_gen.AddVector(LEPTON, &lp4);
-	  event_gen.AddVector(NEUTRINO, &neutrinoHypP4);
-     
-	  event_gen.AddBJets(gen_bJets, bJets_index);
+	  core_gen.SetEvent(ev);
+	  event_gen.SetCore(core_gen);
+	  core_gen.AddLightJets(gen_lightJets, lightJets_index);
+	  core_gen.AddVector(Definitions::LEPTON, lp4);
+	  core_gen.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
+	  core_gen.AddBJets(gen_bJets, bJets_index);
+ 
+	  event_gen.CompleteVectors();
 	  event_gen.SetWeight(wgt);
 	  event_gen.SetEventNumber(iev);
-	  colour_flow_analysis_tool.cfat_event_ptr_         = & event_gen;
- 	  colour_flow_analysis_tool.SetWorkMode(GEN);
+
+
+	  colour_flow_analysis_tool.SetEvent(event_gen);
+
+ 	  colour_flow_analysis_tool.SetWorkMode(Definitions::GEN);
+	  
+     
 
 	  colour_flow_analysis_tool.Work();
 	}

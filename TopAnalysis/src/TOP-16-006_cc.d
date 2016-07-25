@@ -197,8 +197,9 @@
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/external/gcc/4.9.3/include/c++/4.9.3/bits/stl_multiset.h
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/external/gcc/4.9.3/include/c++/4.9.3/unordered_set
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/lcg/root/6.02.12-kpegke4/include/TVirtualTreePlayer.h
-./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/ColourFlowAnalysisTool.hh
-./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/CFAT_Event.hh
+./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/CFAT/1.0.0/interface/ColourFlowAnalysisTool.hh
+./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/CFAT/1.0.0/interface/CFAT_Event.hh
+./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/CFAT/1.0.0/interface/Definitions.hh
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/lcg/root/6.02.12-kpegke4/include/TH2F.h
 ./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/JetConstituentAnalysisTool.hh
 ./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/TOP-16-006.h
@@ -549,6 +550,10 @@
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/external/boost/1.57.0-kpegke/include/boost/serialization/throw_exception.hpp
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/external/boost/1.57.0-kpegke/include/boost/archive/archive_exception.hpp
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/CondFormats/JetMETObjects/interface/FactorizedJetCorrectorCalculator.h
+./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/CFAT_AssignHistograms.hh
+./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/CFAT_Core_cmssw.hh
+./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/CFAT/1.0.0/interface/CFAT_Core.hh
+./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/Definitions_cmssw.hh
 ./src/TOP-16-006_cc.so: /afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/BtagUncertaintyComputer.h
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/lcg/root/6.02.12-kpegke4/include/Riostream.h
 ./src/TOP-16-006_cc.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc493/external/gcc/4.9.3/include/c++/4.9.3/fstream

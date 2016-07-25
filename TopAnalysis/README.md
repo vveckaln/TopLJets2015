@@ -154,3 +154,15 @@ git push git@github.com:MYGITHUBLOGIN/TopLJets2015.git
 ```
 From the github area of the repository cleak on the green button "Compare,review and create a pull request"
 to create the PR to merge with your colleagues.
+
+
+***** COLOUR FLOW ANALYSIS ******
+The code depends on an external library created specifically for colour flow analysis in various platforms. To link and include the external library copy the file cfat.xml to 
+
+$CMSSW_BASE/git@github.com:vveckaln/CFAT.git 
+
+and run
+
+scram setup cfat
+
+before compiling. 
