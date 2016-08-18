@@ -15,6 +15,7 @@ public:
   virtual TLorentzVector GetLorentzVector() const;
   unsigned short GetJetConstituentIndex() const;
   unsigned short GetJetIndex() const;
+  
   void SetCore(CFAT_Core_cmssw &);
   pf_cmssw();
 };
@@ -66,6 +67,8 @@ class CFAT_Core_cmssw: public CFAT_Core
     virtual ~pf_iter_core();
   public:
     virtual void WhoAmI();
+    virtual VectorCode_t   GetVectorCode() const;
+  
   };
   static pf_iter_core * const END ; 
 
@@ -78,6 +81,8 @@ protected:
   virtual const TLorentzVector * GetVector(VectorCode_t);
   virtual pf_iter begin(VectorCode_t);
   virtual pf_iter end(VectorCode_t);
+  virtual pf_iter begin();
+  virtual pf_iter end();
   virtual void SetWorkMode(WorkCode_t);
 public:
   void SetEvent(const MiniEvent_t &);

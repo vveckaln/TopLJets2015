@@ -52,7 +52,9 @@ void CFAT_Core_cmssw::increment(pf_iter &iter)
       jet_const_index ++;
       //      printf("incrementing %u size %u\n", jet_const_index, PF.size);
     } 
-  while (core -> PF.jet_index[jet_const_index] != core -> GetIndex(iter_cmssw -> tracked_vector_) and jet_const_index <= core -> PF.size);
+  while (iter.GetTrackedVectorCode() != 255 and 
+	 core -> PF.jet_index[jet_const_index] != core -> GetIndex(iter_cmssw -> tracked_vector_) and 
+	 jet_const_index <= core -> PF.size);
   if (jet_const_index >= core -> PF.size)
     {
       //printf("setting to END\n");
@@ -90,6 +92,21 @@ bool      CFAT_Core_cmssw::pf_iter_core::compare (const CFAT_Core::pf_iter_core 
 {
   return this != other or GetPFCMSSW() -> index_ != ((const CFAT_Core_cmssw::pf_iter_core* )other) -> GetPFCMSSW() -> index_;
 }
+
+VectorCode_t   CFAT_Core_cmssw::pf_iter_core::GetVectorCode() const 
+{
+  const unsigned char codes[4] = {LEADING_JET, SCND_LEADING_JET, HAD_B, LEPT_B};
+  for (VectorCode_t jet_code = 0; jet_code < 4; jet_code ++)
+    {
+      if (GetPFCMSSW() -> GetJetIndex() == ((CFAT_Core_cmssw*)GetIter() -> GetCore()) -> GetIndex(codes[jet_code]))
+	return codes[jet_code];
+
+    }
+  return 255;
+}
+
+
+
 
 CFAT_Core_cmssw::pf_iter_core::~pf_iter_core()
 {
@@ -147,6 +164,7 @@ CFAT_Core::pf_iter CFAT_Core_cmssw::begin(VectorCode_t vector_code)
   RUN -> particle = particle;
   CFAT_Core::pf_iter iter;
   iter.SetCore(*this);
+  iter.SetTrackedVectorCode(vector_code);
   iter.SetDeleteOption(false);
   iter.SetIterCore(*RUN);
   return iter;
@@ -167,10 +185,46 @@ CFAT_Core::pf_iter CFAT_Core_cmssw::end(VectorCode_t vector_code)
   particle.SetCore(*this);
   END -> particle = particle;
   CFAT_Core::pf_iter iter;
+  iter.SetTrackedVectorCode(vector_code);
   iter.SetDeleteOption(false);
   iter.SetIterCore(*END);
   return iter;
 }
+
+CFAT_Core::pf_iter CFAT_Core_cmssw::begin()
+{
+  unsigned short jet_const_index = 0;
+  
+  pf_cmssw particle;
+  particle.index_ = jet_const_index;
+  particle.SetCore(*this);
+  //pf_iter_core * iter_core = new pf_iter_core;
+  static pf_iter_core * const RUN = new pf_iter_core;
+  
+  RUN -> tracked_vector_ = 255;
+  RUN -> particle = particle;
+  CFAT_Core::pf_iter iter;
+  iter.SetCore(*this);
+  iter.SetDeleteOption(false);
+  iter.SetIterCore(*RUN);
+  return iter;
+}
+
+
+CFAT_Core::pf_iter CFAT_Core_cmssw::end()
+{
+  unsigned short jet_const_index = PF.size;
+  
+  pf_cmssw particle;
+  particle.index_ = jet_const_index;
+  particle.SetCore(*this);
+  END -> particle = particle;
+  CFAT_Core::pf_iter iter;
+  iter.SetDeleteOption(false);
+  iter.SetIterCore(*END);
+  return iter;
+}
+
 
 MiniEvent_t * const CFAT_Core_cmssw::GetEvent() const
 {
