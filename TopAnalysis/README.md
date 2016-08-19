@@ -170,7 +170,7 @@ to BuildFile.xml in
 $CMSSW_BASE/src/Subproject/
 
 and run
-
+```
 scram setup cfat
-
+```
 before compiling.
