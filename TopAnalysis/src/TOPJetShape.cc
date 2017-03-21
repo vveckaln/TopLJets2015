@@ -737,7 +737,7 @@ void RunTopJetShape(TString filename,
       //proceed only if event is selected on gen or reco level
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
       
-      outT->Fill();
+      //  outT->Fill();
     }
   
   //close input file
@@ -745,7 +745,7 @@ void RunTopJetShape(TString filename,
 
   //save histos to file  
   fOut->cd();
-  outT->Write();
+  //  outT->Write();
   for (auto& it : allPlots)  { 
     it.second->SetDirectory(fOut); it.second->Write(); 
   }
