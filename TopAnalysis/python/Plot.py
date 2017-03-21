@@ -47,7 +47,9 @@ class Plot(object):
         self.plotformats = ['pdf','png']
         self.savelog = False
         self.doChi2 = False
-        self.ratiorange = (0.4,1.6)
+#        self.ratiorange = (0.4,1.6)
+        self.ratiorange = (0.4, 6.0)
+ 
         self.frameMin=0.1
         self.frameMax=1.45
         self.mcUnc=0
@@ -146,7 +148,7 @@ class Plot(object):
         c.cd()
         p1 = None
         if self.dataH and not noRatio:
-            p1=ROOT.TPad('p1','p1',0.0,0.2,1.0,1.0) if cwid!=1000 else ROOT.TPad('p1','p1',0.0,0.0,1.0,1.0)
+            p1=ROOT.TPad('p1','p1',0.0, 0.4, 1.0, 1.0) if cwid!=1000 else ROOT.TPad('p1','p1',0.0,0.0,1.0,1.0)
             p1.SetRightMargin(0.05)
             p1.SetLeftMargin(0.12)
             p1.SetTopMargin(0.04)
@@ -308,7 +310,7 @@ class Plot(object):
         #holds the ratio
         c.cd()
         if len(self.mc)>0 and self.dataH and not noRatio:        
-            p2 = ROOT.TPad('p2','p2',0.0,0.0,1.0,0.2)
+            p2 = ROOT.TPad('p2','p2', 0.0, 0.0, 1.0, 0.4)
             p2.Draw()
             p2.SetBottomMargin(0.4)
             p2.SetRightMargin(0.05)
@@ -345,7 +347,7 @@ class Plot(object):
                 ratio=self.dataH.Clone('ratio')
                 ratio.SetDirectory(0)
                 self._garbageList.append(ratio)
-                ratio.Divide(totalMCnoUnc)
+                 ratio.Divide(totalMCnoUnc)
                 gr=ROOT.TGraphAsymmErrors(ratio)
                 gr.SetMarkerStyle(self.data.GetMarkerStyle())
                 gr.SetMarkerSize(self.data.GetMarkerSize())

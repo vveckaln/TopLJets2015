@@ -12,9 +12,9 @@ cmsenv
 
 #EGM electron regression+smearer
 git cms-init
-git cms-merge-topic rafaellopesdesa:EgammaAnalysis80_EGMSmearer_Moriond17_23Jan
+git cms-merge-topic cms-egamma:EGM_gain_v1
 cd EgammaAnalysis/ElectronTools/data
-git clone https://github.com/ECALELFS/ScalesSmearings.git
+git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
 cd $CMSSW_BASE/src
 scram b
 
@@ -26,9 +26,7 @@ git cms-merge-topic cms-met:METRecipe_80X_part2 -u
 git cms-merge-topic -u intrepid42:pseudotoprivet_80x
 
 #ntuplizer
-git clone git@github.com:pfs/TopLJets2015.git
-cd TopLJets2015/TopAnalysis
-git checkout 80x_rereco_rev
+git clone -b 80x_rereco_rev git@github.com:pfs/TopLJets2015.git
 
 #compile
 scram b -j 8
@@ -80,7 +78,7 @@ python scripts/submitToGrid.py -j data/era2016/samples.json -c ${CMSSW_BASE}/src
 As soon as ntuple production starts to finish, to move from crab output directories to a simpler directory structure which can be easily parsed by the local analysis runThe merging can be run locally if needed by using the checkProductionIntegrity.py script
 
 ```
-python scripts/submitCheckProductionIntegrity.py -i /store/cmst3/group/top/psilva/b9fad9c -o /store/cmst3/group/top/ReReco2016/f016290
+python scripts/submitCheckProductionIntegrity.py -i /store/cmst3/group/top/psilva/b32c02e -o /store/cmst3/group/top/ReReco2016/b32c02e
 ```
 
 ## Luminosity
@@ -119,11 +117,11 @@ python scripts/runPileupEstimation.py --json /afs/cern.ch/cms/CAF/CMSCOMM/COMM_D
 ```
 * B-tagging. To apply corrections to the simulation one needs the expected efficiencies stored somwewhere. The script below will project the jet pT spectrum from the TTbar sample before and after applying b-tagging, to compute the expecte efficiencies. The result will be stored in data/expTageff.root
 ```
-python scripts/saveExpectedBtagEff.py -i /store/cmst3/group/top/ReReco2016/f016290/MC13TeV_TTJets -o data/era2016/expTageff.root;
+python scripts/saveExpectedBtagEff.py -i /store/cmst3/group/top/ReReco2016/b32c02e/MC13TeV_TTJets -o data/era2016/expTageff.root;
 ```
 * MC normalization. This will loop over all the samples available in EOS and produce a normalization cache (weights to normalize MC). The file will be available in data/genweights.pck
 ```
-python scripts/produceNormalizationCache.py -i /store/cmst3/group/top/ReReco2016/f016290 -o data/era2016/genweights.root
+python scripts/produceNormalizationCache.py -i /store/cmst3/group/top/ReReco2016/b32c02e -o data/era2016/genweights.root
 ```
 The lepton trigger/id/iso efficiencies should also be placed under data/era2016. 
 The src/LeptonEfficiencyWrapper.cc  should then be updated to handle the reading of the ROOT files and the application of the scale factors
