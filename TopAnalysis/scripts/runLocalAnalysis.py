@@ -64,7 +64,8 @@ def main():
     parser.add_option('-n', '--njobs',       dest='njobs',       help='# jobs to run in parallel  [%default]',                                default=0,    type='int')
     parser.add_option(      '--skipexisting',dest='skipexisting',help='skip jobs with existing output files  [%default]',                            default=False,      action='store_true')
     (opt, args) = parser.parse_args()
-
+    
+    PROJECT=os.environ['PROJECT']
     #parse selection list
     onlyList=[]
     try:
@@ -169,7 +170,7 @@ def main():
                 cfg.write('xrdcp ${WORKDIR}/%s root://eoscms//eos/cms/%s\n'%(localOutF,outF))
                 cfg.write('rm ${WORKDIR}/%s'%localOutF)
             elif outF!=localOutF:
-                cfg.write('mv -v ${WORKDIR}/%s %s\n'%(localOutF,outF))
+                cfg.write('mv -v ${WORKDIR}/%s ${PROJECT}/%s\n'%(localOutF,outF))
             cfg.close()
             os.system('chmod u+x %s'%cfgfile)
             os.system('bsub -q %s %s -R "pool>30000"'%(opt.queue,
