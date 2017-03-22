@@ -1,0 +1,11 @@
+  <tool name="cfat" version="1.0.0">
+               
+    <lib name="cfat"/>
+    <client>
+      <environment name="CFAT_BASE" default="/afs/cern.ch/work/v/vveckaln/private/CFAT/1.0.0"/>
+      <environment name="LIBDIR" default="$CFAT_BASE/lib"/>
+      <environment name="INCLUDE" default="$CFAT_BASE/interface"/>
+    </client>
+    <!--runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/-->
+
+  </tool>
