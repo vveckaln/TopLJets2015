@@ -26,9 +26,11 @@ def main():
 
     #configuration
     usage = 'usage: %prog [options]'
+    project=os.environ['PROJECT']
+
     parser = optparse.OptionParser(usage)
     parser.add_option('-i', '--in',          dest='input',       help='input directory with files or single file',  default=None,       type='string')
-    parser.add_option('-o', '--out',         dest='output',      help='output directory (or file if single file to process)',  default='analysis', type='string')
+    parser.add_option('-o', '--out',         dest='output',      help='output directory (or file if single file to process)',  default='', type='string')
     parser.add_option(      '--only',        dest='only',        help='csv list of samples to process',             default=None,       type='string')
     parser.add_option(      '--runSysts',    dest='runSysts',    help='run systematics',                            default=False,      action='store_true')
     parser.add_option(      '--cache',       dest='cache',       help='use this cache file',                        default='data/genweights.pck', type='string')
@@ -42,8 +44,13 @@ def main():
 
     #compile macro
     ROOT.FWLiteEnabler.enable()
-    ROOT.gSystem.Load('libTopLJets2015TopAnalysis.so')
-    ROOT.gROOT.LoadMacro('src/TOP-16-006.cc+')
+#    ROOT.gSystem.Load('libTopLJets2015TopAnalysis.so')
+    ROOT.gSystem.Load('/afs/cern.ch/work/v/vveckaln/private/test_TOP/CMSSW_7_6_3/lib/slc6_amd64_gcc493/libTopLJets2015TopAnalysis.so')
+
+#    ROOT.gROOT.LoadMacro('src/TOP-16-006.cc+')
+    os.system('pwd')
+    ROOT.gROOT.LoadMacro(project + '/src/TOP-16-006.cc+')
+ 
     from ROOT import RunTop16006
 
     #parse selection list
@@ -97,16 +104,18 @@ def main():
             for ifile in xrange(0,len(input_list)):
                 inF=input_list[ifile]
                 outF=os.path.join(opt.output,'%s_%d.root' %(tag,ifile))
+
                 doFlavourSplitting=True if ('MC13TeV_WJets' in tag or 'MC13TeV_DY50toInf' in tag) else False
                 if doFlavourSplitting:
                     for flav in [0,1,4,5]:
-                        task_list.append( (inF,outF,opt.channel,opt.charge,wgtH,flav,opt.runSysts) )
+                        task_list.append( (inF, outF, opt.channel, opt.charge, wgtH, flav, opt.runSysts, ifile) )
                 else:
-                    task_list.append( (inF,outF,opt.channel,opt.charge,wgtH,0,opt.runSysts) )
+                    task_list.append( (inF, outF, opt.channel, opt.charge, wgtH, 0, opt.runSysts, ifile) )
 
     #run the analysis jobs
     if opt.queue=='local':
         print 'launching %d tasks in %d parallel jobs'%(len(task_list),opt.njobs)
+        print 'outF 2 %s', outF
         if opt.njobs == 0:
             for inF,outF,channel,charge,wgtH,flav,runSysts in task_list:
                 ROOT.RunTop16006(str(inF),str(outF),channel,charge,flav,wgtH,runSysts)
@@ -116,15 +125,29 @@ def main():
             pool.map(RunMethodPacked, task_list)
     else:
         print 'launching %d tasks to submit to the %s queue'%(len(task_list),opt.queue)
+        
         cmsswBase=os.environ['CMSSW_BASE']
-        for inF,outF,channel,charge,tag,flav,runSysts in task_list:
-            localRun='python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py -i %s -o %s --charge %d --ch %d --tag %s --flav %d' % (cmsswBase,inF,outF,charge,channel,tag,flav)
-            if runSysts : localRun += ' --runSysts'            
-            cmd='bsub -q %s %s/src/TopLJets2015/TopAnalysis/scripts/wrapLocalAnalysisRun.sh \"%s\"' % (opt.queue,cmsswBase,localRun)
+        for inF, outF, channel, charge, tag, flav, runSysts, ifile in task_list:
+            localRun='python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py -i %s -o %s --charge %d --ch %d --tag %s --flav %d' % (cmsswBase, inF, outF, charge, channel, tag, flav)
+            if runSysts : localRun += ' --runSysts'
+            cfgfile = 'cfg/cfg_' + tag + '_' + str(ifile) + '_' + str(flav) + '.sh'
+            sedcmd = 'sed \"'
+            sedcmd += 's%@i%'        + inF             + '%;'
+            sedcmd += 's%@o%'        + outF            + '%;'
+            sedcmd += 's%@charge%'   + str(charge)     + '%;'
+            sedcmd += 's%@channel%'  + str(channel)    + '%;'
+            sedcmd += 's%@tag%'      + tag             + '%;'
+            sedcmd += 's%@flav%'     + str(flav)       + '%;'
+            sedcmd += '\"'
+            applysedcmd = 'cat ' + project + '/scripts/cfg.tmpl  | ' + sedcmd + ' > ' + cfgfile 
+            os.system(applysedcmd)
+            
+#            cmd='bsub -q %s %s/src/TopLJets2015/TopAnalysis/scripts/wrapLocalAnalysisRun.sh \"%s\"' % (opt.queue, cmsswBase, localRun)
+            cmd='chmod +x ' + cfgfile + '; bsub -q ' + opt.queue + ' ' + project + '/' + cfgfile + ' -eo ' + project + '/LSF/ -oo ' + project + '/LSF/'  
             os.system(cmd)
 
 """
-for execution from another script
+for execution from another script1
 """
 if __name__ == "__main__":
     sys.exit(main())

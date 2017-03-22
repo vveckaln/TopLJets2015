@@ -7,9 +7,10 @@ ARCH=${SCRIPTPATH##/*/}
 WORKDIR=${SCRIPTPATH}/../
 
 #configure environment
-cd $WORKDIR
+#cd $WORKDIR
 export SCRAM_ARCH=$ARCH
-eval `scram r -sh`
+#eval `scram r -sh`
+
 
 #run with the arguments passed
-$*
+#$*

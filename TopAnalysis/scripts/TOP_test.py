@@ -26,7 +26,10 @@ cachefile.close()
 print 'Normalization read from cache (%s)' % cache
 
     #process tasks
-inF="root://eoscms//eos/cms//store/cmst3/user/psilva/LJets2015/8c1e7c9/MC13TeV_SingleT_t/MergedMiniEvents_0.root"
+#inF="root://eoscms//eos/cms//store/cmst3/user/psilva/LJets2015/8c1e7c9/MC13TeV_SingleT_t/MergedMiniEvents_0.root"
+#inF="root://eoscms//eos/cms//store/cmst3/user/psilva/LJets2015/8c1e7c9/MC13TeV_TTJets/MergedMiniEvents_106.root"
+inF="root://eoscms//eos/cms//store/cmst3/user/psilva/LJets2015/8c1e7c9/MC13TeV_TTJets/MergedMiniEvents_60.root"
+
 outF="test_file.root"
 channel = 13
 charge = 1

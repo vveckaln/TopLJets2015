@@ -8,7 +8,9 @@
 #include <TGraphAsymmErrors.h>
 
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
-#include "ColourFlowAnalysisTool.hh"
+
+#include "TopLJets2015/TopAnalysis/interface/CFAT_cmssw.hh"
+
 #include "TopLJets2015/TopAnalysis/interface/JetConstituentAnalysisTool.hh"
 
 #include "TopLJets2015/TopAnalysis/interface/TOP-16-006.h"
@@ -40,17 +42,18 @@ Float_t computeMT(TLorentzVector &a, TLorentzVector &b)
   return TMath::Sqrt(2*a.Pt()*b.Pt()*(1-TMath::Cos(a.DeltaPhi(b))));
 }
 
-//
+
 void RunTop16006(TString filename,
-		 TString outname,
+		 const TString outname,
 		 Int_t channelSelection, 
 		 Int_t chargeSelection, 
 		 FlavourSplitting flavourSplitting,
 		 TH1F *normH, 
 		 Bool_t runSysts)
 {
-  bool isTTbar( filename.Contains("_TTJets") );
+  TApplication app("myapp", 0, 0);
   
+  bool isTTbar( filename.Contains("_TTJets") );
   //READ TREE FROM FILE
   MiniEvent_t ev;
   TFile *f = TFile::Open(filename);
@@ -75,7 +78,9 @@ void RunTop16006(TString filename,
   std::vector<TGraph *>puWgtGr;
   if(!ev.isData)
     {
-      TString puWgtUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/pileupWgts.root");
+      //TString puWgtUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/pileupWgts.root");
+      TString puWgtUrl("data/pileupWgts.root");
+     
       gSystem->ExpandPathName(puWgtUrl);
       TFile *fIn=TFile::Open(puWgtUrl);
       for(size_t i=0; i<3; i++)
@@ -112,7 +117,9 @@ void RunTop16006(TString filename,
     }
 
   //LEPTON EFFICIENCIES
-  TString lepEffUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/leptonEfficiencies.root");
+  //  TString lepEffUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/leptonEfficiencies.root");
+  TString lepEffUrl("data/leptonEfficiencies.root");
+ 
   gSystem->ExpandPathName(lepEffUrl);
   std::map<TString,TH2 *> lepEffH;
   if(!ev.isData)
@@ -124,7 +131,9 @@ void RunTop16006(TString filename,
       fIn->Close();
     }
 
-  lepEffUrl="${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/CutBasedID_TightWP_76X_18Feb.txt_SF2D.root";
+  //  lepEffUrl="${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/CutBasedID_TightWP_76X_18Feb.txt_SF2D.root";
+  lepEffUrl="data/CutBasedID_TightWP_76X_18Feb.txt_SF2D.root";
+
   gSystem->ExpandPathName(lepEffUrl);
   if(!ev.isData)
     {
@@ -135,10 +144,14 @@ void RunTop16006(TString filename,
     }
 
   //B-TAG CALIBRATION
-  TString btagUncUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/CSVv2.csv");
+  // TString btagUncUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/CSVv2.csv");
+  TString btagUncUrl("data/CSVv2.csv");
+
   gSystem->ExpandPathName(btagUncUrl);
   std::vector<BTagCalibrationReader *> sfbReaders, sflReaders;
-  TString btagEffExpUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/expTageff.root");
+  //  TString btagEffExpUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/expTageff.root");
+  TString btagEffExpUrl("data/expTageff.root");
+ 
   gSystem->ExpandPathName(btagEffExpUrl);
   std::map<TString, TGraphAsymmErrors *> expBtagEff;
   BTagSFUtil myBTagSFUtil;
@@ -161,7 +174,9 @@ void RunTop16006(TString filename,
     }
 
   //JET ENERGY SCALE: https://twiki.cern.ch/twiki/bin/view/CMS/JECUncertaintySources#Summer15_uncertainties
-  TString jecUncUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/Fall15_25nsV2_DATA_UncertaintySources_AK4PFchs.txt");
+  //  TString jecUncUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/Fall15_25nsV2_DATA_UncertaintySources_AK4PFchs.txt");
+  TString jecUncUrl("data/Fall15_25nsV2_DATA_UncertaintySources_AK4PFchs.txt");
+
   gSystem->ExpandPathName(jecUncUrl);
   //FactorizedJetCorrector *jetCorr=getFactorizedJetEnergyCorrector("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/jectxt",!ev.isData);
   std::vector<TString> jecUncSrcs;
@@ -333,11 +348,12 @@ void RunTop16006(TString filename,
   JetConstituentAnalysisTool JCAT;
   JCAT.plots_ptr_ = & allPlots;
   JCAT.plots2D_ptr_ = & all2dPlots;
-  ColourFlowAnalysisTool colour_flow_analysis_tool; 
+  CFAT_cmssw colour_flow_analysis_tool; 
   AssignHistograms(allPlots);
+  AssignSpecificHistograms2D(all2dPlots);
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
   colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
-
+  colour_flow_analysis_tool.file_tag_ = "migration_" + outname;
   //colour_flow_analysis_tool.PtRadiation_mode_ = 0;  
 
   JCAT.AssignHistograms();
@@ -345,10 +361,10 @@ void RunTop16006(TString filename,
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
 
   //LOOP OVER EVENTS
-  for (Int_t iev=0;iev<nentries;iev++)
+  for (Int_t iev = 0; iev<nentries; iev++)
     {
-
-      //      printf("PROCESSING event %u\n", iev);
+      
+            printf("PROCESSING event %u\n", iev);
       t->GetEntry(iev);
       if(iev%5000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
 
@@ -691,7 +707,8 @@ void RunTop16006(TString filename,
 	}
       JCAT.weight_ = wgt;
       JCAT.AnalyseAllJets();
-      
+      printf(" ************************** EVENT %u ******************************* \n", iev);      
+      //      getchar();
       CFAT_Core_cmssw core_reco;
       CFAT_Event event_reco;
       core_reco.SetEvent(ev);
@@ -713,7 +730,7 @@ void RunTop16006(TString filename,
       colour_flow_analysis_tool.SetWorkMode(Definitions::RECO);
 
       //      printf("*** event %u ***** \n", iev);
-      
+      colour_flow_analysis_tool.ResetMigrationValues();
       colour_flow_analysis_tool.Work();
       if (not ev.isData)
 	{
@@ -740,7 +757,9 @@ void RunTop16006(TString filename,
 
 	  colour_flow_analysis_tool.Work();
 	}
-      //ANALYSIS WITH SYSTEMATICS
+      colour_flow_analysis_tool.PlotMigrationValues();
+
+     //ANALYSIS WITH SYSTEMATICS
       if(!runSysts) continue;
       
       //gen weighting systematics
@@ -949,29 +968,17 @@ void RunTop16006(TString filename,
 	    }
 	}
     }
-
-  /* printf("DONE\n");
-  TCanvas c;
-  test2 -> Draw("HIST");
-  
-  //  test -> Draw("HISTSAME");
-  TCanvas c2;
-  test2D -> Draw("COLZ");
-  TCanvas c3;
-  eta -> Draw("HIST");
-
-  TCanvas c4;
-  phi -> Draw("HIST");
-  app.Run();
-  */  //close input file
+ 
   f->Close();
 
+    
   //save histos to file  
   TString selPrefix("");  
   if(flavourSplitting!=NOFLAVOURSPLITTING) selPrefix=Form("%d_",flavourSplitting);
   TString baseName=gSystem->BaseName(outname); 
   TString dirName=gSystem->DirName(outname);
-  TFile *fOut=TFile::Open(dirName+"/"+selPrefix+baseName,"RECREATE");
+  TFile *fOut=TFile::Open(/*dirName+"/"+selPrefix+*/baseName,"RECREATE");
+
   fOut->cd();
   for (auto& it : allPlots)  { 
     it.second->SetDirectory(fOut); it.second->Write(); 
@@ -979,7 +986,9 @@ void RunTop16006(TString filename,
   for (auto& it : all2dPlots)  { 
     it.second->SetDirectory(fOut); it.second->Write(); 
   }
-  fOut->Close();
+  fOut -> Close();
+  colour_flow_analysis_tool.WriteMigrationTree();
+  printf("RUNTOP16006 done\n");
 }
 
 //

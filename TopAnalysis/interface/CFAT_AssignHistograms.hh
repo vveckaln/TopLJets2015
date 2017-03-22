@@ -2,10 +2,12 @@
 #define _CFAT_AssignHistograms_hh_
 #include "TString.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include <map>
 using namespace std;
-typedef /*double */map<TString, TH1*> mapp;
-void AssignHistograms(mapp &);
-void CreateHistogram1D(mapp &, const char * title, const char * axes, unsigned int nbins, double min , double max);
-//void sum(double a, int b);
+typedef map<TString, TH1*> map_hist_1D;
+void AssignHistograms(map_hist_1D &);
+void AssignSpecificHistograms2D(map<TString, TH2*> &);
+void CreateHistogram1D(map_hist_1D &, const char * title, const char * axes, unsigned int nbins, double min , double max);
+void CreateHistogram2D(map<TString, TH2*> &, const char * title, const char * axes, unsigned int nbins_x, double min_x, double max_x, unsigned int nbins_y, double min_y, double max_y);
 #endif
