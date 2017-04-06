@@ -347,7 +347,7 @@ class Plot(object):
                 ratio=self.dataH.Clone('ratio')
                 ratio.SetDirectory(0)
                 self._garbageList.append(ratio)
-                 ratio.Divide(totalMCnoUnc)
+                ratio.Divide(totalMCnoUnc)
                 gr=ROOT.TGraphAsymmErrors(ratio)
                 gr.SetMarkerStyle(self.data.GetMarkerStyle())
                 gr.SetMarkerSize(self.data.GetMarkerSize())
