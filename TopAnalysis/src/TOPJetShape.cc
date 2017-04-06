@@ -26,6 +26,16 @@
 #include "fastjet/tools/Recluster.hh"
 #include "fastjet/contrib/Nsubjettiness.hh"
 #include "fastjet/contrib/EnergyCorrelator.hh"
+#include "TopLJets2015/TopAnalysis/interface/CFAT_cmssw.hh"
+
+#include "TopLJets2015/TopAnalysis/interface/JetConstituentAnalysisTool.hh"
+
+#include "CFAT_Event.hh"
+#include "TopLJets2015/TopAnalysis/interface/CFAT_AssignHistograms.hh"
+#include "TopLJets2015/TopAnalysis/interface/CFAT_Core_cmssw.hh"
+#include "TopLJets2015/TopAnalysis/interface/Definitions_cmssw.hh"
+#include "TopQuarkAnalysis/TopTools/interface/MEzCalculator.h"
+
 using namespace fastjet;
 using namespace fastjet::contrib;
 
@@ -135,7 +145,7 @@ void RunTopJetShape(TString filename,
   gSystem->ExpandPathName(jecUncUrl);
   JetCorrectorParameters *jecParam = new JetCorrectorParameters(jecUncUrl.Data(), jecVar);
   JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty( *jecParam );
-
+  MEzCalculator neutrinoPzComputer;
   //BOOK HISTOGRAMS
   std::map<TString, TH1 *> allPlots;
   std::map<TString, TH2 *> all2dPlots;
@@ -246,6 +256,13 @@ void RunTopJetShape(TString filename,
   allPlots["js_c3_20_charged"] = new TH1F("js_c3_20_charged",";C_{ 3}^{ (2.0)} (charged);Jets",30,0,0.15);
   allPlots["js_c3_20_puppi"] = new TH1F("js_c3_20_puppi",";C_{ 3}^{ (2.0)} (puppi);Jets",30,0,0.15);
   allPlots["js_c3_20_all"] = new TH1F("js_c3_20_all",";C_{ 3}^{ (2.0)} (all);Jets",30,0,0.15);
+
+  CFAT_cmssw colour_flow_analysis_tool; 
+  AssignHistograms(allPlots);
+  AssignSpecificHistograms2D(all2dPlots);
+  colour_flow_analysis_tool.plots_ptr_ = & allPlots;
+  colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
+
   
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
@@ -257,6 +274,8 @@ void RunTopJetShape(TString filename,
   /////////////////////
   
   //EVENT SELECTION WRAPPER
+
+
   SelectionTool selector(filename, false, triggerList);
   
   for (Int_t iev=0;iev<nentries;iev++)
@@ -315,6 +334,10 @@ void RunTopJetShape(TString filename,
       
       //decide the lepton channel and get selected objects
       TString chTag = selector.flagFinalState(ev);
+      printf("chTag %s\n", chTag.Data());
+      if (chTag != "M" and chTag != "E")
+	continue;
+      printf("here\n");
       std::vector<Particle> &leptons     = selector.getSelLeptons(); 
       std::vector<Jet>      &jets        = selector.getJets();  
       
@@ -322,11 +345,41 @@ void RunTopJetShape(TString filename,
       int sel_nbjets = 0;
       int sel_nwjets = 0;
 
-      for (auto& jet : jets) {
-        if (jet.flavor() == 5) ++sel_nbjets;
-        if (jet.flavor() == 1) ++sel_nwjets;
-      }
-      
+      vector<TLorentzVector> bJets, lightJets;
+      vector<TLorentzVector> gen_bJets, gen_lightJets;
+ 
+      //     vector<TLorentzVector> bJets_gen,lightJets_gen;
+
+      vector<unsigned short> bJets_index, lightJets_index;
+      unsigned char jet_index = 0;
+      for (auto& jet : jets) 
+	{
+	  TLorentzVector gen_jp4;
+	  gen_jp4.SetPtEtaPhiM(ev.g_pt[ev.j_g[jet_index]], ev.g_eta[ev.j_g[jet_index]], ev.g_phi[ev.j_g[jet_index]], ev.g_m[ev.j_g[jet_index]]);
+	  if (jet.flavor() == 5) 
+	    {
+	      TLorentzVector jet;
+	      jet.SetPtEtaPhiM(jet.Pt(), jet.Eta(), jet.Phi(), jet.M());
+	      bJets.push_back(jet);
+	      gen_bJets.push_back(gen_jp4);
+	      bJets_index.push_back(jet_index);
+	      ++sel_nbjets;
+	    }
+	  if (jet.flavor() == 1) 
+	    {
+	      TLorentzVector jet;
+	      jet.SetPtEtaPhiM(jet.Pt(), jet.Eta(), jet.Phi(), jet.M());
+	      lightJets.push_back(jet);
+	      gen_lightJets.push_back(gen_jp4);
+	      lightJets_index.push_back(jet_index);
+	      ++sel_nwjets;
+	    }
+	  jet_index ++;
+	}
+      printf("bJets.size() %lu lightJets.size() %lu\n", bJets.size(), lightJets.size());
+
+      if(bJets.size() != 2 or lightJets.size() != 2)
+	continue;
       //event selected on reco level?
       bool preselected          (true);
       bool singleLepton         ((chTag=="E" or chTag=="M") and
@@ -456,17 +509,35 @@ void RunTopJetShape(TString filename,
 
       //fill leptons
       tjsev.nl=leptons.size();
+      printf("leptons.size() %lu\n", leptons.size());
       int il = 0;
-      for(auto& lepton : leptons) {
-        tjsev.l_pt[il]  = lepton.pt();
-        tjsev.l_eta[il] = lepton.eta();
-        tjsev.l_phi[il] = lepton.phi();
-        tjsev.l_m[il]   = lepton.m();
-        tjsev.l_id[il]  = lepton.id();
-        il++;
-      }
+      for(auto& lepton : leptons) 
+	{
+	  printf("lepton il %u id %u Pt %f\n", il, lepton.id(), lepton.pt());
+	  tjsev.l_pt[il]  = lepton.pt();
+	  tjsev.l_eta[il] = lepton.eta();
+	  tjsev.l_phi[il] = lepton.phi();
+	  tjsev.l_m[il]   = lepton.m();
+	  tjsev.l_id[il]  = lepton.id();
+	  il++;
+	}
       
+      TLorentzVector lp4;
+      lp4.SetPtEtaPhiM(leptons[0].pt(), leptons[0].eta(), leptons[0].phi(), leptons[0].m());
+
       //fill MET
+      TLorentzVector met(0.0, 0.0, 0.0, 0.0);
+      met.SetPtEtaPhiM(ev.met_pt[0], 0.0, ev.met_phi[0], 0.0);
+      met.SetPz(0.0); 
+      met.SetE(met.Pt());
+      const float mt(computeMT(lp4, met));
+
+      //compute neutrino kinematics
+      neutrinoPzComputer.SetMET(met);
+      neutrinoPzComputer.SetLepton(lp4);
+      
+      const float nupz = neutrinoPzComputer.Calculate();
+      const TLorentzVector neutrinoHypP4(met.Px(), met.Py(), nupz, TMath::Sqrt(TMath::Power(met.Pt(), 2) + TMath::Power(nupz, 2)));
       tjsev.met_pt=ev.met_pt[0];
       tjsev.met_phi=ev.met_phi[0];
       
@@ -808,7 +879,54 @@ void RunTopJetShape(TString filename,
       
       //proceed only if event is selected on gen or reco level
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
-      
+      CFAT_Core_cmssw core_reco;
+      CFAT_Event event_reco;
+      core_reco.SetEvent(ev);
+      event_reco.SetCore(core_reco);
+      core_reco.AddLightJets(lightJets, lightJets_index);
+ 
+      core_reco.AddVector(Definitions::LEPTON, lp4);
+      core_reco.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
+
+      core_reco.AddBJets(bJets, bJets_index);
+ 
+      event_reco.CompleteVectors();
+      event_reco.SetWeight(wgt);
+      event_reco.SetEventNumber(iev);
+
+
+      colour_flow_analysis_tool.SetEvent(event_reco);
+
+      colour_flow_analysis_tool.SetWorkMode(Definitions::RECO);
+
+      //      printf("*** event %u ***** \n", iev);
+      colour_flow_analysis_tool.ResetMigrationValues();
+      colour_flow_analysis_tool.Work();
+      if (not ev.isData)
+	{
+
+	  CFAT_Core_cmssw core_gen;
+	  CFAT_Event event_gen;
+	  core_gen.SetEvent(ev);
+	  event_gen.SetCore(core_gen);
+	  core_gen.AddLightJets(gen_lightJets, lightJets_index);
+	  core_gen.AddVector(Definitions::LEPTON, lp4);
+	  core_gen.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
+	  core_gen.AddBJets(gen_bJets, bJets_index);
+ 
+	  event_gen.CompleteVectors();
+	  event_gen.SetWeight(wgt);
+	  event_gen.SetEventNumber(iev);
+
+
+	  colour_flow_analysis_tool.SetEvent(event_gen);
+
+	  colour_flow_analysis_tool.SetWorkMode(Definitions::GEN);
+	    
+     
+
+	  colour_flow_analysis_tool.Work();
+	}
       //  outT->Fill();
     }
   
