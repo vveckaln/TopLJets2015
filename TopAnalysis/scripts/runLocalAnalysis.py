@@ -47,6 +47,7 @@ def main():
     parser.add_option('-i', '--in',          dest='input',       help='input directory with files or single file [%default]',  default=None,       type='string')
     parser.add_option('-o', '--out',         dest='output',      help='output directory (or file if single file to process)  [%default]',  default='analysis', type='string')
     parser.add_option(      '--only',        dest='only',        help='csv list of samples to process  [%default]',             default=None,       type='string')
+    parser.add_option(      '--skip',        dest='skip',        help='csv list of samples to skip  [%default]',             default=None,       type='string')
     parser.add_option(      '--runSysts',    dest='runSysts',    help='run systematics  [%default]',                            default=False,      action='store_true')
     parser.add_option(      '--systVar',     dest='systVar',     help='single systematic variation  [%default]',   default='nominal',       type='string')
     parser.add_option(      '--debug',       dest='debug',      help='debug mode  [%default]',                            default=False,      action='store_true')
@@ -59,12 +60,22 @@ def main():
     parser.add_option('-n', '--njobs',       dest='njobs',       help='# jobs to run in parallel  [%default]',                                default=0,    type='int')
     parser.add_option(      '--skipexisting',dest='skipexisting',help='skip jobs with existing output files  [%default]',                            default=False,      action='store_true')
     (opt, args) = parser.parse_args()
+<<<<<<< HEAD
     
     PROJECT=os.environ['PROJECT']
     #parse selection list
+=======
+
+    #parse selection lists
+>>>>>>> origin/80x_rereco_rev
     onlyList=[]
     try:
         onlyList=opt.only.split(',')
+    except:
+        pass
+    skipList=[]
+    try:
+        skipList=opt.skip.split(',')
     except:
         pass
     #parse list of systematic variations
@@ -90,6 +101,7 @@ def main():
         if not '/store/' in opt.output:
             os.system('mkdir -p %s/Chunks'%opt.output)
         else:
+            os.system('eos mkdir %s'%opt.output)
             os.system('eos mkdir %s/Chunks'%opt.output)
     #correct location of corrections to be used using cmsswBase, if needed
     cmsswBase=os.environ['CMSSW_BASE']
@@ -102,8 +114,8 @@ def main():
         inF=opt.input
         if '/store/' in inF and not 'root:' in inF : inF='root://eoscms//eos/cms'+opt.input        
         for systVar in varList:
-            if systVar == 'nominal': outF=opt.output
-            else: outF=opt.output[:-5]+'_'+systVar+'.root'
+            outF=opt.output
+            if systVar != 'nominal' and not systVar in opt.output: outF=opt.output[:-5]+'_'+systVar+'.root'
             task_list.append( (opt.method,inF,outF,opt.channel,opt.charge,opt.flav,opt.runSysts,systVar,opt.era,opt.tag,opt.debug) )
     else:
 
@@ -117,15 +129,15 @@ def main():
             if len(onlyList)>0:
                 processThisTag=False
                 for itag in onlyList:
-                    if itag[0]=='^': 
-                        itag=itag[1:]
-                        if itag in tag : 
-                            processThisTag=False
-                            break
-                        else : 
-                            processThisTag=True
-                    elif itag in tag:
+                    if itag in tag:
                         processThisTag=True
+                        break
+                if not processThisTag : continue
+            if len(skipList)>0:
+                processThisTag=True
+                for itag in skipList:
+                    if itag in tag:
+                        processThisTag=False
                         break
                 if not processThisTag : continue
 
@@ -135,8 +147,8 @@ def main():
             for ifile in xrange(0,len(input_list)):
                 inF=input_list[ifile]
                 for systVar in varList:
-                    if systVar == 'nominal': os.path.join(opt.output,'Chunks','%s_%d.root' %(tag,ifile))
-                    else: outF=os.path.join(opt.output,'Chunks','%s_%s_%d.root' %(tag,systVar,ifile))
+                    outF=os.path.join(opt.output,'Chunks','%s_%d.root' %(tag,ifile))
+                    if systVar != 'nominal' and not systVar in tag: outF=os.path.join(opt.output,'Chunks','%s_%s_%d.root' %(tag,systVar,ifile))
                     if (opt.skipexisting and os.path.isfile(outF)):
                         nexisting += 1
                         continue
@@ -156,13 +168,14 @@ def main():
         print 'launching %d tasks to submit to the %s queue'%(len(task_list),opt.queue)        
 
         FarmDirectory                      = opt.output+"/FARM"
-        if '/store' in FarmDirectory : FarmDirectory = './FARM'
+        if '/store' in FarmDirectory : FarmDirectory = './FARM%s'%os.path.basename(opt.output)
         os.system('mkdir -p %s'%FarmDirectory)
 
         jobNb=0
-        for method,inF,outF,channel,charge,flav,runSysts,era,tag,debug in task_list:
+        for method,inF,outF,channel,charge,flav,runSysts,systVar,era,tag,debug in task_list:
             jobNb+=1
-            cfgfile='%s/job_%d.sh'%(FarmDirectory,jobNb)
+            cfgfile='%s/job_%s.sh'%(FarmDirectory,os.path.splitext(os.path.basename(outF))[0])
+            logfile='%s/job_%s.log'%(FarmDirectory,os.path.splitext(os.path.basename(outF))[0])
             cfg=open(cfgfile,'w')
             cfg.write('WORKDIR=`pwd`\n')
             cfg.write('echo "Working directory is ${WORKDIR}"\n')
@@ -174,14 +187,20 @@ def main():
                     %(inF, localOutF, charge, channel, era, tag, flav, method, systVar)
             if runSysts : runOpts += ' --runSysts'
             if debug :    runOpts += ' --debug'
-            cfg.write('python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py %s\n'%(cmsswBase,runOpts))
+            cfg.write('python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py %s &> run.log\n'%(cmsswBase,runOpts))
             if '/store' in outF:
                 cfg.write('xrdcp ${WORKDIR}/%s root://eoscms//eos/cms/%s\n'%(localOutF,outF))
                 cfg.write('rm ${WORKDIR}/%s'%localOutF)
             elif outF!=localOutF:
+<<<<<<< HEAD
                 cfg.write('mv -v ${WORKDIR}/%s ${PROJECT}/%s\n'%(localOutF,outF))
+=======
+                cfg.write('mv -v ${WORKDIR}/%s %s\n'%(localOutF,outF))
+                cfg.write('mv -v ${WORKDIR}/run.log %s\n'%(logfile))
+>>>>>>> origin/80x_rereco_rev
             cfg.close()
             os.system('chmod u+x %s'%cfgfile)
+            print 'Submitting job %d/%d'%(jobNb, len(task_list))
             os.system('bsub -q %s %s -R "pool>30000"'%(opt.queue,
                                                        os.path.abspath(cfgfile)) )
         

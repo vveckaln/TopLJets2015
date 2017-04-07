@@ -123,7 +123,9 @@ std::map<TString, std::vector<TGraph *> > getPileupWeightsMap(TString era, TH1 *
 
 
 //apply jet energy resolutions
-MiniEvent_t smearJetEnergies(MiniEvent_t ev, std::string option) {
+MiniEvent_t smearJetEnergies(MiniEvent_t &ev, std::string option) {
+  if(ev.isData) return ev;
+
   for (int k = 0; k < ev.nj; k++) {
     TLorentzVector jp4;
     jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
@@ -131,12 +133,8 @@ MiniEvent_t smearJetEnergies(MiniEvent_t ev, std::string option) {
     //smear jet energy resolution for MC
     float genJet_pt(0);
     if(ev.j_g[k]>-1) genJet_pt = ev.g_pt[ ev.j_g[k] ];
-    if(!ev.isData && genJet_pt>0) {
-      int smearIdx(0);
-      if(option=="up") smearIdx=1;
-      if(option=="down") smearIdx=2;
-      float jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Eta(),genJet_pt)[smearIdx];
-      jp4 *= jerSmear;
+    if(genJet_pt>0) {
+      smearJetEnergy(jp4,genJet_pt,option);
       ev.j_pt[k]   = jp4.Pt();
       ev.j_eta[k]  = jp4.Eta();
       ev.j_phi[k]  = jp4.Phi();
@@ -147,8 +145,18 @@ MiniEvent_t smearJetEnergies(MiniEvent_t ev, std::string option) {
   return ev;
 }
 
+//
+void smearJetEnergy(TLorentzVector &jp4, float genJet_pt,std::string option)
+{
+  int smearIdx(0);
+  if(option=="up") smearIdx=1;
+  if(option=="down") smearIdx=2;
+  float jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Eta(),genJet_pt)[smearIdx];
+  jp4 *= jerSmear;
+}
+
 //see working points in https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80XReReco
-MiniEvent_t addBTagDecisions(MiniEvent_t ev,float wp,float wpl) {
+MiniEvent_t addBTagDecisions(MiniEvent_t &ev,float wp,float wpl) {
   for (int k = 0; k < ev.nj; k++) {
     if (ev.j_hadflav[k] >= 4) ev.j_btag[k] = (ev.j_csv[k] > wp);
     else                      ev.j_btag[k] = (ev.j_csv[k] > wpl);
@@ -159,7 +167,7 @@ MiniEvent_t addBTagDecisions(MiniEvent_t ev,float wp,float wpl) {
 
 
 //details in https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration
-MiniEvent_t updateBTagDecisions(MiniEvent_t ev, 
+MiniEvent_t updateBTagDecisions(MiniEvent_t &ev, 
 				std::map<BTagEntry::JetFlavor,BTagCalibrationReader *> &btvsfReaders,
 				std::map<BTagEntry::JetFlavor, TGraphAsymmErrors*> &expBtagEff, 
 				std::map<BTagEntry::JetFlavor, TGraphAsymmErrors*> &expBtagEffPy8, 
@@ -252,7 +260,7 @@ std::map<BTagEntry::JetFlavor, TGraphAsymmErrors *> readExpectedBtagEff(TString 
 
 
 // See https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECUncertaintySources#Main_uncertainties_2016_80X
-MiniEvent_t applyJetCorrectionUncertainty(MiniEvent_t ev, JetCorrectionUncertainty *jecUnc, TString jecVar, TString direction) {
+MiniEvent_t applyJetCorrectionUncertainty(MiniEvent_t &ev, JetCorrectionUncertainty *jecUnc, TString jecVar, TString direction) {
   for (int k = 0; k < ev.nj; k++) {
     if ((jecVar == "FlavorPureGluon"  and not (ev.j_flav[k] == 21 or ev.j_flav[k] == 0)) or
         (jecVar == "FlavorPureQuark"  and not (abs(ev.j_flav[k]) <= 3 and abs(ev.j_flav[k]) != 0)) or
@@ -262,7 +270,19 @@ MiniEvent_t applyJetCorrectionUncertainty(MiniEvent_t ev, JetCorrectionUncertain
     
     TLorentzVector jp4;
     jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
+    applyJetCorrectionUncertainty(jp4,jecUnc,direction);
+    ev.j_pt[k]   = jp4.Pt(); 
+    ev.j_eta[k]  = jp4.Eta();
+    ev.j_phi[k]  = jp4.Phi();
+    ev.j_mass[k] = jp4.M();
+  }
+  
+  return ev;
+}
 
+//
+void applyJetCorrectionUncertainty(TLorentzVector &jp4,JetCorrectionUncertainty *jecUnc,TString direction)
+{
     jecUnc->setJetPt(jp4.Pt());
     jecUnc->setJetEta(jp4.Eta());
     double scale = 1.;
@@ -272,11 +292,60 @@ MiniEvent_t applyJetCorrectionUncertainty(MiniEvent_t ev, JetCorrectionUncertain
       scale -= jecUnc->getUncertainty(false);
     
     jp4 *= scale;
-    ev.j_pt[k]   = jp4.Pt(); 
-    ev.j_eta[k]  = jp4.Eta();
-    ev.j_phi[k]  = jp4.Phi();
-    ev.j_mass[k] = jp4.M();
+}
+
+//b fragmentation
+std::map<TString, TGraph*> getBFragmentationWeights(TString era) {
+  std::map<TString, TGraph*> bfragMap;
+
+  TString bfragWgtUrl(era+"/bfragweights.root");
+  gSystem->ExpandPathName(bfragWgtUrl);
+  TFile *fIn=TFile::Open(bfragWgtUrl);
+  bfragMap["upFrag"] = (TGraph *)fIn->Get("upFrag");
+  bfragMap["centralFrag"] = (TGraph *)fIn->Get("centralFrag");
+  bfragMap["downFrag"] = (TGraph *)fIn->Get("downFrag");
+  bfragMap["PetersonFrag"] = (TGraph *)fIn->Get("PetersonFrag");
+  return bfragMap;
+}
+
+double computeBFragmentationWeight(MiniEvent_t &ev, TGraph* wgtGr) {
+  double weight = 1.;
+  for (int i = 0; i < ev.ng; i++) {
+    if (abs(ev.g_id[i])==5) weight *= wgtGr->Eval(ev.g_xb[i]);
+  }
+  return weight;
+}
+
+std::map<TString, std::map<int, double> > getSemilepBRWeights(TString era) {
+  std::map<TString, TGraph*> bfragMap;
+  std::map<TString, std::map<int, double> > brMap;
+
+  TString bfragWgtUrl(era+"/bfragweights.root");
+  gSystem->ExpandPathName(bfragWgtUrl);
+  TFile *fIn=TFile::Open(bfragWgtUrl);
+  bfragMap["semilepbrUp"] = (TGraph *)fIn->Get("semilepbrUp");
+  bfragMap["semilepbrDown"] = (TGraph *)fIn->Get("semilepbrDown");
+  
+  for (auto const& gr : bfragMap) {
+    for (int i = 0; i < gr.second->GetN(); ++i) {
+      double x,y;
+      gr.second->GetPoint(i,x,y);
+      brMap[gr.first][x] = y;
+    }
   }
   
-  return ev;
+  return brMap;
+}
+
+double computeSemilepBRWeight(MiniEvent_t &ev, std::map<int, double> corr, int pid, bool useabs) {
+  double weight = 1.;
+  for (int i = 0; i < ev.ng; i++) {
+    if (!ev.g_isSemiLepBhad[i]) continue;
+    if (corr.count(ev.g_bid[i]) == 0) continue;
+    if (!useabs and (pid == 0 or pid == ev.g_bid[i])) weight *= corr[ev.g_bid[i]];
+    else if (useabs and (pid == 0 or pid == abs(ev.g_bid[i]))) {
+      weight *= (corr[ev.g_bid[i]]+corr[-ev.g_bid[i]])/2.;
+    }
+  }
+  return weight;
 }

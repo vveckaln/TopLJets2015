@@ -90,7 +90,7 @@ if options.lumiJson:
     process.source.lumisToProcess.extend(myLumis)
 
 process.options   = cms.untracked.PSet(
-    wantSummary = cms.untracked.bool(True),
+   # wantSummary = cms.untracked.bool(True),
     allowUnscheduled = cms.untracked.bool(True)
 )
 
@@ -109,6 +109,8 @@ if not options.runOnData:
     process.pseudoTop.leptonMinPt=cms.double(20)
     process.pseudoTop.leptonMaxEta=cms.double(2.5)
     process.pseudoTop.jetMaxEta=cms.double(5.0)
+
+    process.load('TopQuarkAnalysis.BFragmentationAnalyzer.bfragWgtProducer_cfi')
 
 #EGM
 from TopLJets2015.TopAnalysis.customizeEGM_cff import *
@@ -154,5 +156,5 @@ if options.runOnData:
     process.p = cms.Path(process.analysis)
     #process.p = cms.Path(process.egmSeq*process.jetmetSeq*process.analysis)
 else:
-    process.p = cms.Path(process.pseudoTop*process.analysis)
+    process.p = cms.Path(process.pseudoTop*process.bfragWgtProducer*process.analysis)
     #process.p = cms.Path(process.egmSeq*process.jetmetSeq*process.pseudoTop*process.analysis)

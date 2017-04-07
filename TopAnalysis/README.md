@@ -15,15 +15,19 @@ git cms-init
 git cms-merge-topic cms-egamma:EGM_gain_v1
 cd EgammaAnalysis/ElectronTools/data
 git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
-cd $CMSSW_BASE/src
-scram b
 
 #MET
 git cms-merge-topic cms-met:METRecipe_8020 -u
 git cms-merge-topic cms-met:METRecipe_80X_part2 -u
 
-#pseudo-top rivet based
+#pseudo-top rivet based and b-frag utils
 git cms-merge-topic -u intrepid42:pseudotoprivet_80x
+cd TopQuarkAnalysis
+git clone ssh://git@gitlab.cern.ch:7999/CMS-TOPPAG/BFragmentationAnalyzer.git
+cd -
+
+#muon calibration
+git clone -o Analysis https://github.com/bachtis/analysis.git -b KaMuCa_V4 KaMuCa
 
 #ntuplizer
 git clone -b 80x_rereco_rev git@github.com:pfs/TopLJets2015.git
@@ -78,7 +82,7 @@ python scripts/submitToGrid.py -j data/era2016/samples.json -c ${CMSSW_BASE}/src
 As soon as ntuple production starts to finish, to move from crab output directories to a simpler directory structure which can be easily parsed by the local analysis runThe merging can be run locally if needed by using the checkProductionIntegrity.py script
 
 ```
-python scripts/submitCheckProductionIntegrity.py -i /store/cmst3/group/top/psilva/b32c02e -o /store/cmst3/group/top/ReReco2016/b32c02e
+python scripts/submitCheckProductionIntegrity.py -i /store/cmst3/group/top/psilva/b312177 -o /store/cmst3/group/top/ReReco2016/b312177
 ```
 
 ## Luminosity
@@ -121,7 +125,7 @@ python scripts/saveExpectedBtagEff.py -i /store/cmst3/group/top/ReReco2016/b32c0
 ```
 * MC normalization. This will loop over all the samples available in EOS and produce a normalization cache (weights to normalize MC). The file will be available in data/genweights.pck
 ```
-python scripts/produceNormalizationCache.py -i /store/cmst3/group/top/ReReco2016/b32c02e -o data/era2016/genweights.root
+python scripts/produceNormalizationCache.py -i /store/cmst3/group/top/ReReco2016/b312177 -o data/era2016/genweights.root
 ```
 The lepton trigger/id/iso efficiencies should also be placed under data/era2016. 
 The src/LeptonEfficiencyWrapper.cc  should then be updated to handle the reading of the ROOT files and the application of the scale factors
