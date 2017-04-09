@@ -386,13 +386,8 @@ class Plot(object):
 
         #holds the ratio
         c.cd()
-<<<<<<< HEAD
-        if len(self.mc)>0 and self.dataH and not noRatio:        
-            p2 = ROOT.TPad('p2','p2', 0.0, 0.0, 1.0, 0.4)
-=======
         if len(self.mc)>0 and self.dataH and not noRatio:
             p2 = ROOT.TPad('p2','p2',0.0,0.0,1.0,0.2)
->>>>>>> origin/80x_rereco_rev
             p2.Draw()
             p2.SetBottomMargin(0.4)
             p2.SetRightMargin(0.05)

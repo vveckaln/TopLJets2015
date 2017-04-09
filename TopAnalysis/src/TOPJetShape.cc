@@ -78,7 +78,8 @@ void RunTopJetShape(TString filename,
   TopJetShapeEvent_t tjsev;
   TString baseName=gSystem->BaseName(outname); 
   TString dirName=gSystem->DirName(outname);
-  TFile *fOut=TFile::Open(dirName+"/"+baseName,"RECREATE");
+  printf("outname %s, output file name %s\n", outname.Data(), (dirName+"/"+baseName).Data());
+  TFile *fOut=TFile::Open(dirName+"/"+baseName, "RECREATE");
   fOut->cd();
   TTree *outT=new TTree("tjsev","tjsev");
   createTopJetShapeEventTree(outT,tjsev);
@@ -422,10 +423,8 @@ void RunTopJetShape(TString filename,
       
       //decide the lepton channel and get selected objects
       TString chTag = selector.flagFinalState(ev);
-      printf("chTag %s\n", chTag.Data());
       if (chTag != "M" and chTag != "E")
 	continue;
-      printf("here\n");
       std::vector<Particle> &leptons     = selector.getSelLeptons(); 
       std::vector<Jet>      &jets        = selector.getJets();  
       
@@ -464,7 +463,6 @@ void RunTopJetShape(TString filename,
 	    }
 	  jet_index ++;
 	}
-      printf("bJets.size() %lu lightJets.size() %lu\n", bJets.size(), lightJets.size());
 
       if(bJets.size() != 2 or lightJets.size() != 2)
 	continue;

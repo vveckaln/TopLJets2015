@@ -60,14 +60,8 @@ def main():
     parser.add_option('-n', '--njobs',       dest='njobs',       help='# jobs to run in parallel  [%default]',                                default=0,    type='int')
     parser.add_option(      '--skipexisting',dest='skipexisting',help='skip jobs with existing output files  [%default]',                            default=False,      action='store_true')
     (opt, args) = parser.parse_args()
-<<<<<<< HEAD
-    
     PROJECT=os.environ['PROJECT']
     #parse selection list
-=======
-
-    #parse selection lists
->>>>>>> origin/80x_rereco_rev
     onlyList=[]
     try:
         onlyList=opt.only.split(',')
@@ -192,17 +186,12 @@ def main():
                 cfg.write('xrdcp ${WORKDIR}/%s root://eoscms//eos/cms/%s\n'%(localOutF,outF))
                 cfg.write('rm ${WORKDIR}/%s'%localOutF)
             elif outF!=localOutF:
-<<<<<<< HEAD
-                cfg.write('mv -v ${WORKDIR}/%s ${PROJECT}/%s\n'%(localOutF,outF))
-=======
                 cfg.write('mv -v ${WORKDIR}/%s %s\n'%(localOutF,outF))
                 cfg.write('mv -v ${WORKDIR}/run.log %s\n'%(logfile))
->>>>>>> origin/80x_rereco_rev
             cfg.close()
             os.system('chmod u+x %s'%cfgfile)
             print 'Submitting job %d/%d'%(jobNb, len(task_list))
-            os.system('bsub -q %s %s -R "pool>30000"'%(opt.queue,
-                                                       os.path.abspath(cfgfile)) )
+            os.system('bsub -q %s %s -R "pool>30000" -outdir "/eos/user/v/vveckaln/LSF/%%J_%%I"' %(opt.queue, os.path.abspath(cfgfile)) )
         
 
 
