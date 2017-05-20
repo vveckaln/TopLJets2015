@@ -88,6 +88,8 @@ void RunTopJetShape(TString filename,
 
   //READ TREE FROM FILE
   MiniEvent_t ev;
+  printf("opening file %s\n", filename.Data());
+
   TFile *f = TFile::Open(filename);
   TH1 *genPU=(TH1 *)f->Get("analysis/putrue");
   TH1 *triggerList=(TH1 *)f->Get("analysis/triggerList");
@@ -443,20 +445,17 @@ void RunTopJetShape(TString filename,
 	{
 	  TLorentzVector gen_jp4;
 	  gen_jp4.SetPtEtaPhiM(ev.g_pt[ev.j_g[jet_index]], ev.g_eta[ev.j_g[jet_index]], ev.g_phi[ev.j_g[jet_index]], ev.g_m[ev.j_g[jet_index]]);
+	  TLorentzVector jp4 = jet.p4();
 	  if (jet.flavor() == 5) 
 	    {
-	      TLorentzVector jet;
-	      jet.SetPtEtaPhiM(jet.Pt(), jet.Eta(), jet.Phi(), jet.M());
-	      bJets.push_back(jet);
+	      bJets.push_back(jp4);
 	      gen_bJets.push_back(gen_jp4);
 	      bJets_index.push_back(jet_index);
 	      ++sel_nbjets;
 	    }
 	  if (jet.flavor() == 1) 
 	    {
-	      TLorentzVector jet;
-	      jet.SetPtEtaPhiM(jet.Pt(), jet.Eta(), jet.Phi(), jet.M());
-	      lightJets.push_back(jet);
+	      lightJets.push_back(jp4);
 	      gen_lightJets.push_back(gen_jp4);
 	      lightJets_index.push_back(jet_index);
 	      ++sel_nwjets;
@@ -494,6 +493,7 @@ void RunTopJetShape(TString filename,
       allPlots["puwgtctr"]->Fill(0.,1.0);
       if (!ev.isData) {
         // norm weight
+	printf("normH %s\n", normH ? "true" : "false");
         wgt  = (normH? normH->GetBinContent(1) : 1.0);
         
         // pu weight
@@ -512,6 +512,7 @@ void RunTopJetShape(TString filename,
           varweights.push_back(std::make_pair(1.+selSF.second, true));
           varweights.push_back(std::make_pair(1.-selSF.second, true));
           wgt *= trigSF.first*selSF.first;
+	  printf("trigSF.first %f, selSF.first %f\n", trigSF.first, selSF.first);
         }
         else varweights.insert(varweights.end(), 4, std::make_pair(1., true));
         
@@ -526,6 +527,7 @@ void RunTopJetShape(TString filename,
         varweights.push_back(std::make_pair(computeSemilepBRWeight(ev, semilepbr["semilepbrDown"], 0, true)/0.992632, true));
         
         // lhe weights
+	printf("norm coef %.9f, puWgt %f, coef %f\n", normH? normH->GetBinContent(1) : 1.0, puWgt, ev.g_nw>0 ? ev.g_w[0] : 1.0);
         wgt *= (ev.g_nw>0 ? ev.g_w[0] : 1.0);
         
         std::set<std::string> scalesForPlotter = {
@@ -587,7 +589,8 @@ void RunTopJetShape(TString filename,
           tCandsWcut.push_back(tCand);
         }
       }
-      
+      printf("iev %d wgt %.9f\n", iev, wgt);
+      getchar();
       //control histograms
       for(size_t istage=0; istage<stageVec.size(); istage++) { 
         for(auto& channel : chTags) { 
@@ -625,11 +628,9 @@ void RunTopJetShape(TString filename,
 
       //fill leptons
       tjsev.nl=leptons.size();
-      printf("leptons.size() %lu\n", leptons.size());
       int il = 0;
       for(auto& lepton : leptons) 
 	{
-	  printf("lepton il %u id %u Pt %f\n", il, lepton.id(), lepton.pt());
 	  tjsev.l_pt[il]  = lepton.pt();
 	  tjsev.l_eta[il] = lepton.eta();
 	  tjsev.l_phi[il] = lepton.phi();

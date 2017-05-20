@@ -121,20 +121,20 @@ void CFAT_Core_cmssw::check(const char * intro) const
 CFAT_Core_cmssw::CFAT_Core_cmssw()
 {
  
-  leading_light_jet_ptr_ = NULL;
-  leading_light_jet_index_ = 65535;
+  leading_light_jet_ptr_          = NULL;
+  leading_light_jet_index_        = 65535;
 
-  second_leading_light_jet_ptr_ = NULL;
+  second_leading_light_jet_ptr_   = NULL;
   second_leading_light_jet_index_ = 65535;
-  had_b_ptr_ = NULL;
-  had_b_index_ = 65535;
+  had_b_ptr_                      = NULL;
+  had_b_index_                    = 65535;
   
-  lepton_ptr_ = NULL;
-  neutrino_ptr_ = NULL;
-  lept_b_ptr_ = NULL;
-  lept_b_index_ = 65535;
+  lepton_ptr_                     = NULL;
+  neutrino_ptr_                   = NULL;
+  lept_b_ptr_                     = NULL;
+  lept_b_index_                   = 65535;
 
- PF.size      = 65535;
+  PF.size      = 65535;
   PF.jet_index = NULL;
   PF.id        = NULL; 
   PF.charge    = NULL;
