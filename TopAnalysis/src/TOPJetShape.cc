@@ -196,7 +196,7 @@ void RunTopJetShape(TString filename,
       ht.addHist(tag+"met", new TH1F(tag+"met",";MET [GeV];Events",50,0,250));
     }
   }
-  
+  /*
   allPlots["js_mult_charged"] = new TH1F("js_mult_charged",";N (charged);Jets",30,0,30);
   allPlots["js_mult_puppi"] = new TH1F("js_mult_puppi",";N (puppi);Jets",30,0,30);
   allPlots["js_mult_all"] = new TH1F("js_mult_all",";N (all);Jets",30,0,30);
@@ -272,13 +272,13 @@ void RunTopJetShape(TString filename,
   allPlots["js_c3_20_charged"] = new TH1F("js_c3_20_charged",";C_{ 3}^{ (2.0)} (charged);Jets",30,0,0.15);
   allPlots["js_c3_20_puppi"] = new TH1F("js_c3_20_puppi",";C_{ 3}^{ (2.0)} (puppi);Jets",30,0,0.15);
   allPlots["js_c3_20_all"] = new TH1F("js_c3_20_all",";C_{ 3}^{ (2.0)} (all);Jets",30,0,0.15);
-
+  */
   CFAT_cmssw colour_flow_analysis_tool; 
   AssignHistograms(allPlots);
   AssignSpecificHistograms2D(all2dPlots);
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
   colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
-
+  /*
   ht.addHist("js_mult_charged", new TH1F("js_mult_charged",";N (charged);Jets",30,0,30));
   ht.addHist("js_mult_puppi", new TH1F("js_mult_puppi",";N (puppi);Jets",30,0,30));
   ht.addHist("js_mult_all", new TH1F("js_mult_all",";N (all);Jets",30,0,30));
@@ -354,7 +354,7 @@ void RunTopJetShape(TString filename,
   ht.addHist("js_c3_20_charged", new TH1F("js_c3_20_charged",";C_{ 3}^{ (2.0)} (charged);Jets",30,0,0.15));
   ht.addHist("js_c3_20_puppi", new TH1F("js_c3_20_puppi",";C_{ 3}^{ (2.0)} (puppi);Jets",30,0,0.15));
   ht.addHist("js_c3_20_all", new TH1F("js_c3_20_all",";C_{ 3}^{ (2.0)} (all);Jets",30,0,0.15));
-  
+  */
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
 
@@ -435,7 +435,6 @@ void RunTopJetShape(TString filename,
       int sel_nwjets = 0;
 
       vector<TLorentzVector> bJets, lightJets;
-      vector<TLorentzVector> gen_bJets, gen_lightJets;
  
       //     vector<TLorentzVector> bJets_gen,lightJets_gen;
 
@@ -443,28 +442,22 @@ void RunTopJetShape(TString filename,
       unsigned char jet_index = 0;
       for (auto& jet : jets) 
 	{
-	  TLorentzVector gen_jp4;
-	  gen_jp4.SetPtEtaPhiM(ev.g_pt[ev.j_g[jet_index]], ev.g_eta[ev.j_g[jet_index]], ev.g_phi[ev.j_g[jet_index]], ev.g_m[ev.j_g[jet_index]]);
 	  TLorentzVector jp4 = jet.p4();
 	  if (jet.flavor() == 5) 
 	    {
 	      bJets.push_back(jp4);
-	      gen_bJets.push_back(gen_jp4);
 	      bJets_index.push_back(jet_index);
 	      ++sel_nbjets;
 	    }
 	  if (jet.flavor() == 1) 
 	    {
 	      lightJets.push_back(jp4);
-	      gen_lightJets.push_back(gen_jp4);
 	      lightJets_index.push_back(jet_index);
 	      ++sel_nwjets;
 	    }
 	  jet_index ++;
 	}
 
-      if(bJets.size() != 2 or lightJets.size() != 2)
-	continue;
       //event selected on reco level?
       bool preselected          (true);
       bool singleLepton         ((chTag=="E" or chTag=="M") and
@@ -493,7 +486,6 @@ void RunTopJetShape(TString filename,
       allPlots["puwgtctr"]->Fill(0.,1.0);
       if (!ev.isData) {
         // norm weight
-	printf("normH %s\n", normH ? "true" : "false");
         wgt  = (normH? normH->GetBinContent(1) : 1.0);
         
         // pu weight
@@ -512,7 +504,6 @@ void RunTopJetShape(TString filename,
           varweights.push_back(std::make_pair(1.+selSF.second, true));
           varweights.push_back(std::make_pair(1.-selSF.second, true));
           wgt *= trigSF.first*selSF.first;
-	  printf("trigSF.first %f, selSF.first %f\n", trigSF.first, selSF.first);
         }
         else varweights.insert(varweights.end(), 4, std::make_pair(1., true));
         
@@ -527,7 +518,6 @@ void RunTopJetShape(TString filename,
         varweights.push_back(std::make_pair(computeSemilepBRWeight(ev, semilepbr["semilepbrDown"], 0, true)/0.992632, true));
         
         // lhe weights
-	printf("norm coef %.9f, puWgt %f, coef %f\n", normH? normH->GetBinContent(1) : 1.0, puWgt, ev.g_nw>0 ? ev.g_w[0] : 1.0);
         wgt *= (ev.g_nw>0 ? ev.g_w[0] : 1.0);
         
         std::set<std::string> scalesForPlotter = {
@@ -589,8 +579,6 @@ void RunTopJetShape(TString filename,
           tCandsWcut.push_back(tCand);
         }
       }
-      printf("iev %d wgt %.9f\n", iev, wgt);
-      getchar();
       //control histograms
       for(size_t istage=0; istage<stageVec.size(); istage++) { 
         for(auto& channel : chTags) { 
@@ -639,8 +627,7 @@ void RunTopJetShape(TString filename,
 	  il++;
 	}
       
-      TLorentzVector lp4;
-      lp4.SetPtEtaPhiM(leptons[0].pt(), leptons[0].eta(), leptons[0].phi(), leptons[0].m());
+      TLorentzVector lp4 = leptons[0].p4();
 
       //fill MET
       TLorentzVector met(0.0, 0.0, 0.0, 0.0);
@@ -668,7 +655,7 @@ void RunTopJetShape(TString filename,
         tjsev.j_overlap[ij] = jets[ij].overlap();
         
         if (tjsev.reco_sel != 1) continue;
-        
+	/*       
         tjsev.j_mult_charged[ij] = getMult(jets[ij]);
         tjsev.j_mult_all[ij]     = getMult(jets[ij], true);
         tjsev.j_mult_puppi[ij]   = getMult(jets[ij], true, true);
@@ -762,7 +749,8 @@ void RunTopJetShape(TString filename,
         tjsev.j_c3_20_charged[ij] = getC(3, 2.0, jets[ij]);
         tjsev.j_c3_20_all[ij]     = getC(3, 2.0, jets[ij], true);
         tjsev.j_c3_20_puppi[ij]   = getC(3, 2.0, jets[ij], true, true);
-        
+        */
+	/*
         ht.fill("js_mult_charged", tjsev.j_mult_charged[ij], plotwgts);
         ht.fill("js_mult_puppi", tjsev.j_mult_puppi[ij], plotwgts);
         ht.fill("js_mult_all", tjsev.j_mult_all[ij], plotwgts);
@@ -838,13 +826,14 @@ void RunTopJetShape(TString filename,
         ht.fill("js_c3_20_charged", tjsev.j_c3_20_charged[ij], plotwgts);
         ht.fill("js_c3_20_puppi", tjsev.j_c3_20_puppi[ij], plotwgts);
         ht.fill("js_c3_20_all", tjsev.j_c3_20_all[ij], plotwgts);
+	*/
       }
       
       
       ///////////////////////
       // GENERATOR LEVEL  //
       /////////////////////
-      
+     
       if (isTTbar) {
         //////////////////////////
         // GEN LEVEL SELECTION //
@@ -854,6 +843,9 @@ void RunTopJetShape(TString filename,
         //decide the lepton channel at particle level
         std::vector<Particle> genVetoLeptons = selector.getGenLeptons(ev,15.,2.5);
         std::vector<Particle> genLeptons     = selector.getGenLeptons(ev,30.,2.1);
+        const TLorentzVector lp4 = leptons[0].p4();
+
+
         TString genChTag = selector.flagGenFinalState(ev, genLeptons);
         std::vector<Jet> genJets = selector.getGenJets();
         
@@ -861,12 +853,73 @@ void RunTopJetShape(TString filename,
         int sel_ngbjets = 0;
         int sel_ngwcand = 0;
 
-        for (auto& jet : genJets) {
-          if (jet.flavor() == 5) ++sel_ngbjets;
-          if (jet.flavor() == 1) ++sel_ngwcand;
-        }
-        
-        //event selected on gen level?
+	vector<TLorentzVector> gen_bJets, gen_lightJets;
+ 
+	//     vector<TLorentzVector> bJets_gen,lightJets_gen;
+
+	vector<unsigned short> gen_bJets_index, gen_lightJets_index;
+	unsigned char gen_jet_index = 0;
+	for (auto& jet : jets) 
+	  {
+	    TLorentzVector gen_jp4 = jet.p4();
+	    if (jet.flavor() == 5) 
+	      {
+		gen_bJets.push_back(gen_jp4);
+		gen_bJets_index.push_back(gen_jet_index);
+		++sel_ngbjets;
+	      }
+	    if (jet.flavor() == 1) 
+	      {
+		gen_lightJets.push_back(gen_jp4);
+		gen_lightJets_index.push_back(gen_jet_index);
+		++sel_ngwcand;
+	      }
+	    gen_jet_index ++;
+	  }
+	static const unsigned char gtop_size = 25;
+	TLorentzVector gen_nu; 
+	bool gen_nu_found = false;
+	for (unsigned char gtop_ind = 0; gtop_ind < gtop_size; gtop_ind ++)
+	  {
+	    if (abs(ev.gtop_id[gtop_ind]) == 12000 or abs(ev.gtop_id[gtop_ind]) == 14000)
+	      {
+		gen_nu.SetPtEtaPhiM(ev.gtop_pt[gtop_ind], ev.gtop_eta[gtop_ind], ev.gtop_phi[gtop_ind], ev.gtop_m[gtop_ind]);
+		if (gen_nu_found)
+		  {
+		    gen_nu_found = false;
+		    break;
+		  }
+		gen_nu_found = true;
+	      }
+	    
+	  }
+	if (gen_lightJets.size() == 2 and gen_bJets.size() == 2 and gen_nu_found)
+	  {
+	    printf("running GEN\n");
+	    CFAT_Core_cmssw core_gen;
+	    CFAT_Event event_gen;
+	    core_gen.SetEvent(ev);
+	    event_gen.SetCore(core_gen);
+	    core_gen.AddLightJets(gen_lightJets, gen_lightJets_index);
+	    core_gen.AddVector(Definitions::LEPTON, lp4);
+	    core_gen.AddVector(Definitions::NEUTRINO, gen_nu);
+	    core_gen.AddBJets(gen_bJets, gen_bJets_index);
+ 
+	    event_gen.CompleteVectors();
+	    event_gen.SetWeight(wgt);
+	    event_gen.SetEventNumber(iev);
+
+
+	    colour_flow_analysis_tool.SetEvent(event_gen);
+
+	    colour_flow_analysis_tool.SetWorkMode(Definitions::GEN);
+	    
+     
+
+	    colour_flow_analysis_tool.Work();
+	  }
+    
+      //event selected on gen level?
         bool genSingleLepton((genChTag=="E" or genChTag=="M") and
                              (genVetoLeptons.size() == 1)); // only selected lepton in veto collection
         if (sel_ngbjets==2 && sel_ngwcand>0 && genSingleLepton) tjsev.gen_sel = 1;
@@ -898,7 +951,7 @@ void RunTopJetShape(TString filename,
           if (tjsev.gen_sel != 1) continue;
           
           //calculate jet properties            
-          tjsev.gj_mult_charged[i] = getMult(genJets[i]);
+	  /*   tjsev.gj_mult_charged[i] = getMult(genJets[i]);
           tjsev.gj_mult_all[i]     = getMult(genJets[i], true);
           tjsev.gj_mult_puppi[i]   = getMult(genJets[i], true, true);
           
@@ -990,61 +1043,41 @@ void RunTopJetShape(TString filename,
           tjsev.gj_c3_20_charged[i] = getC(3, 2.0, genJets[i]);
           tjsev.gj_c3_20_all[i]     = getC(3, 2.0, genJets[i], true);
           tjsev.gj_c3_20_puppi[i]   = getC(3, 2.0, genJets[i], true, true);
+	  */
         }
       }
       else tjsev.gen_sel = -1;
       
       //proceed only if event is selected on gen or reco level
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
-      CFAT_Core_cmssw core_reco;
-      CFAT_Event event_reco;
-      core_reco.SetEvent(ev);
-      event_reco.SetCore(core_reco);
-      core_reco.AddLightJets(lightJets, lightJets_index);
- 
-      core_reco.AddVector(Definitions::LEPTON, lp4);
-      core_reco.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
-
-      core_reco.AddBJets(bJets, bJets_index);
- 
-      event_reco.CompleteVectors();
-      event_reco.SetWeight(wgt);
-      event_reco.SetEventNumber(iev);
-
-
-      colour_flow_analysis_tool.SetEvent(event_reco);
-
-      colour_flow_analysis_tool.SetWorkMode(Definitions::RECO);
-
-      //      printf("*** event %u ***** \n", iev);
-      colour_flow_analysis_tool.ResetMigrationValues();
-      colour_flow_analysis_tool.Work();
-      if (not ev.isData)
+      if(bJets.size() == 2 and lightJets.size() == 2)
 	{
-
-	  CFAT_Core_cmssw core_gen;
-	  CFAT_Event event_gen;
-	  core_gen.SetEvent(ev);
-	  event_gen.SetCore(core_gen);
-	  core_gen.AddLightJets(gen_lightJets, lightJets_index);
-	  core_gen.AddVector(Definitions::LEPTON, lp4);
-	  core_gen.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
-	  core_gen.AddBJets(gen_bJets, bJets_index);
+	  printf("running RECO\n");
+	  CFAT_Core_cmssw core_reco;
+	  CFAT_Event event_reco;
+	  core_reco.SetEvent(ev);
+	  event_reco.SetCore(core_reco);
+	  core_reco.AddLightJets(lightJets, lightJets_index);
  
-	  event_gen.CompleteVectors();
-	  event_gen.SetWeight(wgt);
-	  event_gen.SetEventNumber(iev);
+	  core_reco.AddVector(Definitions::LEPTON, lp4);
+	  core_reco.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
+
+	  core_reco.AddBJets(bJets, bJets_index);
+ 
+	  event_reco.CompleteVectors();
+	  event_reco.SetWeight(wgt);
+	  event_reco.SetEventNumber(iev);
 
 
-	  colour_flow_analysis_tool.SetEvent(event_gen);
+	  colour_flow_analysis_tool.SetEvent(event_reco);
 
-	  colour_flow_analysis_tool.SetWorkMode(Definitions::GEN);
-	    
-     
+	  colour_flow_analysis_tool.SetWorkMode(Definitions::RECO);
 
+	  //      printf("*** event %u ***** \n", iev);
+	  colour_flow_analysis_tool.ResetMigrationValues();
 	  colour_flow_analysis_tool.Work();
+	  //  outT->Fill();
 	}
-      //  outT->Fill();
     }
   
   //close input file
@@ -1103,8 +1136,7 @@ double calcGA(double beta, double kappa, Jet jet, bool includeNeutrals, bool use
   /*
   if (ga > 1. && beta == 1 && kappa == 1 && iptcut == 0 && icharge == 0) {
     std::cout << "ga(1,1) = " << ga << std::endl;
-    std::cout << "pt/sum(pt) deltaR" << std::endl;
-    double sumpt_test = 0;
+    std::cout << "pt/sum(pt) deltaR" << std::endlumpt_test = 0;
     for (auto p : jet.particles()) {
       if (p.p4().Pt() < (iptcut+1)*0.500) continue;
       if(p.charge()==0) continue;
@@ -1342,7 +1374,7 @@ void createTopJetShapeEventTree(TTree *t,TopJetShapeEvent_t &tjsev)
   t->Branch("reco_sel", &tjsev.reco_sel ,  "reco_sel/I");
   
   //observables
-  t->Branch("j_mult_charged",   tjsev.j_mult_charged,   "j_mult_charged[nj]/F");
+  /*  t->Branch("j_mult_charged",   tjsev.j_mult_charged,   "j_mult_charged[nj]/F");
   t->Branch("j_mult_puppi",   tjsev.j_mult_puppi,   "j_mult_puppi[nj]/F");
   t->Branch("j_mult_all",   tjsev.j_mult_all,   "j_mult_all[nj]/F");
   t->Branch("j_width_charged",   tjsev.j_width_charged,   "j_width_charged[nj]/F");
@@ -1494,7 +1526,7 @@ void createTopJetShapeEventTree(TTree *t,TopJetShapeEvent_t &tjsev)
   t->Branch("gj_c3_20_charged",   tjsev.gj_c3_20_charged,   "gj_c3_20_charged[ngj]/F");
   t->Branch("gj_c3_20_puppi",   tjsev.gj_c3_20_puppi,   "gj_c3_20_puppi[ngj]/F");
   t->Branch("gj_c3_20_all",   tjsev.gj_c3_20_all,   "gj_c3_20_all[ngj]/F");
-
+  */
 }
 
 //
@@ -1506,7 +1538,7 @@ void resetTopJetShapeEvent(TopJetShapeEvent_t &tjsev)
   for(int i=0; i<50; i++) {
     tjsev.j_pt[i]=0;   tjsev.j_eta[i]=0;   tjsev.j_phi[i]=0;   tjsev.j_m[i]=0; tjsev.j_flavor[i]=0; tjsev.j_overlap[i]=0; tjsev.j_gj[i]=-1;
     tjsev.gj_pt[i]=0;   tjsev.gj_eta[i]=0;   tjsev.gj_phi[i]=0;   tjsev.gj_m[i]=0; tjsev.gj_flavor[i]=0; tjsev.gj_overlap[i]=0; tjsev.gj_j[i]=-1;
-    
+    /*    
     tjsev.j_mult_charged[i]=-99;
     tjsev.j_mult_puppi[i]=-99;
     tjsev.j_mult_all[i]=-99;
@@ -1658,7 +1690,7 @@ void resetTopJetShapeEvent(TopJetShapeEvent_t &tjsev)
     tjsev.gj_c3_20_charged[i]=-99;
     tjsev.gj_c3_20_puppi[i]=-99;
     tjsev.gj_c3_20_all[i]=-99;
-
+    */
   } 
   
   tjsev.gen_sel = -1; tjsev.reco_sel = -1;

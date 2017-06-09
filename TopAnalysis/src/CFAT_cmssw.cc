@@ -31,7 +31,6 @@ void CFAT_cmssw::ResetMigrationValues()
 
 void CFAT_cmssw::StoreMigrationValues(double value)
 {
-  printf("Entering CFAT_cmssw::StoreMigrationValues\n");
   if (work_mode_ == RECO)
     {
       pull_angle_reco_ = value;
@@ -44,9 +43,6 @@ void CFAT_cmssw::StoreMigrationValues(double value)
       pull_angle_gen_plottable_ = true;
       weight_gen_ = GetEvent() -> weight_;
     }
-  printf("work mode %u pull_angle_reco %f pull_angle_reco_plottable %s weight_reco %.9f pull_angle_gen %f pull_angle_gen_plottable %s weight_gen %.9f\n", work_mode_, pull_angle_reco_,
-	 pull_angle_reco_plottable_ ? "true" : "false", weight_reco_, pull_angle_gen_, pull_angle_gen_plottable_ ? "true" : "false", weight_gen_);
-  printf("Exiting CFAT_cmssw::StoreMigrationValues\n");
 
   //printf("mode %u, value %f, weight %.9f\n", work_mode_, value, GetEvent() -> weight_);
   //getchar();
