@@ -274,6 +274,7 @@ void RunTopJetShape(TString filename,
   allPlots["js_c3_20_all"] = new TH1F("js_c3_20_all",";C_{ 3}^{ (2.0)} (all);Jets",30,0,0.15);
   */
   CFAT_cmssw colour_flow_analysis_tool; 
+  printf("Assigning histograms\n");
   AssignHistograms(allPlots);
   AssignSpecificHistograms2D(all2dPlots);
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
@@ -859,7 +860,7 @@ void RunTopJetShape(TString filename,
 
 	vector<unsigned short> gen_bJets_index, gen_lightJets_index;
 	unsigned char gen_jet_index = 0;
-	for (auto& jet : jets) 
+	for (auto& jet : genJets) 
 	  {
 	    TLorentzVector gen_jp4 = jet.p4();
 	    if (jet.flavor() == 5) 
@@ -893,13 +894,15 @@ void RunTopJetShape(TString filename,
 	      }
 	    
 	  }
+	colour_flow_analysis_tool.ResetMigrationValues();
 	if (gen_lightJets.size() == 2 and gen_bJets.size() == 2 and gen_nu_found)
 	  {
-	    printf("running GEN\n");
+	    //printf("Running GEN\n");
 	    CFAT_Core_cmssw core_gen;
 	    CFAT_Event event_gen;
 	    core_gen.SetEvent(ev);
 	    event_gen.SetCore(core_gen);
+ 
 	    core_gen.AddLightJets(gen_lightJets, gen_lightJets_index);
 	    core_gen.AddVector(Definitions::LEPTON, lp4);
 	    core_gen.AddVector(Definitions::NEUTRINO, gen_nu);
@@ -911,11 +914,11 @@ void RunTopJetShape(TString filename,
 
 
 	    colour_flow_analysis_tool.SetEvent(event_gen);
+	    //	    printf("cfat %p, core_gen %p, event_gen %p\n", & colour_flow_analysis_tool, &event_gen, &core_gen);
+	    //printf("CHECK cfat %p, core_gen %p, event_gen %p\n", event_gen.GetCFAT(), core_gen.GetCFATEvent(), event_gen.GetCore());
 
 	    colour_flow_analysis_tool.SetWorkMode(Definitions::GEN);
-	    
-     
-
+	   
 	    colour_flow_analysis_tool.Work();
 	  }
     
@@ -1052,7 +1055,7 @@ void RunTopJetShape(TString filename,
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
       if(bJets.size() == 2 and lightJets.size() == 2)
 	{
-	  printf("running RECO\n");
+	  //printf("running RECO\n");
 	  CFAT_Core_cmssw core_reco;
 	  CFAT_Event event_reco;
 	  core_reco.SetEvent(ev);
@@ -1074,10 +1077,11 @@ void RunTopJetShape(TString filename,
 	  colour_flow_analysis_tool.SetWorkMode(Definitions::RECO);
 
 	  //      printf("*** event %u ***** \n", iev);
-	  colour_flow_analysis_tool.ResetMigrationValues();
 	  colour_flow_analysis_tool.Work();
 	  //  outT->Fill();
 	}
+      colour_flow_analysis_tool.PlotMigrationValues();
+      printf("******************* !!! **********************\n");
     }
   
   //close input file
@@ -1098,6 +1102,7 @@ void RunTopJetShape(TString filename,
   for (auto& it : all2dPlots)  { 
     it.second->SetDirectory(fOut); it.second->Write(); 
   }
+  colour_flow_analysis_tool.WriteMigrationTree();
   fOut->Close();
 }
 

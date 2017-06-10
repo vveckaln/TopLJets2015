@@ -26,7 +26,6 @@ void CFAT_cmssw::ResetMigrationValues()
   pull_angle_gen_ = 0;
   pull_angle_gen_plottable_ = false;
   weight_gen_ = 0;
-  printf("******* Reset Migration Values *********\n");
 }
 
 void CFAT_cmssw::StoreMigrationValues(double value)
@@ -55,8 +54,26 @@ void CFAT_cmssw::PlotMigrationValues()
     {
       const double weight = (weight_reco_ + weight_gen_) * 0.5 ;
       Fill2D("Migration", pull_angle_reco_, pull_angle_gen_, weight);
-      printf("PLOTTED pull_angle_reco_ %f, pull_angle_gen_ %f, weight %f", pull_angle_reco_, pull_angle_gen_, weight);
+      //      printf("PLOTTED pull_angle_reco_ %f, pull_angle_gen_ %f, weight %.9f\n", pull_angle_reco_, pull_angle_gen_, weight);
       migration_tree_ -> Fill();
+    }
+  if (not pull_angle_reco_plottable_ and pull_angle_gen_plottable_)
+    {
+      pull_angle_reco_ = - 10;
+      const double weight = (weight_reco_ + weight_gen_) * 0.5 ;
+      Fill2D("Migration", pull_angle_reco_, pull_angle_gen_, weight);
+      //printf("PLOTTED pull_angle_reco_ %f, pull_angle_gen_ %f, weight %.9f\n", pull_angle_reco_, pull_angle_gen_, weight);
+      migration_tree_ -> Fill();
+
+    }
+  if (pull_angle_reco_plottable_ and not pull_angle_gen_plottable_)
+    {
+      pull_angle_gen_ = - 10;
+      const double weight = (weight_reco_ + weight_gen_) * 0.5 ;
+      Fill2D("Migration", pull_angle_reco_, pull_angle_gen_, weight);
+      //printf("PLOTTED pull_angle_reco_ %f, pull_angle_gen_ %f, weight %.9f\n", pull_angle_reco_, pull_angle_gen_, weight);
+      migration_tree_ -> Fill();
+
     }
   
 }
