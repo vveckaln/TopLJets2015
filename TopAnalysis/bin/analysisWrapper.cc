@@ -6,6 +6,8 @@
 #include "TopLJets2015/TopAnalysis/interface/TOP-HIForest.h"
 #include "TopLJets2015/TopAnalysis/interface/TOP-UE.h"
 #include "TopLJets2015/TopAnalysis/interface/TOPJetShape.h"
+#include "TopLJets2015/TopAnalysis/interface/TOPJetPull.h"
+
 #include "TopLJets2015/TopAnalysis/interface/TOPSynchExercise.h"
 
 #include "TH1F.h"
