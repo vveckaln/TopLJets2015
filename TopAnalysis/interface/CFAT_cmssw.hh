@@ -10,11 +10,13 @@ class CFAT_cmssw: public ColourFlowAnalysisTool
   Double_t pull_angle_gen_;
   bool pull_angle_gen_plottable_;
   Double_t weight_gen_;
+  TString file_tag_;
+
 public:
   CFAT_cmssw();
-  TString file_tag_;
   TTree * migration_tree_;
   TFile * migration_file_;
+  void SetMigrationOutput(const char *);
   virtual void WriteMigrationTree();
   virtual void ResetMigrationValues();
   virtual void StoreMigrationValues(double);

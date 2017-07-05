@@ -17,6 +17,11 @@ CFAT_cmssw::CFAT_cmssw():ColourFlowAnalysisTool()
   
 }
 
+void CFAT_cmssw::SetMigrationOutput(const char * migration_output)
+{
+  file_tag_ = TString(migration_output);
+}
+
 void CFAT_cmssw::ResetMigrationValues()
 {
 
@@ -95,6 +100,7 @@ void CFAT_cmssw::WriteMigrationTree()
 {
   //migration_tree_ -> SetBranchAddress("pull_angle_gen", &y);
   migration_file_ = TFile::Open(file_tag_, "RECREATE");
+  printf("Opened migration file %p %s\n", migration_file_, file_tag_.Data());
   migration_tree_ -> SetDirectory(migration_file_);
   printf("migration tree collected %lld entries\n", migration_tree_ -> GetEntries());
   migration_tree_ -> Write();
