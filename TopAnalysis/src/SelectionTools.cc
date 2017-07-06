@@ -17,11 +17,9 @@ SelectionTool::SelectionTool(TString dataset,bool debug,TH1 *triggerList) :
 }
 
 //
-bool SelectionTool::passMETFilters(MiniEvent_t &ev){
-  
+bool SelectionTool::passMETFilters(MiniEvent_t &ev){  
   if(ev.isData) return ev.met_filterBits==0xff;
-  else          return ((ev.met_filterBits>>2)&0x1) && ((ev.met_filterBits>>6) & 0x3);
-
+  else          return ((ev.met_filterBits&0xf)==0xf) && ((ev.met_filterBits>>5)==0x7);
 }
 
 //
@@ -38,15 +36,15 @@ std::vector<Particle> SelectionTool::getTopFlaggedLeptons(MiniEvent_t &ev){
     if(abs(ev.l_id[il])==11)
       {
 	if( pt>20 && eta<2.4 && ((pid>>7) &0x1))                                     topLeptonQualityFlagsWord |= (0x1 << PASSLLID);
-	if( pt>30 && eta<2.4 && ((pid>>4) &0x1))                                     topLeptonQualityFlagsWord |= (0x1 << PASSLID);
-	if( pt>10 && eta<2.4 && ((pid>>2) &0x1))                                     topLeptonQualityFlagsWord |= (0x1 << PASSLVETO);
+	if( pt>30 && eta<2.1 && ((pid>>4) &0x1))                                     topLeptonQualityFlagsWord |= (0x1 << PASSLID);
+	if( pt>15 && eta<2.4 && ((pid>>2) &0x1))                                     topLeptonQualityFlagsWord |= (0x1 << PASSLVETO);
 	if( pt>26 && eta<2.1 && ((pid>>5) &0x1) && ((pid>>4) &0x1)==0 && relIso>0.4) topLeptonQualityFlagsWord |= (0x1 << PASSLIDNONISO);
       }
     else
       {
 	if( pt>20 && eta<2.4 && ((pid>>4) &0x1) && relIso<0.15)  topLeptonQualityFlagsWord |= (0x1 << PASSLLID);
-	if( pt>26 && eta<2.1 && ((pid>>4) &0x1) && relIso<0.15)  topLeptonQualityFlagsWord |= (0x1 << PASSLID);
-	if( pt>10 && eta<2.4 && ((pid>>1) &0x1) && relIso<0.25)  topLeptonQualityFlagsWord |= (0x1 << PASSLVETO);
+	if( pt>30 && eta<2.1 && ((pid>>4) &0x1) && relIso<0.15)  topLeptonQualityFlagsWord |= (0x1 << PASSLID);
+	if( pt>15 && eta<2.4 && ((pid>>1) &0x1) && relIso<0.25)  topLeptonQualityFlagsWord |= (0x1 << PASSLVETO);
 	if( pt>26 && eta<2.1 && ((pid>>4) &0x1) && relIso>0.25)  topLeptonQualityFlagsWord |= (0x1 << PASSLIDNONISO);
       }
 
@@ -209,6 +207,7 @@ std::vector<Jet> SelectionTool::getGenJets(MiniEvent_t &ev, double minPt, double
       
     //fill jet constituents
     for (int p = 0; p < ev.ngpf; p++) {
+
       if (ev.gpf_g[p] == i) {
 	TLorentzVector pp4;
 	pp4.SetPtEtaPhiM(ev.gpf_pt[p],ev.gpf_eta[p],ev.gpf_phi[p],ev.gpf_m[p]);

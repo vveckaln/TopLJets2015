@@ -17,17 +17,18 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 using namespace std;
 
 //
-void RunToppPb(TString inFileName,
-	       TString outFileName,
-	       Int_t channelSelection,
-	       Int_t chargeSelection,
-	       TH1F *normH,
-	       Bool_t runSysts,
-	       TString era)
+void RunHin17002(TString inFileName,
+                 TString outFileName,
+                 Int_t channelSelection,
+                 Int_t chargeSelection,
+                 TH1F *normH,
+                 Bool_t runSysts,
+                 TString era)
 {		 
   
   Float_t JETPTTHRESHOLD=25;
@@ -40,9 +41,9 @@ void RunToppPb(TString inFileName,
     }
 
   bool isMC(false);
-  if(inFileName.Contains("/MC")) isMC=true;
+  if(inFileName.Contains("/MC") || inFileName.Contains("PYQUEN") || inFileName.Contains("Pyquen")) isMC=true;
   bool isTTJets(false);
-  if(inFileName.Contains("/MCTTNominal")) isTTJets=true;
+  if(inFileName.Contains("/MCTTNominal") || inFileName.Contains("TTBAR")) isTTJets=true;
 
   float totalEvtNorm(1.0);
   if(isMC && normH) totalEvtNorm=normH->GetBinContent(1);
@@ -97,11 +98,22 @@ void RunToppPb(TString inFileName,
   std::map<TString,TH1 *> histos;
   histos["wgtcounter"] = new TH1F("wgtcounter",";Weight;Events;",200,0,200);
   histos["fidcounter"] = new TH1F("fidcounter",";Weight;Events;",200,0,200);
+  histos["gencounter"] = new TH1F("gencounter",";Step;Events;",4, 1,5);
+  TString  genstep[4] = {"Initial", "#req 1Lepton", "#req 1Lepton fiducial", "#req 2jets"};
+  for (int i=1; i < histos["gencounter"]->GetNbinsX()+1; i++)
+    histos["gencounter"]->GetXaxis()->SetBinLabel(i,genstep[i-1]);
+  histos["recocounter"] = new TH1F("recocounter",";Step;Events;",8, 1,9);
+  TString  recostep[8] = {"Initial", "Trigger", "#req 1Lepton", "#equiv 1Lepton", "#req 4jets","#req 1 b-tags","#equiv 1 b-tag", "#equiv 2btag"};
+  for (int i=1; i < histos["recocounter"]->GetNbinsX()+1; i++)
+     histos["recocounter"]->GetXaxis()->SetBinLabel(i,recostep[i-1]);
   histos["trig"] = new TH1F("trig",";Trigger;Events",2,0,2);
   histos["lpt"]  = new TH1F("lpt",";Transverse momentum [GeV];Events",20.,0.,200.);
   histos["leta"] = new TH1F("leta",";Pseudo-rapidity;Events",20.,0.,2.1);
   histos["mt"]   = new TH1F("mt",";Transverse Mass [GeV];Events" ,20,0.,200.);
   histos["metpt"]= new TH1F("metpt",";Missing transverse energy [GeV];Events" ,20,0.,200.);
+  histos["drlj"] = new TH1F("drlj",";min#DeltaR(l,j) [GeV];Events" ,63,0.,6.3);
+  histos["drlb"] = new TH1F("drlb",";min#DeltaR(l,j) [GeV];Events" ,63,0.,6.3);
+  histos["ttevttype"] = new TH1F("ttevttype",";t#bar{t} event type;Events" ,9,0.,9.);
 
    //electron selection control plots
   for(int ireg=0; ireg<2; ireg++)
@@ -144,7 +156,7 @@ void RunToppPb(TString inFileName,
       histos["mjj_"+pf]    = new TH1F("mjj_"+pf,";Mass(j,j') [GeV];Events" ,20,0.,400.);
       histos["rankedmjj_"+pf]    = new TH1F("rankedmjj_"+pf,";Mass(j,j') [GeV];Events" ,20,0.,400.);
       histos["rankedq70mjj_"+pf]    = new TH1F("rankedq70mjj_"+pf,";Mass(j,j') [GeV];Events" ,20,0.,400.);
-      histos["drjj_"+pf]    = new TH1F("drjj_"+pf,";min#DeltaR(j,j') [GeV];Events" ,12,0.,6.3);
+      histos["drjj_"+pf]    = new TH1F("drjj_"+pf,";min#DeltaR(j,j') [GeV];Events" ,12,0.,6.3);      
       histos["ptjj_"+pf]    = new TH1F("ptjj_"+pf,";p_{T}(j,j') [GeV];Events" ,20,0.,300.);
       histos["etajj_"+pf]    = new TH1F("etajj_"+pf,";#eta(j,j');Events" ,10,-3.,3.);
       histos["mlb_"+pf]    = new TH1F("mlb_"+pf,";Mass(l,b) [GeV];Events" ,20,0.,300.);
@@ -201,7 +213,10 @@ void RunToppPb(TString inFileName,
     TTree* hiTree_p = (TTree*)inFile_p->Get("hiEvtAnalyzer/HiTree");
     TTree* hltTree_p = (TTree*)inFile_p->Get("hltanalysis/HltTree");
     TTree *pfCand_p  = (TTree *)inFile_p->Get("pfcandAnalyzer/pfTree");
-    
+    TTree *hiFJRho_p  = (TTree *)inFile_p->Get("hiFJRhoAnalyzer/t");
+    TTree *pseudotop_p = (TTree *)inFile_p->Get("topGenAnalyzer/t");
+    TTree *mc_p = (TTree *)inFile_p->Get("HiGenParticleAna/hi");
+
     //PF candidates
     std::vector<int> *pfId_p=0;
     std::vector<float> *pfPt_p=0,*pfEta_p=0,*pfPhi_p=0,*pfEnergy_p=0;
@@ -324,22 +339,23 @@ void RunToppPb(TString inFileName,
     lepTree_p->SetBranchAddress("eleCharge", &eleCharge_p);
 
     //gen-level variables
-    std::vector<int> *mcPID=0,*mcMomPID=0,*mcStatus=0;
+    std::vector<int> *mcPID=0,*mcStatus=0;
     std::vector<float> *mcPt=0,*mcEta=0,*mcPhi=0,*mcMass=0;
-    lepTree_p->SetBranchStatus("mcPID", 1);
-    lepTree_p->SetBranchStatus("mcPt", 1);
-    lepTree_p->SetBranchStatus("mcEta", 1);
-    lepTree_p->SetBranchStatus("mcPhi", 1);
-    lepTree_p->SetBranchStatus("mcMomPID", 1);
-    lepTree_p->SetBranchStatus("mcStatus", 1);
-    lepTree_p->SetBranchStatus("mcMass", 1);
-    lepTree_p->SetBranchAddress("mcMomPID", &mcMomPID);
-    lepTree_p->SetBranchAddress("mcStatus", &mcStatus);
-    lepTree_p->SetBranchAddress("mcPID", &mcPID);
-    lepTree_p->SetBranchAddress("mcPt", &mcPt);
-    lepTree_p->SetBranchAddress("mcEta", &mcEta);
-    lepTree_p->SetBranchAddress("mcPhi", &mcPhi);
-    lepTree_p->SetBranchAddress("mcMass", &mcMass);
+    if(mc_p)
+      {
+        mc_p->SetBranchStatus("pdg", 1);
+        mc_p->SetBranchStatus("sta", 1);
+        mc_p->SetBranchStatus("pt", 1);
+        mc_p->SetBranchStatus("eta", 1);
+        mc_p->SetBranchStatus("phi", 1);
+        mc_p->SetBranchStatus("mass", 1);
+        mc_p->SetBranchAddress("sta", &mcStatus);
+        mc_p->SetBranchAddress("pdg", &mcPID);
+        mc_p->SetBranchAddress("pt", &mcPt);
+        mc_p->SetBranchAddress("eta", &mcEta);
+        mc_p->SetBranchAddress("phi", &mcPhi);
+        mc_p->SetBranchAddress("mass", &mcMass);
+      }
 
     //jet variables
     const int maxJets = 5000;
@@ -347,40 +363,107 @@ void RunToppPb(TString inFileName,
     Float_t jtpt[maxJets],genpt[maxJets];
     Float_t jteta[maxJets],geneta[maxJets];
     Float_t jtphi[maxJets],genphi[maxJets];
+    Float_t jtarea[maxJets]; 
     Float_t jtm[maxJets]; 
     Float_t discr_csvV2[maxJets];
-    Float_t refpt[maxJets];
-    Int_t refparton_flavor[maxJets];
+    Float_t refpt[maxJets], refarea[maxJets], refdrjt[maxJets], gendrjt[maxJets];
+    Float_t jPfCHF[maxJets],jPfNHF[maxJets],jPfCEF[maxJets],jPfNEF[maxJets], jPfMUF[maxJets];//jet id
+    Int_t jPfCHM[maxJets],jPfNHM[maxJets], jPfCEM[maxJets],jPfNEM[maxJets], jPfMUM[maxJets]; //jet id
+    Int_t refparton_flavorForB[maxJets], refparton_flavor[maxJets], genmatchindex[maxJets];
     jetTree_p->SetBranchStatus("*", 0);
     jetTree_p->SetBranchStatus("ngen", 1);
     jetTree_p->SetBranchStatus("genpt", 1);
     jetTree_p->SetBranchStatus("genphi", 1);
     jetTree_p->SetBranchStatus("geneta", 1);
+    jetTree_p->SetBranchStatus("gendrjt", 1);
+    jetTree_p->SetBranchStatus("genmatchindex", 1);
     jetTree_p->SetBranchStatus("nref", 1);
     jetTree_p->SetBranchStatus("jtpt", 1);
     jetTree_p->SetBranchStatus("jtphi", 1);
     jetTree_p->SetBranchStatus("jteta", 1);
+    jetTree_p->SetBranchStatus("jtarea", 1);
     jetTree_p->SetBranchStatus("jtm", 1);
+    jetTree_p->SetBranchStatus("jtPfCHF", 1);
+    jetTree_p->SetBranchStatus("jtPfNHF", 1);
+    jetTree_p->SetBranchStatus("jtPfCEF", 1);
+    jetTree_p->SetBranchStatus("jtPfNEF", 1);
+    jetTree_p->SetBranchStatus("jtPfMUF", 1);
+    jetTree_p->SetBranchStatus("jtPfCHM", 1);
+    jetTree_p->SetBranchStatus("jtPfNHM", 1);
+    jetTree_p->SetBranchStatus("jtPfCEM", 1);
+    jetTree_p->SetBranchStatus("jtPfNEM", 1);
+    jetTree_p->SetBranchStatus("jtPfMUM", 1);
     jetTree_p->SetBranchStatus("discr_csvV2", 1);
     jetTree_p->SetBranchStatus("refpt", 1);
+    jetTree_p->SetBranchStatus("refarea", 1);
+    jetTree_p->SetBranchStatus("refdrjt", 1);
     jetTree_p->SetBranchStatus("refparton_flavorForB", 1);
+    jetTree_p->SetBranchStatus("refparton_flavor", 1);
     jetTree_p->SetBranchAddress("nref", &nref);
     jetTree_p->SetBranchAddress("jtpt", jtpt);
     jetTree_p->SetBranchAddress("jtphi", jtphi);
     jetTree_p->SetBranchAddress("jteta", jteta);
+    jetTree_p->SetBranchAddress("jtarea", jtarea);
     jetTree_p->SetBranchAddress("jtm", jtm);
+    jetTree_p->SetBranchAddress("jtPfCHF", jPfCHF);
+    jetTree_p->SetBranchAddress("jtPfNHF", jPfNHF);
+    jetTree_p->SetBranchAddress("jtPfCEF", jPfCEF);
+    jetTree_p->SetBranchAddress("jtPfNEF", jPfNEF);
+    jetTree_p->SetBranchAddress("jtPfMUF", jPfMUF);
+    jetTree_p->SetBranchAddress("jtPfCHM", jPfCHM);
+    jetTree_p->SetBranchAddress("jtPfNHM", jPfNHM);
+    jetTree_p->SetBranchAddress("jtPfCEM", jPfCEM);
+    jetTree_p->SetBranchAddress("jtPfNEM", jPfNEM);
+    jetTree_p->SetBranchAddress("jtPfMUM", jPfMUM);
     jetTree_p->SetBranchAddress("discr_csvV2", discr_csvV2);
     jetTree_p->SetBranchAddress("refpt", refpt);
-    jetTree_p->SetBranchAddress("refparton_flavorForB", refparton_flavor);
+    jetTree_p->SetBranchAddress("refarea", refarea);
+    jetTree_p->SetBranchAddress("refdrjt", refdrjt);
+    jetTree_p->SetBranchAddress("refparton_flavorForB", refparton_flavorForB);
+    jetTree_p->SetBranchAddress("refparton_flavor", refparton_flavor);
     jetTree_p->SetBranchAddress("ngen", &ngen);
     jetTree_p->SetBranchAddress("genpt", genpt);
     jetTree_p->SetBranchAddress("genphi", genphi);
     jetTree_p->SetBranchAddress("geneta", geneta);
+    jetTree_p->SetBranchAddress("gendrjt", gendrjt);
+    jetTree_p->SetBranchAddress("genmatchindex", genmatchindex);
+
+    //jet related variables from the hiFJRho tree
+    std::vector<float>* etaMin_hiFJRho_p = 0;
+    std::vector<float>* etaMax_hiFJRho_p = 0;
+    std::vector<float>* rho_hiFJRho_p = 0;
+    std::vector<float>* rhom_hiFJRho_p = 0;
+    std::vector<float>* rhoCorr_hiFJRho_p = 0;
+    std::vector<float>* rhomCorr_hiFJRho_p = 0;
+    std::vector<float>* rhoCorr1Bin_hiFJRho_p = 0;
+    std::vector<float>* rhomCorr1Bin_hiFJRho_p = 0;
+    
+    hiFJRho_p->SetBranchStatus("*", 0);
+    hiFJRho_p->SetBranchStatus("etaMin", 1);
+    hiFJRho_p->SetBranchStatus("etaMax", 1);
+    hiFJRho_p->SetBranchStatus("rho", 1);
+    hiFJRho_p->SetBranchStatus("rhom", 1);
+    hiFJRho_p->SetBranchStatus("rhoCorr", 1);
+    hiFJRho_p->SetBranchStatus("rhomCorr", 1);
+    hiFJRho_p->SetBranchStatus("rhoCorr1Bin", 1);
+    hiFJRho_p->SetBranchStatus("rhomCorr1Bin", 1);
+    
+    hiFJRho_p->SetBranchAddress("etaMin", &etaMin_hiFJRho_p);
+    hiFJRho_p->SetBranchAddress("etaMax", &etaMax_hiFJRho_p);
+    hiFJRho_p->SetBranchAddress("rho", &rho_hiFJRho_p);
+    hiFJRho_p->SetBranchAddress("rhom", &rhom_hiFJRho_p);
+    hiFJRho_p->SetBranchAddress("rhoCorr", &rhoCorr_hiFJRho_p);
+    hiFJRho_p->SetBranchAddress("rhomCorr", &rhomCorr_hiFJRho_p);
+    hiFJRho_p->SetBranchAddress("rhoCorr1Bin", &rhoCorr1Bin_hiFJRho_p);
+    hiFJRho_p->SetBranchAddress("rhomCorr1Bin", &rhomCorr1Bin_hiFJRho_p);
+
+
 
     //event variables
     UInt_t run_, lumi_;
     ULong64_t evt_;
     Int_t hiBin_;
+    Float_t hiHFplus_, hiHFminus_, hiHFplusEta4_, hiHFminusEta4_;
     Float_t vz_;
     Float_t weight;
     std::vector<float> *ttbar_w_p=0;
@@ -389,6 +472,10 @@ void RunToppPb(TString inFileName,
     hiTree_p->SetBranchStatus("evt", 1);
     hiTree_p->SetBranchStatus("lumi", 1);
     hiTree_p->SetBranchStatus("hiBin", 1);
+    hiTree_p->SetBranchAddress("hiHFplus", &hiHFplus_);
+    hiTree_p->SetBranchAddress("hiHFminus", &hiHFminus_);
+    hiTree_p->SetBranchAddress("hiHFplusEta4", &hiHFplusEta4_);
+    hiTree_p->SetBranchAddress("hiHFminusEta4", &hiHFminusEta4_);
     hiTree_p->SetBranchStatus("vz", 1);
     hiTree_p->SetBranchStatus("weight", 1);
     hiTree_p->SetBranchStatus("ttbar_w",1);
@@ -399,7 +486,7 @@ void RunToppPb(TString inFileName,
     hiTree_p->SetBranchAddress("vz", &vz_);
     hiTree_p->SetBranchAddress("weight", &weight);
     hiTree_p->SetBranchAddress("ttbar_w",&ttbar_w_p);
-  
+
     //trigger
     int trig = 0;
     std::string triggerName;
@@ -415,6 +502,22 @@ void RunToppPb(TString inFileName,
     
     hltTree_p->SetBranchStatus(triggerName.data(),1);
     hltTree_p->SetBranchAddress(triggerName.data(),&trig);
+
+    //pseudo-top (if available)
+    std::vector<int> *pt_pdgid=0;
+    std::vector<double> *pt_pt=0,*pt_eta=0,*pt_phi=0, *pt_m=0;
+    std::vector<std::vector<int> > *pt_daughterArr=0;
+
+    if(pseudotop_p)
+      {
+        pseudotop_p->SetBranchStatus("*", 1);
+        pseudotop_p->SetBranchAddress("gtop_id", &pt_pdgid);
+        pseudotop_p->SetBranchAddress("gtop_pt", &pt_pt);
+        pseudotop_p->SetBranchAddress("gtop_eta", &pt_eta);
+        pseudotop_p->SetBranchAddress("gtop_phi", &pt_phi);
+        pseudotop_p->SetBranchAddress("gtop_mass", &pt_m);
+        pseudotop_p->SetBranchAddress("gtop_daughterArr", &pt_daughterArr);
+      }
     
     Int_t nEntries = (Int_t)lepTree_p->GetEntries();
     
@@ -428,9 +531,9 @@ void RunToppPb(TString inFileName,
 	    printf("\r [%d/%d] done",entry,nEntries);
 	    cout << flush;
 	  }
-
+	histos["recocounter"]->Fill(1);
 	//reset summary tree
-	ljev.nj=0; ljev.ngj=0; ljev.ngp=0; ljev.nb=0; ljev.l_id=0; ljev.w=0;
+	ljev.nj=0; ljev.ngj=0; ljev.ngp=0; ljev.nb=0; ljev.l_id=0; ljev.w=0;	ljev.npt=0;
 
 	//readout this event
 	lepTree_p->GetEntry(entry);
@@ -438,11 +541,32 @@ void RunToppPb(TString inFileName,
 	hiTree_p->GetEntry(entry);
 	hltTree_p->GetEntry(entry);
 	pfCand_p->GetEntry(entry);
+	hiFJRho_p->GetEntry(entry);
+        if(mc_p) mc_p->GetEntry(entry);
+
+	//pseudo-top
+	if(pseudotop_p)
+	  {
+	    pseudotop_p->GetEntry(entry);
+	    ljev.npt=pt_pdgid->size();
+	    for(size_t ipt=0; ipt<pt_pdgid->size(); ipt++)
+	      {
+		ljev.pt_id[ipt]= ipt;
+		ljev.pt_pdgid[ipt]= (*pt_pdgid)[ipt];
+		ljev.pt_pt[ipt]= (*pt_pt)[ipt];
+		ljev.pt_eta[ipt]= (*pt_eta)[ipt];
+		ljev.pt_phi[ipt]= (*pt_phi)[ipt];
+		ljev.pt_m[ipt]= (*pt_m)[ipt];
+	      }
+	  }
+
 
 	//assign an event weight
 	float evWeight(1.0);
+        float ttevtype(0);
 	if(isMC)
 	  {
+	    histos["gencounter"]->Fill(1);
 	    if(ttbar_w_p->size()) evWeight = ttbar_w_p->at(0);
 	    evWeight *= totalEvtNorm;
 
@@ -452,22 +576,24 @@ void RunToppPb(TString inFileName,
 	      {
 		for(size_t imc=0; imc<mcPID->size(); imc++)
 		  {
-		    int abspid=abs(mcPID->at(imc));		
-		    int mompid=abs(mcMomPID->at(imc));
 		    int status=abs(mcStatus->at(imc));
-		    
+		    int abspid=abs(mcPID->at(imc));		
 		    TLorentzVector p4;
 		    p4.SetPtEtaPhiM(mcPt->at(imc),mcEta->at(imc),mcPhi->at(imc),mcMass->at(imc));
-
-		    if(mompid==6 && abspid==24 && status==22 && ljev.ngp<20)
-		      {
-			ljev.gp_pt[ljev.ngp]=p4.Pt();
-			ljev.gp_eta[ljev.ngp]=p4.Eta();
-			ljev.gp_phi[ljev.ngp]=p4.Phi();
-			ljev.gp_m[ljev.ngp]=p4.M();
-			ljev.ngp++;		    
-		      }
-
+                    //hardprocess
+		    if(status==3 && (abspid<=6 || abspid==24 || abspid==11 || abspid==13))
+                      {
+                        {
+                          ljev.gp_pdgid[ljev.ngp]=mcPID->at(imc);
+                          ljev.gp_pt[ljev.ngp]=p4.Pt();
+                          ljev.gp_eta[ljev.ngp]=p4.Eta();
+                          ljev.gp_phi[ljev.ngp]=p4.Phi();
+                          ljev.gp_m[ljev.ngp]=p4.M();
+                          ljev.ngp++;
+                          if(abspid==11 || abspid==13) ttevtype+=1;
+                        }
+                      }
+                    
 		    //final state leptons
 		    if(status!=1) continue;
 		    if(channelSelection==13 && abspid!=13) continue;
@@ -483,9 +609,11 @@ void RunToppPb(TString inFileName,
 		      }
 		  }
 	      }
-	    
+
+	    if(selGenLeptons.size()>0 || otherLeptons.size()>0)histos["gencounter"]->Fill(2);
 	    if(selGenLeptons.size()>0)
 	      {
+		histos["gencounter"]->Fill(3);
 		ljev.gl_pt=selGenLeptons[0].Pt();
 		ljev.gl_eta=selGenLeptons[0].Eta();
 		ljev.gl_phi=selGenLeptons[0].Phi();
@@ -508,6 +636,8 @@ void RunToppPb(TString inFileName,
 		    ljev.gj_eta[ljev.ngj]=p4.Eta();
 		    ljev.gj_phi[ljev.ngj]=p4.Phi();
 		    ljev.gj_m[ljev.ngj]=p4.M();
+		    ljev.gj_dr[ljev.ngj]=gendrjt[imcj];
+		    ljev.gj_index[ljev.ngj]=genmatchindex[imcj];
 		    ljev.ngj++;
 		  }
 
@@ -515,6 +645,7 @@ void RunToppPb(TString inFileName,
 
 	    //check if it passes the gen level acceptance
 	    bool passFid(nGenJets>=2 && selGenLeptons.size()==1);
+	    if(passFid) histos["gencounter"]->Fill(4);
 	    for(size_t iw=0; iw<ttbar_w_p->size(); iw++)
 	      {
 		histos["wgtcounter"]->Fill(iw,ttbar_w_p->at(iw));
@@ -524,8 +655,9 @@ void RunToppPb(TString inFileName,
 
 	//require trigger for the event
 	histos["trig"]->Fill(trig,evWeight);
-	if(trig==0) continue;
+	if(!isMC && trig==0) continue;
 
+	histos["recocounter"]->Fill(2);
 
 	//select good muons
 	//cf. details in https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2
@@ -727,13 +859,25 @@ void RunToppPb(TString inFileName,
 	if(channelSelection==1300)
 	  {
 	    if(tightMuonsNonIso.size()==0) continue;
+	    histos["recocounter"]->Fill(3);
 	    if(tightMuons.size()+looseMuons.size()+mediumElectrons.size()+vetoElectrons.size()!=0) continue;
+	    histos["recocounter"]->Fill(4);
 	    tightMuons=tightMuonsNonIso;
 	  }
 	if(channelSelection==13)
 	  {
-	    if(tightMuons.size()!=1) continue; //=1 tight muon	
-	    if(looseMuons.size()+mediumElectrons.size()+vetoElectrons.size()!=0) continue; //no extra leptons
+            histos["ttevttype"]->Fill(ttevtype);
+            bool fail2ndLepton(false);
+            if(tightMuons.size()) histos["ttevttype"]->Fill(ttevtype+3);
+	    if(tightMuons.size()!=1) fail2ndLepton=true;
+	    if(!fail2ndLepton) histos["recocounter"]->Fill(3);
+	    if(looseMuons.size()+mediumElectrons.size()+vetoElectrons.size()!=0) fail2ndLepton=true;
+            if(fail2ndLepton)
+              {
+                histos["ttevttype"]->Fill(ttevtype+6);
+                continue;
+              }
+	    histos["recocounter"]->Fill(4);
 	    if(chargeSelection!=0)
 	      {
 		if(muonCharge[0]!=chargeSelection) continue;
@@ -742,9 +886,11 @@ void RunToppPb(TString inFileName,
 	//electrons
 	EffCorrection_t eselSF(1.0,0.0);
 	if(channelSelection==1100)
-	  {
+	  {            
 	    if(mediumElectronsFailId.size()==0) continue;
+	     histos["recocounter"]->Fill(3);
 	    if(mediumElectrons.size()+vetoElectrons.size()+tightMuons.size()+looseMuons.size()!=0) continue;
+	    histos["recocounter"]->Fill(4);
 	    mediumElectrons=mediumElectronsFailId;
 
 	    //from Georgios studies, endcap electron fakes would still benefit from a ~15% extra weight
@@ -752,8 +898,18 @@ void RunToppPb(TString inFileName,
 	  }
 	if(channelSelection==11)
 	  {
-	    if(mediumElectrons.size()!=1) continue; //=1 medium electron
-	    if(vetoElectrons.size()+tightMuons.size()+looseMuons.size()!=0) continue; //no extra leptons
+            histos["ttevttype"]->Fill(ttevtype);
+            bool fail2ndLepton(false);
+            if(mediumElectrons.size()) histos["ttevttype"]->Fill(ttevtype+3);
+            if(mediumElectrons.size()!=1) fail2ndLepton=true;
+	    if(!fail2ndLepton) histos["recocounter"]->Fill(3);
+	    if(vetoElectrons.size()+tightMuons.size()+looseMuons.size()!=0)fail2ndLepton=true;
+            if(fail2ndLepton)
+              {
+                histos["ttevttype"]->Fill(ttevtype+6);
+                continue;
+              }
+	    histos["recocounter"]->Fill(4);
 	    if(chargeSelection!=0)
 	      {
 		if(elCharge[0]!=chargeSelection) continue;
@@ -764,7 +920,8 @@ void RunToppPb(TString inFileName,
 	    eselSF.second=sqrt(pow(0.03,2)+pow(eselSF.second,2));
 	    evWeight*=eselSF.first;
 	  }
-	
+
+
 	// combined leptons
 	std::vector<TLorentzVector> goodLeptons;
 	goodLeptons = (channelSelection==1300 || channelSelection==13) ?  tightMuons : mediumElectrons;  
@@ -801,31 +958,66 @@ void RunToppPb(TString inFileName,
 	//jet counting
 	typedef std::vector<TLorentzVector> JetColl_t;
 	std::vector<JetColl_t> bJets(9),lightJets(9);
-	for(Int_t jetIter = 0; jetIter < nref; jetIter++)
+	for (Int_t jetIter = 0; jetIter < nref; jetIter++)
 	  {
 	    //cross clean with trigger muon
 	    TLorentzVector jp4(0,0,0,0);
 	    jp4.SetPtEtaPhiM(jtpt[jetIter],jteta[jetIter],jtphi[jetIter],jtm[jetIter]);
+
+	    Int_t jflav(abs(refparton_flavor[jetIter]));	    
+
+	    float UE_correction=0;
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(0) && jteta[jetIter]<etaMax_hiFJRho_p->at(0))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(0);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(1) && jteta[jetIter]<etaMax_hiFJRho_p->at(1))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(1);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(2) && jteta[jetIter]<etaMax_hiFJRho_p->at(2))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(2);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(3) && jteta[jetIter]<etaMax_hiFJRho_p->at(3))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(3);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(4) && jteta[jetIter]<etaMax_hiFJRho_p->at(4))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(4);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(5) && jteta[jetIter]<etaMax_hiFJRho_p->at(5))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(5);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(6) && jteta[jetIter]<etaMax_hiFJRho_p->at(6))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(6);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(7) && jteta[jetIter]<etaMax_hiFJRho_p->at(7))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(7);
+	    if (jteta[jetIter]>etaMin_hiFJRho_p->at(8) && jteta[jetIter]<etaMax_hiFJRho_p->at(8))
+	      UE_correction= rhoCorr1Bin_hiFJRho_p->at(8);
+
+	    //apply UE event subtraction for jet pT
+	    if(!isMC)
+	      jp4.SetPtEtaPhiM(jtpt[jetIter]-UE_correction*jtarea[jetIter],jteta[jetIter],jtphi[jetIter],jtm[jetIter]);
+	    else
+	      jp4.SetPtEtaPhiM(jtpt[jetIter],jteta[jetIter],jtphi[jetIter],jtm[jetIter]);
 	    if(jp4.DeltaR(goodLeptons[0])<0.4) continue;
 	    
 	    //in tracker region
 	    if(TMath::Abs(jp4.Eta())>2.4) continue;
-
+            float drlj(jp4.DeltaR(goodLeptons[0]));
+	    if(jp4.Pt()>JETPTTHRESHOLD)
+              {
+                if(jflav==5) histos["drlb"]->Fill(drlj);
+                histos["drlj"]->Fill(drlj);
+              }
+	    if(drlj<0.4) continue;
+	    
 	    //systematic variations
-	    Int_t jflav(abs(refparton_flavor[jetIter]));	    
 	    bool passCSVL(discr_csvV2[jetIter]>0.460), passCSVM(discr_csvV2[jetIter]>0.8),passCSVMUp(passCSVM),passCSVMDn(passCSVM);	    
 	    std::vector<float> jerSmear(3,1.0),jesScaleUnc(3,1.0);
 	    if(isMC)
 	      {
 		//jet energy resolution smearing	
-		if(refpt[jetIter]>0) jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Eta(),refpt[jetIter]);
-		TLorentzVector rawjp4(jp4);
-		jp4 *= jerSmear[0];
+		//if(refpt[jetIter]>0) jerSmear=getJetResolutionScales(jp4.Pt(),jp4.Eta(),refpt[jetIter]);
+		//TLorentzVector rawjp4(jp4);
+		//jp4 *= jerSmear[0];
 
 		jesScaleUnc[1]=1.028;
 		jesScaleUnc[2]=0.972;
 
 		//b-tagging
+		/*
 		float jptforBtag(jp4.Pt()>1000. ? 999. : jp4.Pt());
 		if(jflav==5)
 		  {
@@ -844,7 +1036,8 @@ void RunToppPb(TString inFileName,
 		    float expEff    = expBtagEff["udsg"]->Eval(jptforBtag); 
 		    myBTagSFUtil.modifyBTagsWithSF(passCSVMUp,1.3,expEff);	
 		    myBTagSFUtil.modifyBTagsWithSF(passCSVMDn,0.7,expEff);	
-		  }		
+		  }
+		*/
 	      }
 	    
 	    if(jp4.Pt()>JETPTTHRESHOLD)
@@ -860,6 +1053,22 @@ void RunToppPb(TString inFileName,
 		    ljev.j_phi[ljev.nj] =jp4.Phi();
 		    ljev.j_m[ljev.nj]   =jp4.M();
 		    ljev.j_btag[ljev.nj]=passCSVL | (passCSVM<<1);
+		    ljev.j_area[ljev.nj]= jtarea[jetIter];
+		    ljev.j_refpt[ljev.nj]= refpt[jetIter];
+		    ljev.j_refarea[ljev.nj]= refarea[jetIter];
+		    ljev.j_refdr[ljev.nj]= refdrjt[jetIter]; 
+		    ljev.j_refparton_flavorForB[ljev.nj]= refparton_flavorForB[jetIter];
+		    ljev.j_refparton_flavor[ljev.nj]= refparton_flavor[jetIter];
+		    ljev.j_PfCHF[ljev.nj]=jPfCHF[jetIter];
+		    ljev.j_PfNHF[ljev.nj]=jPfNHF[jetIter];
+		    ljev.j_PfCEF[ljev.nj]=jPfCEF[jetIter];
+		    ljev.j_PfNEF[ljev.nj]=jPfNEF[jetIter];
+		    ljev.j_PfMUF[ljev.nj]=jPfMUF[jetIter];
+		    ljev.j_PfCHM[ljev.nj]=jPfCHM[jetIter];
+		    ljev.j_PfNHM[ljev.nj]=jPfNHM[jetIter];
+		    ljev.j_PfCEM[ljev.nj]=jPfCEM[jetIter];
+		    ljev.j_PfNEM[ljev.nj]=jPfNEM[jetIter];
+		    ljev.j_PfMUM[ljev.nj]=jPfMUM[jetIter];
 		    ljev.nj++;
 		  }
 
@@ -956,6 +1165,14 @@ void RunToppPb(TString inFileName,
 	    Int_t njets(nljets+nbtags);
 	    
 	    if(nljets<2) continue;
+	    if (njets>=4)
+	      histos["recocounter"]->Fill(5);
+	    if (njets>=4&&nbtags>=1)
+	      histos["recocounter"]->Fill(6);
+	    if (njets>=4&&nbtags==1)
+	      histos["recocounter"]->Fill(7);
+	    if (njets>=4&&nbtags==2)
+	      histos["recocounter"]->Fill(8);
 	    TString pf(Form("%db",TMath::Min(nbtags,2)));
 	    
 	    //jet-related quantities
@@ -1007,6 +1224,12 @@ void RunToppPb(TString inFileName,
 		ljev.run=run_;
 		ljev.lumi=lumi_;
 		ljev.event=evt_;
+
+		//useful for UE dependecy
+		ljev.hiHFplus=hiHFplus_;
+		ljev.hiHFminus=hiHFminus_;
+		ljev.hiHFplusEta4=hiHFplusEta4_;
+		ljev.hiHFminusEta4=hiHFminusEta4_;
 
 		//number of tracks and tracks overlapping with hard process objects
 		ljev.ntracks=0;

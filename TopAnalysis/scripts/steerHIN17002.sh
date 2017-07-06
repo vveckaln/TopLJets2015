@@ -19,17 +19,30 @@ lumi=27.4
 RED='\e[31m'
 NC='\e[0m'
 case $WHAT in
+    MCSEL)
+	echo -e "[ ${RED} Sending out jobs to batch ${NC} ]"
+	commonOpts="--era era2016pPb -m TOP-HIForest::RunHin17002 -q local"	
+        for ch in E Mu; do
+            inFile=/store/group/phys_top/gkrintir/TopHI/TTbar_pPb-EmbEPOS_8p16_Pyquen_pPb816Summer16DR-pPbEmb_80X_mcRun2_pA_v4-v1v1pPb/TTbar_pPb-EmbEPOS_8p16_Pyquen/crab_TopHI/170613_210548/0000
+            chid=11
+            if [[ $ch == *"Mu"* ]]; then
+                chid=13;
+            fi
+	    python scripts/runLocalAnalysis.py -i ${inFile} -q local -o ${outdir}/analysis_pPb/Pyquen_ttbar ${commonOpts} --ch ${chid};
+	done
+        ;;
+
     SEL )
 	echo -e "[ ${RED} Sending out jobs to batch ${NC} ]"
 
-	commonOpts="--era era5TeV -m TOP-HIForest::RunToppPb"	
+	commonOpts="--era era5TeV -m TOP-HIForest::RunHin17002"	
 	inDir=/store/cmst3/group/top/mverweij/PA8TeV/data/PASingleMuon/crab_FilteredPASingleMuHighPt_PPb_v4/161219_092237/
 	a=(`eos ls ${inDir}`)
 	for i in ${a[@]}; do
 	    python scripts/runLocalAnalysis.py -i ${inDir}/${i}/ -q ${queue} -o ${outdir}/analysis_pPb         ${commonOpts} --ch 13;
 	    python scripts/runLocalAnalysis.py -i ${inDir}/${i}/ -q ${queue} -o ${outdir}/analysis_pPb_noniso  ${commonOpts} --ch 1300;
 	done
-
+g
 	inDir=/store/cmst3/group/top/mverweij/PA8TeV/data/PASingleMuon/crab_FilteredPASingleMuHighPt_PbP_v6/170105_162741/
 	a=(`eos ls ${inDir}`)
         for i in ${a[@]}; do

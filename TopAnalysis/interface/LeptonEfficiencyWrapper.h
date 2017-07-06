@@ -21,6 +21,8 @@ class LeptonEfficiencyWrapper
   EffCorrection_t getTriggerCorrection(std::vector<Particle> &leptons,TString period = "");
   EffCorrection_t getOfflineCorrection(int pdgId,float pt,float eta,TString period = "");
   EffCorrection_t getOfflineCorrection(Particle lepton,TString period = "");
+  EffCorrection_t getOfflineIsoHFCorrection(int pdgId,float hf);
+  EffCorrection_t getTrackingCorrection(int nvtx,TString period = "");
   ~LeptonEfficiencyWrapper();  
  private:
   void init(TString era);

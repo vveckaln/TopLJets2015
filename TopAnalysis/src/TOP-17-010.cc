@@ -8,8 +8,7 @@
 #include <TGraphAsymmErrors.h>
 
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
-#include "TopLJets2015/TopAnalysis/interface/TOP-16-006.h"
-#include "TopLJets2015/TopAnalysis/interface/TOP-16-019.h"
+#include "TopLJets2015/TopAnalysis/interface/TOP-17-010.h"
 #include "TopLJets2015/TopAnalysis/interface/LeptonEfficiencyWrapper.h"
 #include "TopLJets2015/TopAnalysis/interface/CorrectionTools.h"
 
@@ -24,7 +23,7 @@ using namespace std;
 
 
 //
-void RunTop16019(TString filename,
+void RunTop17010(TString filename,
 		 TString outname,
 		 Int_t channelSelection, 
 		 Int_t chargeSelection, 
@@ -34,18 +33,10 @@ void RunTop16019(TString filename,
 		 TString era)
 {
 
-  if(filename.Contains("SingleElectron") || filename.Contains("SingleMuon"))
-    {
-      cout << "Bailing out from analysing " << filename << endl;
-      return;
-    }
-
+  //check file type from name
+  bool isDataFile(filename.Contains("Data"));
+  if(isDataFile) runSysts=false;
   bool isTTbar( filename.Contains("_TTJets") );
-
-  //LEPTON EFFICIENCIES
-  LeptonEfficiencyWrapper lepEffH(filename.Contains("Data13TeV"),era);
-  bool hardCodedLES(era=="era2015");
-
 
   //prepare output
   TopWidthEvent_t twev;
@@ -60,50 +51,90 @@ void RunTop16019(TString filename,
   //READ TREE FROM FILE
   MiniEvent_t ev;
   TFile *f = TFile::Open(filename);
-  TH1 *puTrue=(TH1 *)f->Get("analysis/putrue");
-  puTrue->SetDirectory(0);
-  puTrue->Scale(1./puTrue->Integral());
+  TH1 *genPU=(TH1 *)f->Get("analysis/putrue");
+  TH1 *triggerList=(TH1 *)f->Get("analysis/triggerList");
   TTree *t = (TTree*)f->Get("analysis/data");
   attachToMiniEventTree(t,ev,true);
   Int_t nentries(t->GetEntriesFast());
-  t->GetEntry(0);
-  bool requireEETriggers(false);
-  if(ev.isData && filename.Contains("DoubleEG"))       requireEETriggers=true;
-  bool requireMMTriggers(false);
-  if(ev.isData && filename.Contains("DoubleMuon"))     requireMMTriggers=true;
-  bool requireEMTriggers(false);
-  if(ev.isData && filename.Contains("MuonEG"))         requireEMTriggers=true;
-  //bool vetoEtrigger(false),vetoMtrigger(false);
-  //if(ev.isData && filename.Contains("SingleElectron")) vetoMtrigger=true;
 
+  //EVENT SELECTION WRAPPER
+  SelectionTool evsel(filename,false,triggerList);
 
-  //PILEUP WEIGHTING
-  std::vector<TGraph *>puWgtGr;
-  if(!ev.isData) puWgtGr=getPileupWeights(era,puTrue);
-    
-  //B-TAG CALIBRATION
-  std::map<BTagEntry::JetFlavor, BTagCalibrationReader *> btvsfReaders  = getBTVcalibrationReaders(era,BTagEntry::OP_MEDIUM);
-  std::map<BTagEntry::JetFlavor, TGraphAsymmErrors *>    expBtagEffPy8 = readExpectedBtagEff(era);
-  TString btagExpPostFix("");
-  if(isTTbar)
-    {
-      if(filename.Contains("_herwig")) btagExpPostFix="_herwig";
-      if(filename.Contains("_scaleup")) btagExpPostFix="_scaleup";
-      if(filename.Contains("_scaledown")) btagExpPostFix="_scaledown";
-    }
-  std::map<BTagEntry::JetFlavor, TGraphAsymmErrors *> expBtagEff=readExpectedBtagEff(era,btagExpPostFix);
-  BTagSFUtil myBTagSFUtil;
+  //CORRECTIONS
+  std::vector<RunPeriod_t> runPeriods=getRunPeriods(era);
 
-  //jet energy uncertainties
-  TString jecUncUrl(era+"/jecUncertaintySources_AK4PFchs.txt");
-  gSystem->ExpandPathName(jecUncUrl);
-  JetCorrectorParameters *jecParam = new JetCorrectorParameters(jecUncUrl.Data(),"Total");
-  JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty( *jecParam );
-
-  //for data only get the lumi per run map                                                                                                                                                                         
+  //lumi
+  TH1F *ratevsrunH=0;
   std::map<Int_t,Float_t> lumiMap;
-  if(ev.isData) lumiMap=lumiPerRun(era);
+  if( isDataFile )  
+    {
+      std::pair<std::map<Int_t,Float_t>, TH1F *> result=parseLumiInfo(era);
+      lumiMap   = result.first;
+      ratevsrunH = result.second;
+    }
 
+  //pileup
+  std::map<TString, std::vector<TGraph *> > puWgtGr;
+  if( !isDataFile ) puWgtGr=getPileupWeightsMap(era,genPU);
+
+  //b-fragmentation
+  float bfragWgt(1.0);
+
+  //lepton efficiencies
+  LeptonEfficiencyWrapper lepEffH(isDataFile,era);
+
+  //b-tagging
+  BTagSFUtil myBTagSFUtil;
+  std::map<TString, std::map<BTagEntry::JetFlavor, BTagCalibrationReader *> > btvsfReaders = getBTVcalibrationReadersMap(era, BTagEntry::OP_MEDIUM);
+  std::map<BTagEntry::JetFlavor, TGraphAsymmErrors *> expBtagEff = readExpectedBtagEff(era);
+
+  //JET ENERGY UNCERTAINTIES    
+  TString jecUncUrl(era+"/Summer16_23Sep2016V4_MC_UncertaintySources_AK4PFchs.txt");
+  gSystem->ExpandPathName(jecUncUrl);
+  std::vector<TString> jecUncSrcs;
+  std::vector<JetCorrectionUncertainty*> jecUncs;
+  if(runSysts)
+    {
+      jecUncSrcs.push_back("AbsoluteStat");        
+      jecUncSrcs.push_back("AbsoluteScale");        
+      jecUncSrcs.push_back("AbsoluteMPFBias");        
+      jecUncSrcs.push_back("Fragmentation");        
+      jecUncSrcs.push_back("SinglePionECAL");  
+      jecUncSrcs.push_back("SinglePionHCAL"); 
+      jecUncSrcs.push_back("FlavorPureGluon"); 
+      jecUncSrcs.push_back("FlavorPureQuark");
+      jecUncSrcs.push_back("FlavorPureCharm"); 
+      jecUncSrcs.push_back("FlavorPureBottom");
+      jecUncSrcs.push_back("TimePtEta");
+      jecUncSrcs.push_back("RelativeJEREC1");  
+      jecUncSrcs.push_back("RelativeJEREC2"); 
+      jecUncSrcs.push_back("RelativeJERHF");
+      jecUncSrcs.push_back("RelativePtBB");    
+      jecUncSrcs.push_back("RelativePtEC1");  
+      jecUncSrcs.push_back("RelativePtEC2");   
+      jecUncSrcs.push_back("RelativePtHF");  
+      jecUncSrcs.push_back("RelativeBal");  
+      jecUncSrcs.push_back("RelativeFSR");
+      jecUncSrcs.push_back("RelativeStatFSR");
+      jecUncSrcs.push_back("RelativeStatEC"); 
+      jecUncSrcs.push_back("RelativeStatHF");
+      jecUncSrcs.push_back("PileUpDataMC");    
+      jecUncSrcs.push_back("PileUpPtRef");    
+      jecUncSrcs.push_back("PileUpPtBB");     
+      jecUncSrcs.push_back("PileUpPtEC1");      
+      jecUncSrcs.push_back("PileUpPtEC2");      
+      jecUncSrcs.push_back("PileUpPtHF");    
+    }
+  for(size_t i=0; i<jecUncSrcs.size(); i++)
+    {
+      JetCorrectorParameters *p = new JetCorrectorParameters(jecUncUrl.Data(), jecUncSrcs[i].Data());
+      jecUncs.push_back( new JetCorrectionUncertainty(*p) );
+    }
+
+  //b-fragmentation weights
+  std::map<TString, TGraph*> fragWeights=getBFragmentationWeights(era);
+  std::map<TString, std::map<int, double> > semilepBRwgts=getSemilepBRWeights(era);
+    
   //BOOK HISTOGRAMS
   std::map<TString, TH1 *> allPlots;
   addGenScanCounters(allPlots,f);
@@ -114,16 +145,12 @@ void RunTop16019(TString filename,
   for(size_t ilfs=0; ilfs<lfsVec.size(); ilfs++)   
     { 
       TString tag(lfsVec[ilfs]);
+
+      if(ratevsrunH) allPlots["ratevsrun_"+tag]=(TH1 *)ratevsrunH->Clone("ratevsrun_"+tag);    
+
       allPlots["nvtx_"+tag]  = new TH1F("nvtx_"+tag,";Vertex multiplicity;Events",30,0,30);
       allPlots["rho_"+tag]  = new TH1F("rho_"+tag,";#rho;Events",30,0,30);
       allPlots["mll_"+tag]  = new TH1F("mll_"+tag,";Dilepton invariant mass [GeV];Events",20,0,200);
-      if(lumiMap.size()) 
-	{
-	  allPlots["ratevsrun_"+tag] = new TH1F("ratevsrun_"+tag,";Run number; Events/pb",lumiMap.size(),0,lumiMap.size());
-	  Int_t runCtr(0);
-          for(std::map<Int_t,Float_t>::iterator it=lumiMap.begin(); it!=lumiMap.end(); it++,runCtr++)
-            allPlots["ratevsrun_"+tag]->GetXaxis()->SetBinLabel(runCtr+1,Form("%d",it->first));
-	}
 
       for(int i=0; i<2; i++)
 	{
@@ -147,17 +174,6 @@ void RunTop16019(TString filename,
 	      allPlots[pf+"eta_"+tag]  = new TH1F(pf+"eta_"+tag,";Jet pseudo-rapidity;Events",50,0,4.7);
 	    }
 	}
-      for(int ibj=0; ibj<2; ibj++)
-	{
-	  for(int k=0; k<2; k++)
-	    {
-	      TString pf(Form("b%d",ibj));
-	      if(k>0) pf += "ch";
-	      allPlots[pf+"const_"+tag]     = new TH1F(pf+"const_"+tag,     ";Constituent multiplicity;Events",50,0,50);
-	      allPlots[pf+"pullm_"+tag]     = new TH1F(pf+"pullm_"+tag,     ";Pull magnitude;Events",20,0,0.05);
-	      allPlots[pf+"pullangle_"+tag]   = new TH1F(pf+"pullangle_"+tag,   ";Pull angle [rad];Events",20,-3.16,3.16);
-	    }
-	}
     }
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
   for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
@@ -165,61 +181,40 @@ void RunTop16019(TString filename,
   //LOOP OVER EVENTS
   for (Int_t iev=0;iev<nentries;iev++)
     {
+      TString period("");
       t->GetEntry(iev);
       resetTopWidthEvent(twev);
       if(iev%10000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
 
-      //select good leptons
-      std::vector<TLorentzVector> leptons;
-      std::vector<int> selLeptons,selLeptonsId;
-      for(int il=0; il<ev.nl; il++)
+      //assign a run period and correct the event accordingly
+      float puWgt(1.0),puWgtUp(1.0),puWgtDn(1.0),topptsf(1.0);
+      if(!ev.isData)
 	{
-	  bool passTightKin(ev.l_pt[il]>20 && fabs(ev.l_eta[il])<2.5);
-	  bool passTightId(ev.l_id[il]==13 ? (ev.l_pid[il]>>1)&0x1  : (ev.l_pid[il]>>2)&0x1);
-	  float relIso(ev.l_relIso[il]);
-	  bool passTightIso( ev.l_id[il]==13 ? relIso<0.15 : (ev.l_pid[il]>>1)&0x1 );
-	  if(passTightKin && passTightId && passTightIso) 
+	  period=assignRunPeriod(runPeriods);
+	  puWgt   = puWgtGr[period][0]->Eval(ev.g_pu);
+	  puWgtUp = puWgtGr[period][1]->Eval(ev.g_pu);
+	  puWgtDn = puWgtGr[period][2]->Eval(ev.g_pu);
+
+	  //top pt weighting
+	  if(isTTbar)
 	    {
-	      selLeptons.push_back(il);
-	      selLeptonsId.push_back(ev.l_id[il]);
-	      TLorentzVector lp4;
-	      lp4.SetPtEtaPhiM(ev.l_pt[il],ev.l_eta[il],ev.l_phi[il],ev.l_mass[il]);
-	      leptons.push_back(lp4);
+	      for(Int_t igen=0; igen<ev.ngtop; igen++)
+		{
+		  if(abs(ev.gtop_id[igen])!=6) continue;
+		  topptsf *= TMath::Exp(0.156-0.00137*ev.gtop_pt[igen]);
+		}
 	    }
 	}
-      
-      //check if triggers have fired
-      bool hasEETrigger(((ev.triggerBits>>1)&0x1)!=0 || ((ev.triggerBits>>4)&0x1)!=0);
-      bool hasMMTrigger(((ev.triggerBits>>2)&0x3)!=0);
-      bool hasEMTrigger(((ev.triggerBits>>2)&0x3)!=0);
-      if(!ev.isData)
-	{ 
-	  hasEETrigger=true;
-	  hasMMTrigger=true;
-	  hasEMTrigger=true;
-	}
-      else
-	{
-	  if(requireEETriggers) { hasMMTrigger=false; hasEMTrigger=false; }
-	  if(requireMMTriggers) { hasEETrigger=false; hasEMTrigger=false; }
-	  if(requireEMTriggers) { hasEETrigger=false; hasMMTrigger=false; }
-	}
 
-      //decide the channel
-      TString chTag("");
-      if(selLeptons.size()>=2)
-	{
-	  if(abs(ev.l_id[ selLeptons[0] ]*ev.l_id[ selLeptons[1] ])==11*13      && hasEMTrigger) chTag="EM";
-	  else if(abs(ev.l_id[ selLeptons[0] ]*ev.l_id[ selLeptons[1] ])==13*13 && hasMMTrigger) chTag="MM";
-	  else if(abs(ev.l_id[ selLeptons[0] ]*ev.l_id[ selLeptons[1] ])==11*11 && hasEETrigger) chTag="EE";
-	}
-
+      //EVENT SELECTION
+      TString chTag = evsel.flagFinalState(ev);
+      if(chTag!="EE" && chTag!="EM" && chTag!="MM") continue;
+      std::vector<Particle> &leptons=evsel.getSelLeptons();
 
       //select jets
+      Int_t nbtags=0;
       std::vector<int> genJetsFlav,genJetsHadFlav, btagStatus;
       std::vector<TLorentzVector> jets,genJets;
-      Int_t nbtags=0;
-      std::vector<JetPullInfo_t> bJetPulls;
       for (int k=0; k<ev.nj;k++)
 	{
 	  //check kinematics
@@ -230,7 +225,7 @@ void RunTop16019(TString filename,
 	  bool overlapsWithLepton(false);
 	  for(size_t il=0; il<leptons.size(); il++)
 	    {
-	      if(jp4.DeltaR(leptons[il])>0.4) continue;
+	      if(jp4.DeltaR(leptons[il].p4())>0.4) continue;
 	      overlapsWithLepton=true;
 	    }
 	  if(overlapsWithLepton) continue;
@@ -246,7 +241,7 @@ void RunTop16019(TString filename,
 
 	  //b-tag
 	  float csv = ev.j_csv[k];	  
-	  bool isBTagged(csv>0.800),isBTaggedUp(isBTagged),isBTaggedDown(isBTagged);
+	  bool isBTagged(csv>0.8484),isBTaggedUp(isBTagged),isBTaggedDown(isBTagged);
 	  if(!ev.isData)
 	    {
 	      float jptForBtag(jp4.Pt()>1000. ? 999. : jp4.Pt()), jetaForBtag(fabs(jp4.Eta()));
@@ -257,18 +252,18 @@ void RunTop16019(TString filename,
 	      if(abs(ev.j_hadflav[k])==5) hadFlav=BTagEntry::FLAV_B;  
 	     
 	      expEff    = expBtagEff[hadFlav]->Eval(jptForBtag); 
-	      float py8corr(expEff>0 ? expBtagEffPy8[hadFlav]->Eval(jptForBtag)/expBtagEff[hadFlav]->Eval(jptForBtag) : 0.);
-
-	      jetBtagSF = btvsfReaders[hadFlav]->eval_auto_bounds( "central", hadFlav, jetaForBtag, jptForBtag);
-	      jetBtagSF *= py8corr;
+	      //float py8corr(expEff>0 ? expBtagEffPy8[hadFlav]->Eval(jptForBtag)/expBtagEff[hadFlav]->Eval(jptForBtag) : 0.);
+              
+	      jetBtagSF = btvsfReaders[period][hadFlav]->eval_auto_bounds( "central", hadFlav, jetaForBtag, jptForBtag);
+	      //jetBtagSF *= py8corr;
 	      myBTagSFUtil.modifyBTagsWithSF(isBTagged,      jetBtagSF,      expEff);
 
-	      jetBtagSFUp = btvsfReaders[hadFlav]->eval_auto_bounds( "up", hadFlav, jetaForBtag, jptForBtag);
-	      jetBtagSFUp *= py8corr;
+	      jetBtagSFUp = btvsfReaders[period][hadFlav]->eval_auto_bounds( "up", hadFlav, jetaForBtag, jptForBtag);
+	      //jetBtagSFUp *= py8corr;
 	      myBTagSFUtil.modifyBTagsWithSF(isBTaggedUp,    jetBtagSFUp,    expEff);
 
-	      jetBtagSFDown = btvsfReaders[hadFlav]->eval_auto_bounds( "down", hadFlav, jetaForBtag, jptForBtag);
-	      jetBtagSFDown *= py8corr;
+	      jetBtagSFDown = btvsfReaders[period][hadFlav]->eval_auto_bounds( "down", hadFlav, jetaForBtag, jptForBtag);
+	      //jetBtagSFDown *= py8corr;
 	      myBTagSFUtil.modifyBTagsWithSF(isBTaggedDown,  jetBtagSFDown,  expEff);
 	    }
 
@@ -294,81 +289,62 @@ void RunTop16019(TString filename,
 	  genJetsFlav.push_back(flav); 
 	  genJetsHadFlav.push_back(hadFlav);
 	  nbtags += isBTagged;
-	  if(isBTagged) bJetPulls.push_back( getPullVector(ev,k) );	  
 	}
 
       //
       //event weight
       //
       float wgt(1.0);
-      std::vector<float> puWgts(3,1.0),topPtWgts(2,1.0);
-      EffCorrection_t lepSelCorrWgt(1.0,0.0), triggerCorrWgt(1.0,0.0);
+      EffCorrection_t eSelCorrWgt(1.0,0.0),mSelCorrWgt(1.0,0.0), triggerCorrWgt(1.0,0.0);
       if(!ev.isData)
 	{
 	  //MC normalization weight
 	  float norm( normH ? normH->GetBinContent(1) : 1.0);
 
-	  //top pt
-	  Int_t ntops(0);
-          float ptsf(1.0);
-          for(Int_t igen=0; igen<ev.ngtop; igen++)
-            {
-              if(abs(ev.gtop_id[igen])!=6) continue;
-              ntops++;
-              ptsf *= TMath::Exp(0.156-0.00137*ev.gtop_pt[igen]);
-            }
-          if(ptsf>0 && ntops==2)
-            {
-              ptsf=TMath::Sqrt(ptsf);
-              topPtWgts[0]=1./ptsf;
-              topPtWgts[1]=ptsf;
-            }
-
-
 	  //account for pu weights and effect on normalization
 	  allPlots["puwgtctr"]->Fill(0.,1.0);
-	  for(size_t iwgt=0; iwgt<3; iwgt++)
-	    {
-	      puWgts[iwgt]=puWgtGr[iwgt]->Eval(ev.g_putrue);  
-	      allPlots["puwgtctr"]->Fill(iwgt+1,puWgts[iwgt]);
-	    }
+	  allPlots["puwgtctr"]->Fill(1.,puWgt);
+	  allPlots["puwgtctr"]->Fill(2.,puWgtUp);
+	  allPlots["puwgtctr"]->Fill(3.,puWgtDn);
 	
-	  if(chTag!="")
-	    {
-	      //trigger/id+iso efficiency corrections
-	      triggerCorrWgt=lepEffH.getTriggerCorrection(selLeptonsId,leptons);
-	      for(size_t il=0; il<2; il++)
-		{
-		  EffCorrection_t selSF=lepEffH.getOfflineCorrection(selLeptonsId[il],leptons[il].Pt(),leptons[il].Eta());
-		  lepSelCorrWgt.second = sqrt( pow(lepSelCorrWgt.first*selSF.second,2)+pow(lepSelCorrWgt.second*selSF.first,2));
-		  lepSelCorrWgt.first *= selSF.first;
-		}
-	    }
-	  
+          //trigger/id+iso efficiency corrections
+          triggerCorrWgt=lepEffH.getTriggerCorrection(leptons,period);
+          for(size_t il=0; il<2; il++)
+            {
+              EffCorrection_t selSF=lepEffH.getOfflineCorrection(leptons[il].id(),leptons[il].pt(),leptons[il].eta(),period);
+              if(abs(leptons[il].id())==11)
+                {
+                  eSelCorrWgt.second = sqrt( pow(eSelCorrWgt.first*selSF.second,2)+pow(eSelCorrWgt.second*selSF.first,2));
+                  eSelCorrWgt.first *= selSF.first;
+                }
+              else
+                {
+                  mSelCorrWgt.second = sqrt( pow(mSelCorrWgt.first*selSF.second,2)+pow(mSelCorrWgt.second*selSF.first,2));
+                  mSelCorrWgt.first *= selSF.first;
+                }
+            }
+          
+          bfragWgt=computeBFragmentationWeight(ev,fragWeights["downFrag"]);
+
 	  //update nominal event weight
-	  wgt=triggerCorrWgt.first*lepSelCorrWgt.first*puWgts[0]*norm;
+	  wgt=triggerCorrWgt.first*eSelCorrWgt.first*mSelCorrWgt.first*puWgt*bfragWgt*norm;
 	  if(ev.g_nw>0) wgt*=ev.g_w[0];
 	}
-
+      
       //all done... physics
       //preselection
       if(chTag=="") continue;
-      if(leptons[0].Pt()<30 && leptons[1].Pt()<30) continue;
-      if(fabs(leptons[0].Eta())>2.1 && fabs(leptons[1].Eta())>2.1) continue;
+      if(leptons[0].pt()<25 && leptons[1].pt()<25) continue;
+      if(fabs(leptons[0].eta())>2.5 || fabs(leptons[1].eta())>2.5) continue;
+      float mll((leptons[0].p4()+leptons[1].p4()).M());
+      if(mll<12) continue;
 
       //nominal selection control histograms
       allPlots["nvtx_"+chTag]->Fill(ev.nvtx,wgt);
       allPlots["rho_"+chTag]->Fill(ev.rho,wgt);
-      float mll((leptons[0]+leptons[1]).M());
       allPlots["mll_"+chTag]->Fill(mll,wgt);
       std::map<Int_t,Float_t>::iterator rIt=lumiMap.find(ev.run);
-      if(rIt!=lumiMap.end())
-	{
-	  Int_t runCtr=std::distance(lumiMap.begin(),rIt);
-	  allPlots["ratevsrun_"+chTag]->Fill(runCtr,1.e+6/rIt->second);
-	}
-
-      if(mll<12) continue;
+      if(rIt!=lumiMap.end() && ratevsrunH) allPlots["ratevsrun_"+chTag]->Fill(std::distance(lumiMap.begin(),rIt),1./rIt->second);
       allPlots["njets_"+chTag]->Fill(jets.size(),wgt);
 
       if(jets.size()<2) continue;
@@ -378,28 +354,26 @@ void RunTop16019(TString filename,
       for(int il=0; il<twev.nl; il++)
 	{
 	  TString pf(Form("l%d",il));
-	  allPlots[pf+"pt_"+chTag]->Fill(leptons[il].Pt(),wgt);
-	  allPlots[pf+"eta_"+chTag]->Fill(fabs(leptons[il].Eta()),wgt);
+	  allPlots[pf+"pt_"+chTag]->Fill(leptons[il].pt(),wgt);
+	  allPlots[pf+"eta_"+chTag]->Fill(fabs(leptons[il].eta()),wgt);
 	  if(nbtags>1)
 	    {
-	      allPlots[pf+"b2pt_"+chTag]->Fill(leptons[il].Pt(),wgt);
-	      allPlots[pf+"b2eta_"+chTag]->Fill(fabs(leptons[il].Eta()),wgt);
+	      allPlots[pf+"b2pt_"+chTag]->Fill(leptons[il].pt(),wgt);
+	      allPlots[pf+"b2eta_"+chTag]->Fill(fabs(leptons[il].eta()),wgt);
 	    }
 
-	  twev.l_pt[il]=leptons[il].Pt();
-	  twev.l_eta[il]=leptons[il].Eta();
-	  twev.l_phi[il]=leptons[il].Phi();
-	  twev.l_m[il]=leptons[il].M();
-	  twev.l_id[il]=ev.l_id[ selLeptons[il] ];
-	  twev.l_les[il]=getLeptonEnergyScaleUncertainty(twev.l_id[il],twev.l_pt[il],twev.l_eta[il]);
-	  if(!hardCodedLES && twev.l_id[il]==13) twev.l_les[il]=TMath::Abs(1-ev.l_scaleUnc[ selLeptons[il] ]);
-
+	  twev.l_pt[il]=leptons[il].pt();
+	  twev.l_eta[il]=leptons[il].eta();
+	  twev.l_phi[il]=leptons[il].phi();
+	  twev.l_m[il]=leptons[il].mass();
+	  twev.l_id[il]=leptons[il].id();
+	  twev.l_les[il]=ev.l_scaleUnc[leptons[il].originalReference()]/leptons[il].p4().E();
 	  for(Int_t ig=0; ig<ev.ng; ig++)
 	    {
-	      if(abs(ev.g_id[ig])!=ev.l_id[ selLeptons[il] ]) continue;
+	      if(abs(ev.g_id[ig])!=leptons[il].id()) continue;
 	      TLorentzVector glp4;
 	      glp4.SetPtEtaPhiM( ev.g_pt[ig], ev.g_eta[ig], ev.g_phi[ig], ev.g_m[ig]);
-	      if(glp4.DeltaR( leptons[il] ) > 0.3) continue;
+	      if(glp4.DeltaR( leptons[il].p4() ) > 0.3) continue;
 	      twev.gl_id[il]=ev.g_id[ig];
 	      twev.gl_pt[il]=ev.g_pt[ig];
 	      twev.gl_eta[il]=ev.g_eta[ig];
@@ -441,48 +415,48 @@ void RunTop16019(TString filename,
 	      std::vector<float> jerSmear=getJetResolutionScales(twev.j_pt[ij],twev.j_eta[ij],twev.gj_pt[ij]);
 	      twev.j_jer[ij]=(jerSmear[0]>0 ? jerSmear[1]/jerSmear[0] : 1.0);
 	    }
-	  twev.j_jes[ij]=1.0;
-	  if(jecUnc)
+	  twev.j_jes.push_back( std::vector<Float_t>() ); //[ij].clear();
+	  if(jecUncs.size())
 	    {
-	      jecUnc->setJetEta(twev.j_eta[ij]);
-	      jecUnc->setJetPt(twev.j_pt[ij]);
-	      twev.j_jes[ij]=jecUnc->getUncertainty(true);
-	    }
-	  
+              for(size_t iju=0; iju<jecUncs.size(); iju++)
+                {
+                  jecUncs[iju]->setJetEta(twev.j_eta[ij]);
+                  jecUncs[iju]->setJetPt(twev.j_pt[ij]);
+                  Float_t unc=jecUncs[iju]->getUncertainty(true);
+                  if(jecUncSrcs[iju]=="FlavorPureGluon" && abs(twev.gj_flav[ij])!=21) unc=0;
+                  if(jecUncSrcs[iju]=="FlavorPureQuark" && (abs(twev.gj_flav[ij])>4 || abs(twev.gj_flav[ij])==0)) unc=0;
+                  if(jecUncSrcs[iju]=="FlavorPureCharm" && abs(twev.gj_flav[ij])!=4) unc=0;
+                  if(jecUncSrcs[iju]=="FlavorPureBottom"&& abs(twev.gj_flav[ij])!=5) unc=0;
+                  twev.j_jes[ij].push_back( unc );
+                }
+            }
 	}
 
       allPlots["nbtags_"+chTag]->Fill(nbtags,wgt);
-      if(nbtags>1)
-	{
-	  for(Int_t ibj=0; ibj<2; ibj++)
-	    {
-	      TString pf(Form("b%d",ibj));
-	      allPlots[pf+"const_"+chTag]->Fill(bJetPulls[ibj].n,wgt);
-	      allPlots[pf+"pullm_"+chTag]->Fill(bJetPulls[ibj].pull.Mod(),wgt);
-	      allPlots[pf+"pullangle_"+chTag]->Fill(TMath::ATan2(bJetPulls[ibj].pull.Px(),bJetPulls[ibj].pull.Py()),wgt);
-	      allPlots[pf+"chconst_"+chTag]->Fill(bJetPulls[ibj].nch,wgt);
-	      allPlots[pf+"chpullm_"+chTag]->Fill(bJetPulls[ibj].chPull.Mod(),wgt);
-	      allPlots[pf+"chpullangle_"+chTag]->Fill(TMath::ATan2(bJetPulls[ibj].chPull.Px(),bJetPulls[ibj].chPull.Py()),wgt);
-	    }
-	}
 
       if(chTag=="MM") twev.cat=13*13;
       if(chTag=="EM") twev.cat=11*13;
       if(chTag=="EE") twev.cat=11*11;
-      twev.nw=9;
+      twev.nw=14;
       twev.weight[0]=wgt;
-      twev.weight[1]=wgt*puWgts[1]/puWgts[0];
-      twev.weight[2]=wgt*puWgts[2]/puWgts[0];
+      twev.weight[1]=wgt*puWgtUp/puWgt;
+      twev.weight[2]=wgt*puWgtDn/puWgt;
       twev.weight[3]=wgt*(triggerCorrWgt.first+triggerCorrWgt.second)/triggerCorrWgt.first;
       twev.weight[4]=wgt*(triggerCorrWgt.first-triggerCorrWgt.second)/triggerCorrWgt.first;
-      twev.weight[5]=wgt*(lepSelCorrWgt.first+lepSelCorrWgt.second)/lepSelCorrWgt.first;
-      twev.weight[6]=wgt*(lepSelCorrWgt.first-lepSelCorrWgt.second)/lepSelCorrWgt.first;
-      twev.weight[7]=wgt*topPtWgts[0];
-      twev.weight[8]=wgt*topPtWgts[1];
+      twev.weight[5]=wgt*(eSelCorrWgt.first+eSelCorrWgt.second)/eSelCorrWgt.first;
+      twev.weight[6]=wgt*(eSelCorrWgt.first-eSelCorrWgt.second)/eSelCorrWgt.first;
+      twev.weight[7]=wgt*(mSelCorrWgt.first+mSelCorrWgt.second)/mSelCorrWgt.first;
+      twev.weight[8]=wgt*(mSelCorrWgt.first-mSelCorrWgt.second)/mSelCorrWgt.first;
+      twev.weight[9]=wgt*topptsf;
+      twev.weight[10]=wgt*computeSemilepBRWeight(ev,semilepBRwgts["semilepbrDown"]);
+      twev.weight[11]=wgt*computeSemilepBRWeight(ev,semilepBRwgts["semilepbrUp"]);
+      twev.weight[12]=wgt*computeBFragmentationWeight(ev,fragWeights["downFrag"])/bfragWgt;
+      twev.weight[13]=wgt*computeBFragmentationWeight(ev,fragWeights["upFrag"])/bfragWgt;
+      twev.weight[14]=wgt*computeBFragmentationWeight(ev,fragWeights["PetersonFrag"]);
       if(ev.g_nw>0)
 	{
 	  twev.nw+=ev.g_nw;
-	  for(int iw=1; iw<=ev.g_nw; iw++) twev.weight[8+iw]=wgt*ev.g_w[iw]/ev.g_w[0];
+	  for(int iw=1; iw<=ev.g_nw; iw++) twev.weight[14+iw]=wgt*ev.g_w[iw]/ev.g_w[0];
 	}
       twev.nt=0;
       twev.met_pt=ev.met_pt[0];
@@ -570,7 +544,8 @@ void createTopWidthEventTree(TTree *t,TopWidthEvent_t &twev)
   t->Branch("j_phi", twev.j_phi , "j_phi[nj]/F");
   t->Branch("j_m",   twev.j_m ,   "j_m[nj]/F");
   t->Branch("j_jer",   twev.j_jer ,   "j_jer[nj]/F");
-  t->Branch("j_jes",   twev.j_jes ,   "j_jes[nj]/F");
+  //for(size_t i=0; i<50; i++) twev.j_jes.push_back( std::vector<Float_t>() );
+  t->Branch("j_jes",   &twev.j_jes);
   t->Branch("j_btag",   twev.j_btag ,   "j_btag[nj]/I");
   t->Branch("gj_pt",  twev.gj_pt ,  "gj_pt[nj]/F");
   t->Branch("gj_eta", twev.gj_eta , "gj_eta[nj]/F");
@@ -593,9 +568,9 @@ void resetTopWidthEvent(TopWidthEvent_t &twev)
 {
   twev.cat=0;   twev.nw=0;   twev.nl=0;   twev.nj=0;   twev.nt=0;
   twev.met_pt=0; twev.met_phi=0;
-  for(int i=0; i<10; i++) twev.weight[i]=0;
+  for(int i=0; i<20; i++) twev.weight[i]=0;
   for(int i=0; i<2; i++) { twev.l_pt[i]=0;   twev.l_eta[i]=0;   twev.l_phi[i]=0;   twev.l_m[i]=0; twev.l_id[i]=0; twev.l_les[i]=0; twev.gl_pt[i]=0;   twev.gl_eta[i]=0;   twev.gl_phi[i]=0;   twev.gl_m[i]=0; twev.gl_id[i]=0; }
-  for(int i=0; i<50; i++) { twev.j_pt[i]=0;   twev.j_eta[i]=0;   twev.j_phi[i]=0;   twev.j_m[i]=0; twev.j_btag[i]=0; twev.j_jer[i]=0; twev.j_jes[i]=0; twev.gj_pt[i]=0;   twev.gj_eta[i]=0;   twev.gj_phi[i]=0;   twev.gj_m[i]=0; twev.gj_flav[i]=0; twev.gj_hadflav[i]=0; } 
+  for(int i=0; i<50; i++) { twev.j_pt[i]=0;   twev.j_eta[i]=0;   twev.j_phi[i]=0;   twev.j_m[i]=0; twev.j_btag[i]=0; twev.j_jer[i]=0;  twev.gj_pt[i]=0;   twev.gj_eta[i]=0;   twev.gj_phi[i]=0;   twev.gj_m[i]=0; twev.gj_flav[i]=0; twev.gj_hadflav[i]=0; }  twev.j_jes.clear(); //[i].clear(); } 
   for(int i=0; i<10; i++) { twev.t_pt[i]=0;   twev.t_eta[i]=0;   twev.t_phi[i]=0;   twev.t_m[i]=0; twev.t_id[i]=0; }
 }
 

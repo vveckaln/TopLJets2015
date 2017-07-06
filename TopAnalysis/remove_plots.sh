@@ -25,9 +25,12 @@ rm analysis/FARM/*
 
 rm migration/*
 
-source /afs/cern.ch/project/eos/installation/user/etc/setup.sh
+#source /afs/cern.ch/project/eos/installation/user/etc/setup.sh
 
-eos rm -r $EOS/ReReco2016/f016290/migration
-eos rm -r $EOS/ReReco2016/f016290/analysis_muplus
-eos mkdir $EOS/ReReco2016/f016290/migration
-eos mkdir $EOS/ReReco2016/f016290/analysis_muplus
+rm -r $EOS/analysis/*
+rm -r $EOS/LSF/*
+
+rm -r $EOS/ReReco2016/f016290/migration
+rm -r $EOS/ReReco2016/f016290/analysis_muplus
+mkdir $EOS/ReReco2016/f016290/migration
+mkdir $EOS/ReReco2016/f016290/analysis_muplus

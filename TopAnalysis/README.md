@@ -6,8 +6,8 @@ These installation instructions correspond to the 2016 data/MC Moriond17 re-reco
 To install execute the following in your work area.
 
 ```
-cmsrel CMSSW_8_0_26_patch1
-cd CMSSW_8_0_26_patch1/src 
+cmsrel CMSSW_8_0_28
+cd CMSSW_8_0_28/src 
 cmsenv
 
 #EGM electron regression+smearer
@@ -107,7 +107,7 @@ You can then run the brilcalc tool to get the integrated luminosity in total and
 The following script runs brilcalc inclusively and per trigger path, and stores the results in a ROOT file with the total integrated lumi per run.
 It takes a bit to run, depending on the number of triggers configured to use in the analysis
 ```
-export PATH=$HOME/.local/bin:/afs/cern.ch/cms/lumi/brilconda-1.1.7/bin:$PATH
+export PATH=$HOME/.local/bin:/afs/cern.ch/cms/lumi/brilconda/bin:$PATH
 python scripts/convertLumiTable.py -o data/era2016/
 ```
 

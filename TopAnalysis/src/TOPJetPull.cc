@@ -248,23 +248,23 @@ void RunTopJetPull(TString filename,
       if(!ev.isData) {
         //jec
         if (vSystVar[0] == "jec") {
-          ev = applyJetCorrectionUncertainty(ev, jecUnc, jecVar, vSystVar[2]);
+          applyJetCorrectionUncertainty(ev, jecUnc, jecVar, vSystVar[2]);
         }
         //jer
         if (vSystVar[0] == "jer") {
-          ev = smearJetEnergies(ev, vSystVar[1]);
+          smearJetEnergies(ev, vSystVar[1]);
         }
-        else ev = smearJetEnergies(ev);
+        else smearJetEnergies(ev);
         //b tagging
         if (vSystVar[0] == "btag") {
           if (vSystVar[1] == "heavy") {
-            ev = updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil,vSystVar[2],"central");
+            updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil,vSystVar[2],"central");
           }
           if (vSystVar[1] == "light") {
-            ev = updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil,"central",vSystVar[2]);
+            updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil,"central",vSystVar[2]);
           }
         }
-        else ev = updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil);
+        else updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil);
       }
       
       ///////////////////////////

@@ -43,6 +43,8 @@
 #include "FWCore/Framework/interface/TriggerNamesService.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+#include "DataFormats/CTPPSReco/interface/CTPPSLocalTrackLite.h"
+#include "DataFormats/CTPPSDetId/interface/CTPPSDetId.h"
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
@@ -128,6 +130,7 @@ private:
   edm::EDGetTokenT<edm::View<pat::Jet> > jetToken_;
   edm::EDGetTokenT<pat::METCollection> metToken_, puppiMetToken_;
   edm::EDGetTokenT<pat::PackedCandidateCollection> pfToken_;
+  edm::EDGetTokenT<std::vector<CTPPSLocalTrackLite> > ctppsToken_;
   
   //Electron Decisions
   edm::EDGetTokenT<edm::ValueMap<float> > eleMvaIdMapToken_;
@@ -149,7 +152,7 @@ private:
   MiniEvent_t ev_;
   
   KalmanMuonCalibrator *muonCor_;
-
+  bool useRawLeptons_;
   edm::Service<TFileService> fs;
 };
 
@@ -187,6 +190,7 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig) :
   metToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
   puppiMetToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("puppimets"))),
   pfToken_(consumes<pat::PackedCandidateCollection>(iConfig.getParameter<edm::InputTag>("pfCands"))),
+  ctppsToken_(consumes<std::vector<CTPPSLocalTrackLite> >(iConfig.getParameter<edm::InputTag>("ctppsLocalTracks"))),
   eleMvaIdMapToken_(consumes<edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("eleMvaIdMap"))),
   eleVetoIdMapToken_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("eleVetoIdMap"))),
   eleLooseIdMapToken_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("eleLooseIdMap"))),
@@ -203,7 +207,8 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig) :
   pfjetIDLoose_( PFJetIDSelectionFunctor::FIRSTDATA, PFJetIDSelectionFunctor::LOOSE ),  
   saveTree_( iConfig.getParameter<bool>("saveTree") ),
   savePF_( iConfig.getParameter<bool>("savePF") ),
-  muonCor_(0)
+  muonCor_(0),
+  useRawLeptons_( iConfig.getParameter<bool>("useRawLeptons") )
 {
   //now do what ever initialization is needed
   electronToken_      = mayConsume<edm::View<pat::Electron> >(iConfig.getParameter<edm::InputTag>("electrons"));
@@ -494,6 +499,27 @@ int MiniAnalyzer::recAnalysis(const edm::Event& iEvent, const edm::EventSetup& i
   edm::Handle<pat::PackedCandidateCollection> pfcands;
   iEvent.getByToken(pfToken_,pfcands);
 
+  if(iEvent.isRealData()) {
+    //CTPPS local tracks (only present in data)
+    ev_.nfwdtrk=0;
+    edm::Handle<std::vector<CTPPSLocalTrackLite> > ctppslocaltracks;
+    iEvent.getByToken(ctppsToken_, ctppslocaltracks);
+    for (const CTPPSLocalTrackLite& lt : *ctppslocaltracks) {
+      const CTPPSDetId detid(lt.getRPId());
+      if (detid.station()!=0) continue; // only keep the 210m horizontal stations
+
+      ev_.fwdtrk_arm[ev_.nfwdtrk] = detid.arm(); // 0 = sector 4-5 ; 1 = sector 5-6
+      ev_.fwdtrk_pot[ev_.nfwdtrk] = detid.rp(); // 2 = near pot ; 3 = far pot
+      ev_.fwdtrk_x[ev_.nfwdtrk] = lt.getX()*1.e-3; // store in m
+      ev_.fwdtrk_x_unc[ev_.nfwdtrk] = lt.getXUnc()*1.e-3;
+      ev_.fwdtrk_y[ev_.nfwdtrk] = lt.getY()*1.e-3;
+      ev_.fwdtrk_y_unc[ev_.nfwdtrk] = lt.getYUnc()*1.e-3;
+
+      ev_.nfwdtrk++;
+    }
+  }
+
+
   //
   //LEPTON SELECTION
   //
@@ -504,7 +530,7 @@ int MiniAnalyzer::recAnalysis(const edm::Event& iEvent, const edm::EventSetup& i
   edm::Handle<pat::MuonCollection> muons;
   iEvent.getByToken(muonToken_, muons);
   float maxMuPtForCor(200.);
-  if(muonCor_) muonCor_=new KalmanMuonCalibrator( ev_.isData? "DATA_80X_13TeV" : "MC_80X_13TeV");
+  if(!useRawLeptons_ && muonCor_==0) muonCor_=new KalmanMuonCalibrator( ev_.isData? "DATA_80X_13TeV" : "MC_80X_13TeV");
   for (const pat::Muon &mu : *muons) 
     { 
 
@@ -513,6 +539,8 @@ int MiniAnalyzer::recAnalysis(const edm::Event& iEvent, const edm::EventSetup& i
 
       //apply correction
       float pt=mu.pt();
+      if(pt<2) continue; //no need to care about very low pt muons here... (corrections will tend to be meaningless)
+
       float eta = mu.eta();
       float phi = mu.phi();
       float ptUnc = mu.bestTrack()->ptError();
@@ -532,21 +560,29 @@ int MiniAnalyzer::recAnalysis(const edm::Event& iEvent, const edm::EventSetup& i
 	    {
 	      corrApplied=false;
 	    }
-	  
-	  if(corrApplied)
+          
+          if(pt<0.1 || isnan(pt))
+            {
+              cout << "After correction this muon pt is " << pt << " !!" << endl
+                   << "Before correction this muon pt was " << mu.pt() << " !!" << endl
+                   << "...will be skipped" << endl;
+              continue;
+            }
+          
+          if(corrApplied)
 	    {
 	      int n=muonCor_->getN();
 	      float uncUp(0),uncDn(0);
 	      for(int i=0; i<n; i++)
 		{
 		  muonCor_->vary(i,+1);
-		  uncUp += pow(muonCor_->getCorrectedPt(40,0.0,0.0,1)-pt,2);
+		  uncUp += pow(muonCor_->getCorrectedPt(mu.pt(),eta,phi,mu.charge())-pt,2);
 		  muonCor_->vary(i,-1);
-		  uncDn += pow(muonCor_->getCorrectedPt(40,0.0,0.0,1)-pt,2);
+		  uncDn += pow(muonCor_->getCorrectedPt(mu.pt(),eta,phi,mu.charge())-pt,2);
 		}
 	      muonCor_->reset();
 	      muonCor_->varyClosure(+1);
-	      float vClose=muonCor_->getCorrectedPt(40,0.0,0.0,1);
+	      float vClose=muonCor_->getCorrectedPt(mu.pt(),eta,phi,mu.charge());
 	      uncUp += pow(vClose-pt,2);
 	      uncDn += pow(vClose-pt,2);
 	      ptUnc = 0.5*(TMath::Sqrt(uncUp)+TMath::Sqrt(uncDn));

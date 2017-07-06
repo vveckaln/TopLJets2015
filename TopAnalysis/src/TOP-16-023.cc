@@ -24,6 +24,10 @@ void defineTreeBranches(TTree *outT,LJEvent_t &ljev,bool isMC)
   outT->Branch("run",     &ljev.run,      "run/l");
   outT->Branch("lumi",    &ljev.lumi,     "lumi/l");
   outT->Branch("event",   &ljev.event,    "event/l");
+  outT->Branch("hiHFplus",&ljev.hiHFplus, "hiHFplus/F");
+  outT->Branch("hiHFminus",&ljev.hiHFminus, "hiHFminus/F");
+  outT->Branch("hiHFplusEta4",&ljev.hiHFplusEta4, "hiHFplusEta4/F");
+  outT->Branch("hiHFminusEta4",&ljev.hiHFminusEta4, "hiHFminusEta4/F");
   outT->Branch("w",    &ljev.w,       "w/F");
   outT->Branch("nj",   &ljev.nj,      "nj/I");
   outT->Branch("nb",   &ljev.nb,      "nb/I");
@@ -32,6 +36,22 @@ void defineTreeBranches(TTree *outT,LJEvent_t &ljev,bool isMC)
   outT->Branch("j_eta",  ljev.j_eta,  "j_eta[nj]/F");
   outT->Branch("j_phi",  ljev.j_phi,  "j_phi[nj]/F");
   outT->Branch("j_m",    ljev.j_m,    "j_m[nj]/F");
+  outT->Branch("j_PfCHF", ljev.j_PfCHF, "j_PfCHF[nj]/F");
+  outT->Branch("j_PfNHF", ljev.j_PfNHF, "j_PfNHF[nj]/F");
+  outT->Branch("j_PfCEF", ljev.j_PfCEF, "j_PfCEF[nj]/F");
+  outT->Branch("j_PfNEF", ljev.j_PfNEF, "j_PfNEF[nj]/F");
+  outT->Branch("j_PfMUF", ljev.j_PfMUF, "j_PfMUF[nj]/F");
+  outT->Branch("j_PfCHM", ljev.j_PfCHM, "j_PfCHM[nj]/I");
+  outT->Branch("j_PfNHM", ljev.j_PfNHM, "j_PfNHM[nj]/I");
+  outT->Branch("j_PfCEM", ljev.j_PfCEM, "j_PfCEM[nj]/I");
+  outT->Branch("j_PfNEM", ljev.j_PfNEM, "j_PfNEM[nj]/I");
+  outT->Branch("j_PfMUM", ljev.j_PfMUM, "j_PfMUM[nj]/I");
+  outT->Branch("j_area",    ljev.j_area,    "j_area[nj]/F");
+  outT->Branch("j_refpt",   ljev.j_refpt,   "j_refpt[nj]/F");
+  outT->Branch("j_refarea",    ljev.j_refarea,   "j_refarea[nj]/F");
+  outT->Branch("j_refdr",    ljev.j_refdr,    "j_refdr[nj]/F");
+  outT->Branch("j_refparton_flavorForB",    ljev.j_refparton_flavorForB,   "j_refparton_flavorForB[nj]/F");
+  outT->Branch("j_refparton_flavor",    ljev.j_refparton_flavor,    "j_refparton_flavor[nj]/F");
   outT->Branch("l_id",  &ljev.l_id,   "l_id/I");
   outT->Branch("l_pt",  &ljev.l_pt,   "l_pt/F");
   outT->Branch("l_eta", &ljev.l_eta,  "l_eta/F");
@@ -43,7 +63,16 @@ void defineTreeBranches(TTree *outT,LJEvent_t &ljev,bool isMC)
   outT->Branch("ntracks_hp",   &ljev.ntracks_hp,    "ntracks_hp/I");
   if(isMC)
     {
+      outT->Branch("npt",   &ljev.npt,    "npt/I");
+      outT->Branch("pt_id",   ljev.pt_id,   "pt_id[npt]/I");
+      outT->Branch("pt_pdgid",ljev.pt_pdgid,"pt_pdfid[npt]/I");
+      outT->Branch("pt_pt",   ljev.pt_pt,   "pt_pt[npt]/F");
+      outT->Branch("pt_eta",  ljev.pt_eta,  "pt_eta[npt]/F");
+      outT->Branch("pt_phi",  ljev.pt_phi,  "pt_phi[npt]/F");
+      outT->Branch("pt_m",    ljev.pt_m,    "pt_m[npt]/F");      
+
       outT->Branch("ngp",   &ljev.ngp,    "ngp/I");
+      outT->Branch("gp_pdgid",   ljev.gp_pdgid,   "gp_pdgid[ngp]/I");
       outT->Branch("gp_pt",   ljev.gp_pt,   "gp_pt[ngp]/F");
       outT->Branch("gp_eta",  ljev.gp_eta,  "gp_eta[ngp]/F");
       outT->Branch("gp_phi",  ljev.gp_phi,  "gp_phi[ngp]/F");
@@ -53,6 +82,8 @@ void defineTreeBranches(TTree *outT,LJEvent_t &ljev,bool isMC)
       outT->Branch("gj_eta",  ljev.gj_eta,  "gj_eta[ngj]/F");
       outT->Branch("gj_phi",  ljev.gj_phi,  "gj_phi[ngj]/F");
       outT->Branch("gj_m",    ljev.gj_m,    "gj_m[ngj]/F");
+      outT->Branch("gj_dr",  ljev.gj_dr,  "gj_dr[ngj]/F");
+      outT->Branch("gj_index",    ljev.gj_index,   "gj_index[ngj]/I");
       outT->Branch("gl_pt",  &ljev.gl_pt,   "gl_pt/F");
       outT->Branch("gl_eta", &ljev.gl_eta,  "gl_eta/F");
       outT->Branch("gl_phi", &ljev.gl_phi,  "gl_phi/F");
