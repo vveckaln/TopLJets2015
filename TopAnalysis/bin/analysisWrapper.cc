@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
   else if(method=="TOP-HIForest::RunHin17002")               RunHin17002(in,out,channel,charge,normH,runSysts,era);
   else if(method=="TOP-UE::RunTopUE")                        RunTopUE(in,out,channel,charge,SelectionTool::FlavourSplitting(flav),normH,runSysts,era);
   else if(method=="TOPJetShape::RunTopJetShape")             RunTopJetShape(in,out,channel,charge,SelectionTool::FlavourSplitting(flav),normH,runSysts,systVar,era,debug);
-  else if(method=="TOPJetShape::RunTopJetPull")              RunTopJetPull(in,out,channel,charge,SelectionTool::FlavourSplitting(flav),normH,runSysts,systVar,era,debug);
+  else if(method=="TOPJetPull::RunTopJetPull")              RunTopJetPull(in,out,channel,charge,SelectionTool::FlavourSplitting(flav),normH,runSysts,systVar,era,debug);
 
 
   else if(method=="TOPSynchExercise::RunTOPSynchExercise")   RunTOPSynchExercise(in,out,debug);
