@@ -102,7 +102,7 @@ def main():
         for tkey in rootinfile.GetListOfKeys():
             keys.append(tkey.GetName())
         #observables = ["mult", "width"]
-        observables = ["mult", "width", "ptd", "ptds", "ecc", "tau21", "tau32", "tau43", "zg", "zgxdr", "zgdr", "ga_width", "ga_lha", "ga_thrust", "c1_02", "c1_05", "c1_10", "c1_20", "c2_02", "c2_05", "c2_10", "c2_20", "c3_02", "c3_05", "c3_10", "c3_20"]
+        observables = ["mult", "width", "ptd", "ptds", "ecc", "tau21", "tau32", "tau43", "zg", "zgxdr", "zgdr", "ga_width", "ga_lha", "ga_thrust", "c1_02", "c1_05", "c1_10", "c1_20", "c2_02", "c2_05", "c2_10", "c2_20", "c3_02", "c3_05", "c3_10", "c3_20", "m2_b1", "n2_b1", "n3_b1", "m2_b2", "n2_b2", "n3_b2"]
         
         reco = ["charged"]
         
@@ -195,6 +195,7 @@ def main():
             condor.write('executable = {0}/$(cfgFile).sh\n'.format(FarmDirectory))
             condor.write('output     = {0}/output_$(cfgFile).out\n'.format(FarmDirectory))
             condor.write('error      = {0}/output_$(cfgFile).err\n'.format(FarmDirectory))
+            condor.write('log        = {0}/output_$(cfgFile).log\n'.format(FarmDirectory))
             condor.write('+JobFlavour = "{0}"\n'.format(opt.queue))
 
             jobNb=0

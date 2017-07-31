@@ -81,7 +81,6 @@ def main():
     
     for slist,isSyst in [ (samplesList,False), (systSamplesList,True), (expSystSamplesList,True) ]:
         for tag,sample in slist: 
-            if tag in ['MC13TeV_TTJets_cflip']: continue
             if isSyst and not 't#bar{t}' in sample[3] : continue
             isData = sample[1]
             isSig  = not isSyst and sample[3] == 't#bar{t}'
@@ -170,6 +169,8 @@ def main():
     
     systematicUnfolded = {}
     for tag,systematic in systematics.iteritems():
+        gen = normalizeAndDivideByBinWidth(systematic.ProjectionX(tag+'_gen'))
+        if tag in ['MC13TeV_TTJets_cflip']: continue
         systematicUnfolded[tag] = unfold(tag, systematic, backgrounds, data)[0]
     
     background_systematics = [
@@ -280,6 +281,8 @@ def main():
     dataUnfoldedSys.Draw('SAME P X0 E1')
     
     nominalGen = normalizeAndDivideByBinWidth(nominal.ProjectionX("nominalGen"))
+    for i in range(1, nominalGen.GetNbinsX()+1):
+        nominalGen.SetBinError(i, 1e-20)
     nominalGen.SetLineColor(ROOT.kRed+1)
     nominalGen.SetLineWidth(2)
     nominalGen.SetMarkerColor(ROOT.kRed+1)
@@ -312,6 +315,8 @@ def main():
     dataUnfoldedSysRatio.GetYaxis().SetNdivisions(503)
     
     FSRUpGen = normalizeAndDivideByBinWidth(systematics['MC13TeV_TTJets_fsrup'].ProjectionX("FSRUpGen"))
+    for i in range(1, FSRUpGen.GetNbinsX()+1):
+        FSRUpGen.SetBinError(i, 1e-20)
     FSRUpGen.SetLineColor(ROOT.kRed+1)
     FSRUpGen.SetMarkerColor(ROOT.kRed+1)
     FSRUpGen.SetMarkerStyle(26)
@@ -320,6 +325,8 @@ def main():
     FSRUpGenRatio.Divide(dataUnfolded)
     
     FSRDownGen = normalizeAndDivideByBinWidth(systematics['MC13TeV_TTJets_fsrdn'].ProjectionX("FSRDownGen"))
+    for i in range(1, FSRDownGen.GetNbinsX()+1):
+        FSRDownGen.SetBinError(i, 1e-20)
     FSRDownGen.SetLineColor(ROOT.kRed+1)
     FSRDownGen.SetMarkerColor(ROOT.kRed+1)
     FSRDownGen.SetMarkerStyle(32)
@@ -340,7 +347,19 @@ def main():
     nominalGenFSRRatio=nominalGenFSR.Clone('nominalGenFSRRatio')
     nominalGenFSRRatio.Divide(dataUnfolded)
     
+    #qcdBasedGen = normalizeAndDivideByBinWidth(systematics['MC13TeV_TTJets_qcdBased'].ProjectionX("qcdBasedGen"))
+    #qcdBasedGen.SetLineColor(ROOT.kBlue+1)
+    #qcdBasedGen.SetLineStyle(7)
+    #qcdBasedGen.SetLineWidth(2)
+    #qcdBasedGen.SetMarkerColor(ROOT.kOrange+1)
+    #qcdBasedGen.SetMarkerStyle(28)
+    #qcdBasedGen.Draw('SAME P X0 E1')
+    #qcdBasedGenRatio=qcdBasedGen.Clone('qcdBasedGenRatio')
+    #qcdBasedGenRatio.Divide(dataUnfolded)
+    
     herwigGen = normalizeAndDivideByBinWidth(systematics['MC13TeV_TTJets_herwig'].ProjectionX("herwigGen"))
+    for i in range(1, herwigGen.GetNbinsX()+1):
+        herwigGen.SetBinError(i, 1e-20)
     herwigGen.SetLineColor(ROOT.kBlue+1)
     herwigGen.SetLineStyle(7)
     herwigGen.SetLineWidth(2)
@@ -350,8 +369,9 @@ def main():
     herwigGenRatio=herwigGen.Clone('herwigGenRatio')
     herwigGenRatio.Divide(dataUnfolded)
     
+    flip_threshold = 0.4
     inix = 0.5
-    if (nominalGen.GetMaximumBin() > nominalGen.GetNbinsX()/2.): inix = 0.15
+    if (nominalGen.GetMaximumBin() > nominalGen.GetNbinsX()*flip_threshold): inix = 0.15 # TODO: this should compare bin center and axis range
     
     legend = ROOT.TLegend(inix,0.625,inix+0.35,0.9)
     legend.SetLineWidth(0)
@@ -360,6 +380,7 @@ def main():
     legend.AddEntry(nominalGen, "Powheg+Pythia 8", "pl")
     legend.AddEntry(FSRUpGen, "#minus FSR up", "p")
     legend.AddEntry(FSRDownGen, "#minus FSR down", "p")
+    #legend.AddEntry(qcdBasedGen, "#minus QCD-based CR", "p")
     legend.AddEntry(herwigGen, "Powheg+Herwig++", "pl")
     legend.Draw()
     txt=ROOT.TLatex()
@@ -368,7 +389,7 @@ def main():
     txt.SetTextSize(0.05)
     txt.SetTextAlign(12)
     inix = 0.15
-    if (nominalGen.GetMaximumBin() > nominalGen.GetNbinsX()/2.): inix = 0.64
+    if (nominalGen.GetMaximumBin() > nominalGen.GetNbinsX()*flip_threshold): inix = 0.64
     txt.DrawLatex(inix,0.88,cmsLabel)
     txt.DrawLatex(0.7,0.97,'#scale[0.8]{%3.1f fb^{-1} (%s)}' % (opt.lumi/1000.,opt.com) )
     
@@ -392,6 +413,7 @@ def main():
     nominalGenRatio.Draw('SAME H')
     FSRUpGenRatio.Draw  ('SAME P X0 E1')
     FSRDownGenRatio.Draw('SAME P X0 E1')
+    #qcdBasedGenRatio.Draw('SAME P X0 E1')
     herwigGenRatio.Draw ('SAME H')
     
     c.Print(opt.outDir+'/'+opt.obs+'_charged_'+opt.flavor+'_result.pdf')
