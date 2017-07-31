@@ -64,7 +64,7 @@ def main():
     parser.add_option(      '--outputonly',        dest='outputonly',        help='filter job submission for a csv list of output files  [%default]',             default=None,       type='string')
     parser.add_option(      '--farmappendix',        dest='farmappendix',        help='Appendix to condor FARM directory [%default]',             default=None,       type='string')
     (opt, args) = parser.parse_args()
-
+    PROJECT=os.getenv('PROJECT')
     #parse selection lists
     onlyList=[]
     try:
@@ -180,17 +180,21 @@ def main():
             pool.map(RunMethodPacked, task_list)
     else:
         
-        FarmDirectory = '%s/FARM%s%s'%(cmsswBase,os.path.basename(opt.output),opt.farmappendix)
-        os.system('mkdir -p %s'%FarmDirectory)
-        
+        FarmOutputDirectory = '%s/FARM%s'%(opt.output, opt.farmappendix)
+        FarmCfgDirectory = '%s/FARM' % PROJECT
+        os.system('mkdir -p %s' %FarmOutputDirectory)
+        os.system('mkdir -p %s' %FarmCfgDirectory)
         print 'Preparing %d tasks to submit to the batch'%len(task_list)
-        print 'Executables and condor wrapper are stored in %s'%FarmDirectory
+        print 'Executables and condor wrapper are stored in %s'%FarmCfgDirectory
 
-        with open ('%s/condor.sub'%FarmDirectory,'w') as condor:
+        with open ('%s/condor.sub'%FarmCfgDirectory,'w') as condor:
 
-            condor.write('executable = {0}/$(cfgFile).sh\n'.format(FarmDirectory))
-            condor.write('output     = {0}/output_$(cfgFile).out\n'.format(FarmDirectory))
-            condor.write('error      = {0}/output_$(cfgFile).err\n'.format(FarmDirectory))
+            condor.write('executable = {0}/$(cfgFile).sh\n'.format(FarmCfgDirectory))
+            condor.write('output     = {0}/output_$(cfgFile).out\n'.format(FarmOutputDirectory))
+            condor.write('error      = {0}/output_$(cfgFile).err\n'.format(FarmOutputDirectory))
+            condor.write('log        = {0}/*.$(ClusterId).log\n'.format(FarmCfgDirectory))
+
+#            condor.write('log        = {0}/$(cfgFile).log\n'.format(FarmDirectory))
             condor.write('+JobFlavour = "{0}"\n'.format(opt.queue))
 
             jobNb=0
@@ -202,7 +206,7 @@ def main():
                 condor.write('cfgFile=%s\n'%cfgFile)
                 condor.write('queue 1\n')
                 
-                with open('%s/%s.sh'%(FarmDirectory,cfgFile),'w') as cfg:
+                with open('%s/%s.sh'%(FarmCfgDirectory, cfgFile),'w') as cfg:
 
                     cfg.write('#!/bin/bash\n')
                     cfg.write('WORKDIR=`pwd`\n')
@@ -211,6 +215,7 @@ def main():
                     cfg.write('eval `scram r -sh`\n')
                     cfg.write('cd ${WORKDIR}\n')
                     localOutF=os.path.basename(outF)
+                    MigrationFile=opt.output + '/migration/migration_' + localOutF
                     runOpts='-i %s -o ${WORKDIR}/%s --charge %d --ch %d --era %s --tag %s --flav %d --method %s --systVar %s'\
                         %(inF, localOutF, charge, channel, era, tag, flav, method, systVar)
                     if runSysts : runOpts += ' --runSysts'
@@ -221,11 +226,12 @@ def main():
                         cfg.write('rm ${WORKDIR}/%s'%localOutF)
                     elif outF!=localOutF:
                         cfg.write('  mv -v ${WORKDIR}/%s %s\n'%(localOutF,outF))
+                        cfg.write('  mv -v ${WORKDIR}/migration_%s %s\n'%(localOutF, MigrationFile))
 
-                os.system('chmod u+x %s/%s.sh'%(FarmDirectory,cfgFile))
+                os.system('chmod u+x %s/%s.sh'%(FarmCfgDirectory,cfgFile))
 
         print 'Submitting jobs to condor, flavour "%s"'%(opt.queue)
-        os.system('condor_submit %s/condor.sub'%FarmDirectory)
+        os.system('condor_submit %s/condor.sub'%FarmCfgDirectory)
         
 
 """
