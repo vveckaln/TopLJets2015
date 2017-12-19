@@ -118,6 +118,6 @@ double getC(int N, double beta, Jet jet, bool includeNeutrals = false, bool useP
 std::vector<double> getZg(Jet jet, bool includeNeutrals = false, bool usePuppi = false, double ptcut = 1.0);
 std::map<TString,double> getECF(Jet jet, bool includeNeutrals = false, bool usePuppi = false, double ptcut = 1.0);
 
-double deltaR(TLorentzVector v1, TLorentzVector v2) { return v1.DeltaR(v2); }
-double mapAngleMPiToPi(double phi) { return TVector2::Phi_mpi_pi(phi); }
+double deltaR(TLorentzVector v1, TLorentzVector v2);
+double mapAngleMPiToPi(double phi);
 #endif

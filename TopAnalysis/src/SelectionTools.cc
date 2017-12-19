@@ -109,6 +109,7 @@ std::vector<Particle> SelectionTool::getGenLeptons(MiniEvent_t &ev, double minPt
     TLorentzVector lp4;
     lp4.SetPtEtaPhiM(ev.g_pt[i],ev.g_eta[i],ev.g_phi[i],ev.g_m[i]);
     leptons.push_back( Particle(lp4, -ev.g_id[i]/abs(ev.g_id[i]), ev.g_id[i], 0, 1) );
+
   }
   
   return leptons;
@@ -121,7 +122,12 @@ std::vector<Jet> SelectionTool::getGoodJets(MiniEvent_t &ev, double minPt, doubl
   for (int k=0; k<ev.nj; k++) {
     TLorentzVector jp4;
     jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
+    //flavor based on b tagging
 
+    int flavor = 0;
+    if (ev.j_btag[k]) {
+      flavor = 5;
+    }
     //cross clean with leptons
     bool overlapsWithLepton(false);
     for (auto& lepton : leptons) {
@@ -132,16 +138,10 @@ std::vector<Jet> SelectionTool::getGoodJets(MiniEvent_t &ev, double minPt, doubl
     //jet kinematic selection
     if(jp4.Pt() < minPt || abs(jp4.Eta()) > maxEta) continue;
 
-    //flavor based on b tagging
-    int flavor = 0;
-    if (ev.j_btag[k]) {
-      flavor = 5;
-    }
     
     Jet jet(jp4, flavor, k);
     jet.setCSV(ev.j_csv[k]);
     jet.setPartonFlavor(ev.j_flav[k]);
-
     //fill jet constituents
     for (int p = 0; p < ev.npf; p++) {
       if (ev.pf_j[p] == k) {
@@ -157,6 +157,7 @@ std::vector<Jet> SelectionTool::getGoodJets(MiniEvent_t &ev, double minPt, doubl
 
     
     jets.push_back(jet);
+    jet_indices_.push_back(k);
   }
   
   //additional jet-jet information
@@ -185,9 +186,12 @@ std::vector<Jet> SelectionTool::getGenJets(MiniEvent_t &ev, double minPt, double
   std::vector<Jet> jets;
   
   for (int i = 0; i < ev.ng; i++) {
-    if (abs(ev.g_id[i])>10) continue;
     TLorentzVector jp4;
     jp4.SetPtEtaPhiM(ev.g_pt[i],ev.g_eta[i],ev.g_phi[i],ev.g_m[i]);
+    //flavor
+    int flavor = ev.g_id[i];
+
+    if (abs(ev.g_id[i])>10) continue;
 
     //cross clean with leptons
     bool overlapsWithLepton(false);
@@ -200,10 +204,8 @@ std::vector<Jet> SelectionTool::getGenJets(MiniEvent_t &ev, double minPt, double
 
     //jet kinematic selection
     if(jp4.Pt() < minPt || abs(jp4.Eta()) > maxEta) continue;
-
-    //flavor
-    int flavor = ev.g_id[i];
-      
+    
+   
     Jet jet(jp4, flavor, i);
     for (int k=0; k<ev.nj; k++) {
       if (ev.j_g[k] == i) jet.setPartonFlavor(ev.j_flav[k]);
@@ -220,7 +222,7 @@ std::vector<Jet> SelectionTool::getGenJets(MiniEvent_t &ev, double minPt, double
 	if (ev.gpf_c[p] != 0) jet.addTrack(pp4, ev.gpf_id[p]);
       }
     }
-
+    gen_jet_indices_.push_back(i);
     jets.push_back(jet);
   }
   
@@ -252,7 +254,8 @@ TString SelectionTool::flagFinalState(MiniEvent_t &ev, std::vector<Particle> pre
   leptons_.clear(); 
   vetoLeptons_.clear();
   jets_.clear();
-
+  jet_indices_.clear();
+  gen_jet_indices_.clear();
   //if no set of pre-selected leptons has been passed, use standard top selections
   if(preselleptons.size()==0) preselleptons=getTopFlaggedLeptons(ev);
 

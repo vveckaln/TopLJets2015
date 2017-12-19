@@ -24,6 +24,9 @@ class SelectionTool {
   std::vector<Particle> &getSelLeptons()  { return leptons_; }
   std::vector<Particle> &getVetoLeptons() { return vetoLeptons_; }
   std::vector<Jet>      &getJets()        { return jets_; }
+  std::vector<unsigned int> & getJetIndices() {return jet_indices_;};
+  std::vector<unsigned int> & getGenJetIndices() {return gen_jet_indices_;};
+
   TLorentzVector        &getMET()         { return met_; }
 
   //selection at particle level
@@ -50,6 +53,9 @@ class SelectionTool {
   bool isSingleElectronPD_,isSingleMuonPD_,isDoubleEGPD_,isDoubleMuonPD_,isMuonEGPD_;
   std::vector<Particle> leptons_,vetoLeptons_,genLeptons_;
   std::vector<Jet> jets_,genJets_;
+  std::vector<unsigned int> jet_indices_;
+  std::vector<unsigned int> gen_jet_indices_;
+
   TLorentzVector met_;
   bool debug_;
   std::map<TString,unsigned int> triggerBits_;

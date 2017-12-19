@@ -1212,3 +1212,7 @@ void resetTopJetShapeEvent(TopJetShapeEvent_t &tjsev)
   
   tjsev.gen_sel = -1; tjsev.reco_sel = -1;
 }
+
+double deltaR(TLorentzVector v1, TLorentzVector v2) { return v1.DeltaR(v2); }
+double mapAngleMPiToPi(double phi) { return TVector2::Phi_mpi_pi(phi); }
+

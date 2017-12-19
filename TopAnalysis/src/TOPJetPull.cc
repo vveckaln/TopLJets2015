@@ -66,6 +66,25 @@ void RunTopJetPull(TString filename,
   /////////////////////
   // INITIALIZATION //
   ///////////////////
+  TH1F h("histo", "histo", 1000, 0, 100);
+  TH1F * h_selection_reco = new TH1F("selection_reco", "selection RECO; Selection stage; Events", 2, -0.5, 1.5);
+  TH1F * h_selection_gen = new TH1F("selection_gen", "selection GEN; Selection stage; Events", 2, -0.5, 1.5);
+
+  TH1F * const h_selection[] = {h_selection_reco, h_selection_gen};
+  const unsigned short Nbin_labels = 4;
+  const char* bin_labels[Nbin_labels] = {"1l", "1l + #geq4j", "1l + #geq4j(2b)", "1l + #geq4j(2b, 2lj)"}; 
+
+  for (unsigned short h_ind = 0; h_ind < 2; h_ind++)
+    {
+      h_selection[h_ind] -> SetDirectory(0);
+      for (unsigned short bin_ind = 1; bin_ind <= Nbin_labels; bin_ind ++)
+	{
+	  h_selection[h_ind] -> GetXaxis() -> SetBinLabel(bin_ind, bin_labels[bin_ind -1]); 
+	  //	  h_selection[h_ind] -> GetXaxis() -> SetBinLabel(bin_ind, bin_labels[bin_ind]); 
+
+	}
+
+    }
   TRandom* random = new TRandom(0); // random seed for period selection
   std::vector<RunPeriod_t> runPeriods=getRunPeriods(era);
 
@@ -78,8 +97,8 @@ void RunTopJetPull(TString filename,
 
   //PREPARE OUTPUT
   TopJetShapeEvent_t tjsev;
-  TString baseName=gSystem->BaseName(outname); 
-  TString dirName=gSystem->DirName(outname);
+  const TString baseName=gSystem->BaseName(outname); 
+  const TString dirName=gSystem->DirName(outname);
   printf("outname %s, output file name %s\n", outname.Data(), (dirName+"/"+baseName).Data());
   TFile *fOut=TFile::Open(dirName+"/"+baseName, "RECREATE");
   fOut->cd();
@@ -218,8 +237,11 @@ void RunTopJetPull(TString filename,
 
 
   SelectionTool selector(filename, false, triggerList);
-  
-  for (Int_t iev=0;iev<nentries;iev++)
+  unsigned long nGEN_events = 0;  
+  unsigned long nRECO_events = 0; 
+  unsigned long nBOTH_events = 0;
+
+  for (Int_t iev = 0;iev < nentries%100; iev ++)
     {
       t->GetEntry(iev);
       resetTopJetShapeEvent(tjsev);
@@ -231,7 +253,33 @@ void RunTopJetPull(TString filename,
       //////////////////
       // CORRECTIONS //
       ////////////////
+
       
+      printf("!!!!!! Event number %u !!!!!!\n", iev);
+      
+      bool GEN_selected = false;
+      bool RECO_selected = false;
+      /*         for (int k=0; k<ev.nj; k++) 
+	{
+	  TLorentzVector jp4;
+	  jp4.SetPtEtaPhiM(ev.j_pt[k],ev.j_eta[k],ev.j_phi[k],ev.j_mass[k]);
+
+	  int flavor = 0;
+	  if (ev.j_btag[k]) {
+	    flavor = 5;
+	  }
+
+	  
+	  }
+*/
+
+      
+      /*      for (int part_ind = 0; part_ind <ev.npf; part_ind ++)
+	{
+	  TLorentzVector particle;
+	  particle.SetPtEtaPhiM(ev.pf_pt[part_ind], ev.pf_eta[part_ind], ev.pf_phi[part_ind], ev.pf_m[part_ind]);
+	  printf("part_ind %u ind %d rapidity %f, phi %f\n", part_ind, ev.pf_j[part_ind], particle.Rapidity(), particle.Phi());
+	  }*/
       double csvm = 0.8484;
       if (vSystVar[0] == "csv") {
           if (vSystVar[1] == "heavy") {
@@ -278,8 +326,9 @@ void RunTopJetPull(TString filename,
       if (chTag != "M" and chTag != "E")
 	continue;
       std::vector<Particle> &leptons     = selector.getSelLeptons(); 
+      printf("leptons size %lu chTag %s\n", leptons.size(), chTag.Data());
       std::vector<Jet>      &jets        = selector.getJets();  
-      
+      std::vector<unsigned int> jet_indices = selector.getJetIndices();
       //count b and W candidates
       int sel_nbjets = 0;
       int sel_nwjets = 0;
@@ -290,24 +339,28 @@ void RunTopJetPull(TString filename,
 
       vector<unsigned short> bJets_index, lightJets_index;
       unsigned char jet_index = 0;
+      //std::vector<Jet> exp_light_jets;
+      
       for (auto& jet : jets) 
 	{
 	  TLorentzVector jp4 = jet.p4();
 	  if (jet.flavor() == 5) 
 	    {
 	      bJets.push_back(jp4);
-	      bJets_index.push_back(jet_index);
+	      bJets_index.push_back(jet_indices[jet_index]);
 	      ++sel_nbjets;
 	    }
 	  if (jet.flavor() == 1) 
 	    {
 	      lightJets.push_back(jp4);
-	      lightJets_index.push_back(jet_index);
+	      lightJets_index.push_back(jet_indices[jet_index]);
+	      //      exp_light_jets.push_back(jet);
 	      ++sel_nwjets;
 	    }
 	  jet_index ++;
 	}
 
+      //printf("bJets.size() %lu, lightJets.size() %lu, jets.size() %lu\n", bJets.size(), lightJets.size(), jets.size());
       //event selected on reco level?
       bool preselected          (true);
       bool singleLepton         ((chTag=="E" or chTag=="M") and
@@ -465,6 +518,10 @@ void RunTopJetPull(TString filename,
       }
 
       //fill leptons
+      if (leptons.size() == 1)
+	{
+	  h_selection_reco -> Fill("1l", wgt);
+	}
       tjsev.nl=leptons.size();
       int il = 0;
       for(auto& lepton : leptons) 
@@ -478,7 +535,6 @@ void RunTopJetPull(TString filename,
 	}
       
       TLorentzVector lp4 = leptons[0].p4();
-
       //fill MET
       TLorentzVector met(0.0, 0.0, 0.0, 0.0);
       met.SetPtEtaPhiM(ev.met_pt[0], 0.0, ev.met_phi[0], 0.0);
@@ -521,12 +577,18 @@ void RunTopJetPull(TString filename,
         //decide the lepton channel at particle level
         std::vector<Particle> genVetoLeptons = selector.getGenLeptons(ev,15.,2.5);
         std::vector<Particle> genLeptons     = selector.getGenLeptons(ev,30.,2.1);
-        const TLorentzVector lp4 = leptons[0].p4();
-
+	
+	if (genLeptons.size() == 1)
+	  {
+	    h_selection_gen -> Fill("1l", wgt);
+	  }
+	//  const TLorentzVector lp4 = leptons[0].p4()
+	//	const TLorentzVector gen_lp4 = genLeptons[0].p4();
 
         TString genChTag = selector.flagGenFinalState(ev, genLeptons);
-        std::vector<Jet> genJets = selector.getGenJets();
-        
+        printf("genLeptons.size() %lu genChTag %s\n", genLeptons.size(), genChTag.Data());
+	std::vector<Jet> genJets = selector.getGenJets();
+	std::vector<unsigned int> & genJets_indices = selector.getGenJetIndices();
         //count b and W candidates
         int sel_ngbjets = 0;
         int sel_ngwcand = 0;
@@ -537,23 +599,31 @@ void RunTopJetPull(TString filename,
 
 	vector<unsigned short> gen_bJets_index, gen_lightJets_index;
 	unsigned char gen_jet_index = 0;
-	for (auto& jet : genJets) 
+	if (genJets.size() >= 4)
 	  {
-	    TLorentzVector gen_jp4 = jet.p4();
-	    if (jet.flavor() == 5) 
+	    h_selection_gen -> Fill( "1l + #geq4j", wgt);
+	  }
+
+	for (auto& genjet : genJets) 
+	  {
+	    TLorentzVector gen_jp4 = genjet.p4();
+	    if (genjet.flavor() == 5) 
 	      {
 		gen_bJets.push_back(gen_jp4);
-		gen_bJets_index.push_back(gen_jet_index);
+		gen_bJets_index.push_back(genJets_indices[gen_jet_index]);
 		++sel_ngbjets;
 	      }
-	    if (jet.flavor() == 1) 
+	    if (genjet.flavor() == 1) 
 	      {
 		gen_lightJets.push_back(gen_jp4);
-		gen_lightJets_index.push_back(gen_jet_index);
+		gen_lightJets_index.push_back(genJets_indices[gen_jet_index]);
 		++sel_ngwcand;
 	      }
 	    gen_jet_index ++;
 	  }
+
+       
+	//	printf("gen_bJets.size() %lu, gen_lightJets.size() %lu, genJets.size() %lu\n", gen_bJets.size(), gen_lightJets.size(), genJets.size());
 	static const unsigned char gtop_size = 25;
 	TLorentzVector gen_nu; 
 	bool gen_nu_found = false;
@@ -572,8 +642,14 @@ void RunTopJetPull(TString filename,
 	    
 	  }
 	colour_flow_analysis_tool.ResetMigrationValues();
+	if (genJets.size() >= 4 and gen_bJets.size() == 2)
+	  {
+	    h_selection_gen -> Fill( "1l + #geq4j(2b)", wgt);
+	  }
 	if (gen_lightJets.size() == 2 and gen_bJets.size() == 2 and gen_nu_found)
 	  {
+	    h_selection_gen -> Fill( "1l + #geq4j(2b, 2lj)", wgt);
+	    GEN_selected = true;
 	    //printf("Running GEN\n");
 	    CFAT_Core_cmssw core_gen;
 	    CFAT_Event event_gen;
@@ -584,7 +660,7 @@ void RunTopJetPull(TString filename,
 	    core_gen.AddVector(Definitions::LEPTON, lp4);
 	    core_gen.AddVector(Definitions::NEUTRINO, gen_nu);
 	    core_gen.AddBJets(gen_bJets, gen_bJets_index);
- 
+	    core_gen.SetEventDisplayMode(0);
 	    event_gen.CompleteVectors();
 	    event_gen.SetWeight(wgt);
 	    event_gen.SetEventNumber(iev);
@@ -597,6 +673,7 @@ void RunTopJetPull(TString filename,
 	    colour_flow_analysis_tool.SetWorkMode(Definitions::GEN);
 	   
 	    colour_flow_analysis_tool.Work();
+	    
 	  }
     
       //event selected on gen level?
@@ -636,9 +713,22 @@ void RunTopJetPull(TString filename,
       
       //proceed only if event is selected on gen or reco level
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
+      if (jets.size() >= 4)
+	{
+	  h_selection_reco -> Fill("1l + #geq4j", wgt);
+	  
+	}
+
+
+      if (jets.size() >= 4 and bJets.size() == 2)
+	{
+	  h_selection_reco -> Fill( "1l + #geq4j(2b)", wgt);
+	}
       if(bJets.size() == 2 and lightJets.size() == 2)
 	{
-	  //printf("running RECO\n");
+	  h_selection_reco -> Fill( "1l + #geq4j(2b, 2lj)", wgt);
+	  RECO_selected = true;
+	  
 	  CFAT_Core_cmssw core_reco;
 	  CFAT_Event event_reco;
 	  core_reco.SetEvent(ev);
@@ -649,26 +739,45 @@ void RunTopJetPull(TString filename,
 	  core_reco.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
 
 	  core_reco.AddBJets(bJets, bJets_index);
- 
+	  core_reco.SetEventDisplayMode(0);
 	  event_reco.CompleteVectors();
 	  event_reco.SetWeight(wgt);
 	  event_reco.SetEventNumber(iev);
 
-
+	  
 	  colour_flow_analysis_tool.SetEvent(event_reco);
 
 	  colour_flow_analysis_tool.SetWorkMode(Definitions::RECO);
 
+	  //core_reco.ls_particles(Definitions::SCND_LEADING_JET);
 	  //      printf("*** event %u ***** \n", iev);
 	  colour_flow_analysis_tool.Work();
-	  //  outT->Fill();
 	}
       if (isTTbar)
 	{
+	  //  getchar();
+
 	  colour_flow_analysis_tool.PlotMigrationValues();
 	}
-      printf("******************* !!! **********************\n");
-    }
+      //printf("******************* !!! **********************\n");
+      /*if (iev == 41)
+	getchar();*/
+      if (GEN_selected and not RECO_selected)
+	{
+	  nGEN_events ++;
+	  
+	}
+      if (not GEN_selected and RECO_selected)
+	{
+	  nRECO_events ++;
+	  
+	}
+      if (GEN_selected and RECO_selected)
+	{
+	  nBOTH_events ++;
+	}
+      //getchar();
+   }
   
   //close input file
   f->Close();
@@ -692,5 +801,11 @@ void RunTopJetPull(TString filename,
     {
       colour_flow_analysis_tool.WriteMigrationTree();
     }
+
+  //  h_selection_gen -> SetDirectory(fOut);
+  //h_selection_reco -> SetDirectory(fOut);
+  fOut -> cd();
+  h_selection_gen -> Write();
+  h_selection_reco -> Write();
   fOut->Close();
 }

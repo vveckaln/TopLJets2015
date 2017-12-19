@@ -192,18 +192,8 @@ def main():
                             if not key in plots : plots[key]=Plot(key,com=opt.com)
 
                             #add process to plot
-                            title = hist.GetTitle()
-                            isSystN = isSyst or keyIsSyst
-                            if isSystN and not ("no SC" in title or "aMC@NLO" in title or "m=166.5" in title or "m=169.5" in title or "m=173.5" in title or "m=175.5" in title or "m=178.5" in title or "width" in title or "t#bar{t}t#bar{t}" in title) or not isSystN:
-                                
-#                                if key == "pull_angle_allconst_reco_leading_jet_:_2nd_leading_jet_DeltaRTotal_4j2t":
-#                                    print "key %s title %s isSyst %s keyIsSyst %s fIn %s" % (key, title, isSyst, keyIsSyst, fIn)
-                                plots[key].add(h=hist,title=hist.GetTitle(),color=sp[2],isData=sample[1],spImpose=isSignal,isSyst=(isSyst or keyIsSyst))
-                            else:
-  #                              if key == "pull_angle_allconst_reco_leading_jet_:_2nd_leading_jet_DeltaRTotal_4j2t":
- #                                   print "SKIPPED %s"% title
-                                pass
-                                
+                            plots[key].add(h=hist,title=hist.GetTitle(),color=sp[2],isData=sample[1],spImpose=isSignal,isSyst=(isSyst or keyIsSyst))
+                            
                     except:
                         pass
 
@@ -215,20 +205,16 @@ def main():
     else:                outDir = opt.outDir
     os.system('mkdir -p %s' % outDir)
     os.system('rm %s/%s'%(outDir,opt.outName))
-    for p in plots :
-        if "chi_" in p:
-#p == "JetConst_M_allconst_gen_leading_jet": 
-    #p == "pull_angle_allconst_reco_leading_jet_:_2nd_leading_jet_DeltaRTotal_4j2t" or p == "E3_1l4j2b_j2eta":
-            #print "\n !!!!!  p %s  !!!!!\n" % p
-            plots[p].mcUnc=opt.mcUnc
-            if opt.saveLog    : plots[p].savelog=True
-            skipPlot=False
-            if opt.onlyData and plots[p].dataH is None: skipPlot=True 
-            if opt.silent : skipPlot=True
-            if not skipPlot : plots[p].show(outDir=outDir,lumi=opt.lumi,noStack=opt.noStack,saveTeX=opt.saveTeX)
-            plots[p].appendTo('%s/%s'%(outDir,opt.outName))
-            plots[p].reset()
-            #raw_input("Press Enter to continue...")
+    for p in plots : 
+        print "p.GetName() "% p.GetName()
+        plots[p].mcUnc=opt.mcUnc
+        if opt.saveLog    : plots[p].savelog=True
+        skipPlot=False
+        if opt.onlyData and plots[p].dataH is None: skipPlot=True 
+        if opt.silent : skipPlot=True
+        if not skipPlot : plots[p].show(outDir=outDir,lumi=opt.lumi,noStack=opt.noStack,saveTeX=opt.saveTeX)
+        plots[p].appendTo('%s/%s'%(outDir,opt.outName))
+        plots[p].reset()
 
     print '-'*50
     print 'Plots and summary ROOT file can be found in %s' % outDir

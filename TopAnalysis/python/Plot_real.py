@@ -82,7 +82,6 @@ class Plot(object):
         elif isSyst:
             try:
                 self.mcsyst[title].Add(h)
-                    
             except:
                 self.mcsyst[title]=h
                 self.mcsyst[title].SetName('%s_%s' % (h.GetName(), title ) )
@@ -188,8 +187,6 @@ class Plot(object):
 
         p1.SetGridx(False)
         p1.SetGridy(False) #True)
-        #if self.name == "JetConst_M_allconst_gen_leading_jet":
-        p1.SetLogy()
         self._garbageList.append(p1)
         p1.cd()
 
@@ -263,7 +260,7 @@ class Plot(object):
                 nominalTTbar.SetDirectory(0)
 
         #systematics
- #       print "totalMC %s nominalTTbar %s len(self.mcsyst) %u" % (totalMC, nominalTTbar, len(self.mcsyst))
+        print "totalMC %s nominalTTbar %s len(self.mcsyst) %u" % (totalMC, nominalTTbar, len(self.mcsyst))
         if (totalMC and nominalTTbar and len(self.mcsyst)>0):
             # complete
             systUp=[0.]
@@ -277,21 +274,16 @@ class Plot(object):
                         systUp[xbin] = math.sqrt(systUp[xbin]**2 + diff**2)
                     else:
                         systDown[xbin] = math.sqrt(systDown[xbin]**2 + diff**2)
-
-#                    print "xbin %u hname %s self.mcsyst[hname].GetBinContent(xbin) %f nominalTTbar.GetBinContent(xbin) %f, diff %f, systUp[xbin] %f, systDown[xbin] %f"%  (xbin, hname, self.mcsyst[hname].GetBinContent(xbin), nominalTTbar.GetBinContent(xbin), diff, systUp[xbin], systDown[xbin])
+            print "setting totalMCUnc"
             totalMCUnc = totalMC.Clone('totalmcunc')
-            
             self._garbageList.append(totalMCUnc)
             totalMCUnc.SetDirectory(0)
             totalMCUnc.SetFillColor(ROOT.TColor.GetColor('#99d8c9'))
             ROOT.gStyle.SetHatchesLineWidth(1)
             totalMCUnc.SetFillStyle(3254)
             for xbin in xrange(1,nominalTTbar.GetNbinsX()+1):
-                content_before = totalMCUnc.GetBinContent(xbin)
-                error_before = totalMCUnc.GetBinError(xbin)
                 totalMCUnc.SetBinContent(xbin, totalMCUnc.GetBinContent(xbin) + (systUp[xbin]-systDown[xbin])/2.)
                 totalMCUnc.SetBinError(xbin, math.sqrt(totalMCUnc.GetBinError(xbin)**2 + ((systUp[xbin]+systDown[xbin])/2.)**2))
- #               print "xbin %u content_before %f totalMCUnc.GetBinContent(xbin) %f error_before %f totalMCUnc.GetBinError(xbin) %f systUp[xbin] %f systDown[xbin] %f"% (xbin, content_before, totalMCUnc.GetBinContent(xbin), error_before, totalMCUnc.GetBinError(xbin), systUp[xbin], systDown[xbin])
             # shape
             nominalIntegral = nominalTTbar.Integral()
             for hname,h in self.mcsyst.iteritems():
@@ -365,17 +357,12 @@ class Plot(object):
             frame.GetXaxis().SetLabelSize(0.03)
             frame.GetXaxis().SetTitleSize(0.035)
         frame.Draw()
-        frame.SetMinimum(2.0)
         if totalMC is not None   :
             if noStack: stack.Draw('nostack same')
             else:
-                #stack.SetMinimum(2.0)
-
                 stack.Draw('hist same')
                 if (len(self.mcsyst)>0):
-                 #   totalMCUnc.SetMinimum(2.0)
                     totalMCUnc.Draw('e2 same')
-                 #   totalMCUncShape.SetMinimum(2.0)
                     totalMCUncShape.Draw('e2 same')
         for m in self.spimpose:
             self.spimpose[m].Draw('histsame')
@@ -421,7 +408,7 @@ class Plot(object):
         #holds the ratio
         c.cd()
         if not noRatio and self.dataH and len(self.mc)>0 :
-            p2 = ROOT.TPad('p2','p2',0.0, 0.0, 1.0, 0.2)
+            p2 = ROOT.TPad('p2','p2',0.0,0.0,1.0,0.2)
             p2.Draw()
             p2.SetBottomMargin(0.4)
             p2.SetRightMargin(0.05)

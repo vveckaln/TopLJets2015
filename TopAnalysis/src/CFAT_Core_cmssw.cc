@@ -254,7 +254,7 @@ void CFAT_Core_cmssw::SetWorkMode(WorkCode_t work_code)
       PF.mass        = GetEvent() -> gpf_m;
     
       break;
-    default:
+    case Definitions::RECO:
       PF.size        = (unsigned short)GetEvent() -> npf;
       PF.jet_index   = GetEvent() -> pf_j;
       PF.id          = GetEvent() -> pf_id; 
@@ -263,7 +263,9 @@ void CFAT_Core_cmssw::SetWorkMode(WorkCode_t work_code)
       PF.eta         = GetEvent() -> pf_eta; 
       PF.phi         = GetEvent() -> pf_phi; 
       PF.mass        = GetEvent() -> pf_m;
-    
+      break;
+    default:
+      ;
     }
 }
 

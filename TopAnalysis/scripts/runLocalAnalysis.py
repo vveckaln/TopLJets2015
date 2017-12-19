@@ -215,6 +215,9 @@ def main():
                     cfg.write('eval `scram r -sh`\n')
                     cfg.write('cd ${WORKDIR}\n')
                     localOutF=os.path.basename(outF)
+                    isTTbar = False
+                    if "TTJets" in localOutF:
+                        isTTbar = True
                     MigrationFile=opt.output + '/migration/migration_' + localOutF
                     runOpts='-i %s -o ${WORKDIR}/%s --charge %d --ch %d --era %s --tag %s --flav %d --method %s --systVar %s'\
                         %(inF, localOutF, charge, channel, era, tag, flav, method, systVar)
@@ -226,7 +229,8 @@ def main():
                         cfg.write('rm ${WORKDIR}/%s'%localOutF)
                     elif outF!=localOutF:
                         cfg.write('  mv -v ${WORKDIR}/%s %s\n'%(localOutF,outF))
-                        cfg.write('  mv -v ${WORKDIR}/migration_%s %s\n'%(localOutF, MigrationFile))
+                        if isTTbar:
+                            cfg.write('  mv -v ${WORKDIR}/migration_%s %s\n'%(localOutF, MigrationFile))
 
                 os.system('chmod u+x %s/%s.sh'%(FarmCfgDirectory,cfgFile))
 
