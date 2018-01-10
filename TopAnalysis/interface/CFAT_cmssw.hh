@@ -1,6 +1,8 @@
 #include "ColourFlowAnalysisTool.hh"
+#include "Definitions.hh"
 class TFile;
 class TTree;
+using namespace Definitions;
 class CFAT_cmssw: public ColourFlowAnalysisTool
 {
   
@@ -14,14 +16,14 @@ class CFAT_cmssw: public ColourFlowAnalysisTool
 
 public:
   CFAT_cmssw();
-  TTree * migration_tree_;
+  TTree * migration_tree_[N_channels_types];
   TFile * migration_file_;
   void SetMigrationOutput(const char *);
   virtual void WriteMigrationTree();
   virtual void ResetMigrationValues();
   virtual void StoreMigrationValues(double);
   virtual void PlotMigrationValues();
-  virtual inline void Fill1D(const TString & key, double value) const;
+  virtual inline void Fill1D(const TString & key, double value, double = 1.0) const;
   virtual inline void Fill2D(const TString & key, double value_x, double value_y, double weight) const;
 
 };

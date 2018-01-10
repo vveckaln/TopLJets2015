@@ -4,7 +4,6 @@
 #include "TString.h"
 #include "TH2F.h"
 
-//
 JetPullInfo_t getPullVector( MiniEvent_t &ev, int ijet)
 {
   JetPullInfo_t result;

@@ -21,6 +21,18 @@ Float_t computeMT(TLorentzVector &a, TLorentzVector &b);
 FactorizedJetCorrector *getFactorizedJetEnergyCorrector(TString,bool);
 std::vector<float> getJetResolutionScales(float pt, float eta, float genjpt);
 float getLeptonEnergyScaleUncertainty(int l_id,float l_pt,float l_eta);
+inline void fill_selection_histo(std::map<TString, TH1 *> & plots, TString ch, const char * level, const char * bin, double  wgt)
+{
+  {
+    const TString key(ch + "_" + level + "_selection");
+    plots[key] -> Fill(bin, wgt);
+  }
+  {
+    const TString key(TString("L") + "_" + level + "_selection");
+    plots[key] -> Fill(bin, wgt);
+  }
+}
+
 
 struct JetPullInfo_t
 {

@@ -286,7 +286,6 @@ std::map<BTagEntry::JetFlavor, TGraphAsymmErrors *> readExpectedBtagEff(TString 
   btagEffExpUrl.ReplaceAll(".root",btagExpPostFix+".root");
   gSystem->ExpandPathName(btagEffExpUrl);
   TFile *beffIn=TFile::Open(btagEffExpUrl);
-  
   //read efficiency graphs
   std::map<BTagEntry::JetFlavor, TGraphAsymmErrors *> expBtagEff;
   expBtagEff[BTagEntry::FLAV_B]=(TGraphAsymmErrors *)beffIn->Get("b");
