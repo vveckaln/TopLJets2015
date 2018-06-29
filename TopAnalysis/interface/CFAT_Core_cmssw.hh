@@ -36,6 +36,12 @@ class CFAT_Core_cmssw: public CFAT_Core
   const TLorentzVector           * lept_b_ptr_;
   unsigned short                   lept_b_index_;
 
+  const TLorentzVector           * leading_b_;
+  unsigned short                   leading_b_index_;
+
+  const TLorentzVector           * scnd_leading_b_;
+  unsigned short                   scnd_leading_b_index_;
+
   friend class pf_cmssw;
   friend class CFAT_Core;
   struct

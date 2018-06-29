@@ -95,8 +95,9 @@ bool      CFAT_Core_cmssw::pf_iter_core::compare (const CFAT_Core::pf_iter_core 
 
 VectorCode_t   CFAT_Core_cmssw::pf_iter_core::GetVectorCode() const 
 {
-  const unsigned char codes[4] = {LEADING_JET, SCND_LEADING_JET, HAD_B, LEPT_B};
-  for (VectorCode_t jet_code = 0; jet_code < 4; jet_code ++)
+  const unsigned char n = 4;
+  const unsigned char codes[n] = {LEADING_JET, SCND_LEADING_JET, HAD_B, LEPT_B};
+  for (VectorCode_t jet_code = 0; jet_code < n; jet_code ++)
     {
       if (GetPFCMSSW() -> GetJetIndex() == ((CFAT_Core_cmssw*)GetIter() -> GetCore()) -> GetIndex(codes[jet_code]))
 	return codes[jet_code];
@@ -104,9 +105,6 @@ VectorCode_t   CFAT_Core_cmssw::pf_iter_core::GetVectorCode() const
     }
   return 255;
 }
-
-
-
 
 CFAT_Core_cmssw::pf_iter_core::~pf_iter_core()
 {
@@ -133,6 +131,11 @@ CFAT_Core_cmssw::CFAT_Core_cmssw()
   neutrino_ptr_                   = NULL;
   lept_b_ptr_                     = NULL;
   lept_b_index_                   = 65535;
+  leading_b_                      = nullptr;
+  leading_b_index_                = 65535;
+
+  scnd_leading_b_                 = nullptr;
+  scnd_leading_b_index_           = 65535;
 
   PF.size      = 65535;
   PF.jet_index = NULL;
@@ -277,23 +280,23 @@ unsigned short CFAT_Core_cmssw::GetIndex(VectorCode_t vector_code) const
   switch(vector_code)
     {
     case LEADING_JET:
-      index = leading_light_jet_index_;
-      break;
+      return leading_light_jet_index_;
     case SCND_LEADING_JET:
-      index = second_leading_light_jet_index_;
-      break;
+      return second_leading_light_jet_index_;
     case HAD_B:
-      index = had_b_index_;
-      break;
+      return had_b_index_;
     case LEPT_B:
-      index = lept_b_index_;
-      break;
+      return lept_b_index_;
+    case LEADING_B:
+      return leading_b_index_;
+    case SCND_LEADING_B:
+      return scnd_leading_b_index_;
     default:
       char error[128];
-      sprintf(error, "unsigned short CFAT_Core::GetIndex(VectorCode_t) : Invalid vector code %u,", vector_code);
+      //      sprintf(error, "unsigned short CFAT_Core::GetIndex(VectorCode_t) : Invalid vector code %u,", vector_code);
+      printf("%s", error);
       throw error;
     }
-  return index;
 }
 
 const TLorentzVector *& CFAT_Core_cmssw::GetVectorRef(VectorCode_t code)
@@ -312,7 +315,12 @@ const TLorentzVector *& CFAT_Core_cmssw::GetVectorRef(VectorCode_t code)
       return neutrino_ptr_;
     case LEPT_B:
       return lept_b_ptr_;
+    case LEADING_B:
+      return leading_b_;
+    case SCND_LEADING_B:
+      return scnd_leading_b_;
     default:
+      //printf("TLorentzVector *& CFAT_Core_cmssw::GetVectorRef(VectorCode_t) : check vector code %u ", code);
       throw "TLorentzVector *& CFAT_Core_cmssw::GetVectorRef(VectorCode_t) : check vector code";
     }
 }
@@ -368,6 +376,22 @@ void CFAT_Core_cmssw::AddBJets(const vector<TLorentzVector> & b_jets, const vect
       had_b_index_       = b_jets_indices.at(had_b_local_index);
       lept_b_index_      = b_jets_indices.at(lept_b_local_index);
     }
+  if (b_jets.at(0) . Pt() >= b_jets.at(1) . Pt())
+	{
+	  GetVectorRef(LEADING_B)                = &b_jets.at(0);
+	  leading_b_index_                       = b_jets_indices.at(0);
+	  GetVectorRef(SCND_LEADING_B)           = &b_jets.at(1);
+	  scnd_leading_b_index_                  = b_jets_indices.at(1);
+	}
+      else
+	{
+	  GetVectorRef(LEADING_B)                = &b_jets.at(1);
+	  leading_b_index_                       = b_jets_indices.at(1);
+	  GetVectorRef(SCND_LEADING_B)           = &b_jets.at(0);
+	  scnd_leading_b_index_                  = b_jets_indices.at(0);
+	}
+    
+  printf("leading b %p sec lb %p hb %p lb%p\n", GetVector(LEADING_B) , GetVector(SCND_LEADING_B), GetVector(HAD_B), GetVector(LEPT_B) );
 }
 
 void CFAT_Core_cmssw::AddVector(VectorCode_t code, const TLorentzVector & other)

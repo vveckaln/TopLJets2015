@@ -63,7 +63,7 @@ TString assignRunPeriod(std::vector<RunPeriod_t> &runPeriods,TRandom *rand)
     if (pickLumi < testLumi) break;
     else ++iLumi;
   }
-
+  printf("runPeriods.size() %lu testLumi %f, iLumi %u, pickLumi %f\n", runPeriods.size(), testLumi, iLumi, pickLumi);
   //return the period
   return runPeriods[iLumi].first;
 }

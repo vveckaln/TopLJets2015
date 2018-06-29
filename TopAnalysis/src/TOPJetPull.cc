@@ -70,10 +70,10 @@ void RunTopJetPull(TString filename,
   ///////////////////
  
   TRandom*  random = new TRandom(0); // random seed for period selection
-  std::vector<RunPeriod_t> runPeriods=getRunPeriods(era);
+  std::vector<RunPeriod_t> runPeriods = getRunPeriods(era);
 
-  bool isTTbar( filename.Contains("_TTJets") or (normH and TString(normH->GetTitle()).Contains("_TTJets")));
-  bool isData( filename.Contains("Data") );
+  const bool isTTbar( filename.Contains("_TTJets") or (normH and TString(normH->GetTitle()).Contains("_TTJets")));
+  const bool isData( filename.Contains("Data") );
   
   // explicit systematics
   std::vector<std::string> vSystVar;
@@ -81,7 +81,7 @@ void RunTopJetPull(TString filename,
 
   //PREPARE OUTPUT
   TopJetShapeEvent_t tjsev;
-  const TString baseName=gSystem->BaseName(outname); 
+  const TString baseName = gSystem -> BaseName(outname); 
   const TString dirName=gSystem->DirName(outname);
   printf("outname %s, output file name %s\n", outname.Data(), (dirName+"/"+baseName).Data());
   /*  TFile *fOut=TFile::Open(dirName+"/"+baseName, "RECREATE");
@@ -96,9 +96,9 @@ void RunTopJetPull(TString filename,
   printf("opening file %s\n", filename.Data());
 
   TFile *f = TFile::Open(filename);
-  TH1 *genPU=(TH1 *)f->Get("analysis/putrue");
+  TH1 * genPU = (TH1 *) f -> Get("analysis/putrue");
   TH1 *triggerList=(TH1 *)f->Get("analysis/triggerList");
-  TTree *t = (TTree*)f->Get("analysis/data");
+  TTree *t = (TTree*) f -> Get("analysis/data");
   attachToMiniEventTree(t,ev,true);
   Int_t nentries(t->GetEntriesFast());
   if (debug) nentries = 10000; //restrict number of entries for testing
@@ -129,9 +129,13 @@ void RunTopJetPull(TString filename,
   BTagSFUtil* myBTagSFUtil = new BTagSFUtil();
   std::map<TString, std::map<BTagEntry::JetFlavor, BTagCalibrationReader *> > btvsfReaders = getBTVcalibrationReadersMap(era, BTagEntry::OP_MEDIUM);
 
+  for (map<TString, std::map<BTagEntry::JetFlavor, BTagCalibrationReader *> >:: iterator it =  btvsfReaders.begin(); it !=  btvsfReaders.end(); it ++)
+    {
+      printf("map key %s\n", it -> first.Data());
+    }
   //dummy calls
-  btvsfReaders[runPeriods[0].first][BTagEntry::FLAV_B]->eval_auto_bounds("central", BTagEntry::FLAV_B,   0., 30.);
-  btvsfReaders[runPeriods[0].first][BTagEntry::FLAV_UDSG]->eval_auto_bounds("central", BTagEntry::FLAV_UDSG,   0., 30.);
+  btvsfReaders[runPeriods[0].first][BTagEntry::FLAV_B] -> eval_auto_bounds("central", BTagEntry::FLAV_B,   0., 30.);
+  btvsfReaders[runPeriods[0].first][BTagEntry::FLAV_UDSG] -> eval_auto_bounds("central", BTagEntry::FLAV_UDSG,   0., 30.);
 
   std::map<BTagEntry::JetFlavor, TGraphAsymmErrors *>    expBtagEffPy8 = readExpectedBtagEff(era);
   TString btagExpPostFix("");
@@ -183,11 +187,11 @@ void RunTopJetPull(TString filename,
 	  const TString key(TString(tag_channels_types_[channel_ind]) + "_" + tag_levels_types_[level_ind] + "_selection");
 	  TH1F * h = new TH1F(key, TString(tag_channels_types_[channel_ind]) + "_" + tag_levels_types_[level_ind] + "_selection; Selection stage; Events", Nbin_labels, -0.5, Nbin_labels - 0.5);
 	  allPlots[key] = h;
-	  const char* bin_labels[Nbin_labels] = {"1l", "1l + #geq4j", "1l + #geq4j(2b)", "1l + #geq4j(2b, 2lj)"}; 
+	  //	  const char* bin_labels = title_selection_stages_; 
 	  //	  h -> SetDirectory(0);
 	  for (unsigned short bin_ind = 1; bin_ind <= Nbin_labels; bin_ind ++)
 	    {
-	      h -> GetXaxis() -> SetBinLabel(bin_ind, bin_labels[bin_ind -1]); 
+	      h -> GetXaxis() -> SetBinLabel(bin_ind, title_selection_stages_[bin_ind -1]); 
 
 	    }
 
@@ -227,7 +231,8 @@ void RunTopJetPull(TString filename,
   }
   CFAT_cmssw colour_flow_analysis_tool; 
   AssignHistograms(allPlots);
-
+  printf("finished assigning histograms\n");
+  getchar();
   AssignSpecificHistograms2D(all2dPlots);
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
   colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
@@ -250,19 +255,20 @@ void RunTopJetPull(TString filename,
   unsigned long nRECO_events = 0; 
   unsigned long nBOTH_events = 0;
   bool file_completed = false;
-  for (Int_t iev = 0; iev < nentries; iev ++)
+  for (Int_t iev = 0; iev < nentries/10; iev ++)
     {
       t->GetEntry(iev);
       resetTopJetShapeEvent(tjsev);
-      if(iev%10==0) printf ("\r [%3.0f%%] done", 100.*(float)iev/(float)nentries);
-      
+      if(iev%1000==0) printf ("\r [%3.0f%%] done", 100.*(float)iev/(float)nentries);
+      printf("iev %u\n", iev);
       //assign randomly a run period
-      TString period = assignRunPeriod(runPeriods,random);
-      
+      TString period = assignRunPeriod(runPeriods, random);
+      printf("period %s\n", period.Data());
       //////////////////
       // CORRECTIONS //
       ////////////////
-      
+      bool gen_singleLepton4Jets2b2W = false;
+      bool singleLepton4Jets2b2W = false;
       bool GEN_selected = false;
       bool RECO_selected = false;
       double csvm = 0.8484;
@@ -291,15 +297,25 @@ void RunTopJetPull(TString filename,
         }
         else smearJetEnergies(ev);
         //b tagging
-        if (vSystVar[0] == "btag") {
-          if (vSystVar[1] == "heavy") {
-            updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil,vSystVar[2],"central");
-          }
-          if (vSystVar[1] == "light") {
-            updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil,"central",vSystVar[2]);
-          }
-        }
-        else updateBTagDecisions(ev, btvsfReaders[period],expBtagEff,expBtagEffPy8,myBTagSFUtil);
+	printf("vSystvar[0] %s period %s btvsfReaders[period] %p\n", vSystVar[0].c_str(), period.Data(), btvsfReaders[period]);
+        if (vSystVar[0] == "btag")
+	  {
+	    if (vSystVar[1] == "heavy") 
+	      {
+		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, vSystVar[2], "central");
+		printf("probe A\n");
+	      }
+	    if (vSystVar[1] == "light") 
+	      {
+		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, "central", vSystVar[2]);
+		printf("probe B\n");
+	      }
+	  }
+        else
+	  {
+	    updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil);
+	    printf("probe C\n");
+	  }
       }
       
       ///////////////////////////
@@ -351,7 +367,7 @@ void RunTopJetPull(TString filename,
                                  (selector.getVetoLeptons().size() == 0));
       bool singleLepton4Jets    (singleLepton and jets.size()>=4);
       bool singleLepton4Jets2b  (singleLepton4Jets and sel_nbjets==2);
-      bool singleLepton4Jets2b2W(singleLepton4Jets2b and sel_nwjets==2);
+      singleLepton4Jets2b2W = (singleLepton4Jets2b and sel_nwjets==2);
       
       std::vector<bool> recoPass; recoPass.push_back(preselected); recoPass.push_back(singleLepton); recoPass.push_back(singleLepton4Jets); recoPass.push_back(singleLepton4Jets2b); recoPass.push_back(singleLepton4Jets2b2W); 
       
@@ -498,15 +514,13 @@ void RunTopJetPull(TString filename,
             ht.fill(tag+pf+"eta", jets[i].eta(), plotwgts);
           }
           ht.fill(tag+"met", ev.met_pt[0], plotwgts);
+	  if (istage > 0)
+	    {
+	      fill_selection_histo(allPlots, chTag, tag_levels_types_[RECO], title_selection_stages_[istage - 1], plotwgts[0]);
+	    }
+
         }
       }
-
-      //fill leptons
-      if (leptons.size() == 1)
-	{
-	  //	  fill_selection_histo();
-	  fill_selection_histo(allPlots, chTag, tag_levels_types_[RECO], "1l", wgt);
-	}
       tjsev.nl=leptons.size();
       int il = 0;
       for(auto& lepton : leptons) 
@@ -552,25 +566,22 @@ void RunTopJetPull(TString filename,
       ///////////////////////
       // GENERATOR LEVEL  //
       /////////////////////
-     
-      if (isTTbar) {
-        //////////////////////////
-        // GEN LEVEL SELECTION //
-        ////////////////////////
+      colour_flow_analysis_tool.ResetMigrationValues();
+      if (isTTbar) 
+	{
+	  //////////////////////////
+	  // GEN LEVEL SELECTION //
+	  ////////////////////////
        
         
-        //decide the lepton channel at particle level
-        std::vector<Particle> genVetoLeptons = selector.getGenLeptons(ev,15.,2.5);
-        std::vector<Particle> genLeptons     = selector.getGenLeptons(ev,30.,2.1);
+	  //decide the lepton channel at particle level
+	  std::vector<Particle> genVetoLeptons = selector.getGenLeptons(ev,15.,2.5);
+	  std::vector<Particle> genLeptons     = selector.getGenLeptons(ev,30.,2.1);
 	
-	//  const TLorentzVector lp4 = leptons[0].p4()
-	//	const TLorentzVector gen_lp4 = genLeptons[0].p4();
+	  //  const TLorentzVector lp4 = leptons[0].p4()
+	  //	const TLorentzVector gen_lp4 = genLeptons[0].p4();
 
         TString genChTag = selector.flagGenFinalState(ev, genLeptons);
-	if (genLeptons.size() == 1 and (genChTag == "E" or genChTag == "M"))
-	  {
-	    fill_selection_histo(allPlots, genChTag, tag_levels_types_[GEN], "1l", wgt);
-	  }
 
 	std::vector<Jet> genJets = selector.getGenJets();
 	std::vector<unsigned int> & genJets_indices = selector.getGenJetIndices();
@@ -584,10 +595,6 @@ void RunTopJetPull(TString filename,
 
 	vector<unsigned short> gen_bJets_index, gen_lightJets_index;
 	unsigned char gen_jet_index = 0;
-	if (genJets.size() >= 4  and (genChTag == "E" or genChTag == "M"))
-	  {
-	    fill_selection_histo(allPlots, genChTag, tag_levels_types_[GEN], "1l + #geq4j", wgt);
-	  }
 
 	for (auto& genjet : genJets) 
 	  {
@@ -626,21 +633,28 @@ void RunTopJetPull(TString filename,
 	      }
 	    
 	  }
-	colour_flow_analysis_tool.ResetMigrationValues();
-	if (genJets.size() >= 4 and gen_bJets.size() == 2 and (genChTag == "E" or genChTag == "M"))
+
+	const bool gen_preselected             (true);
+        const bool genSingleLepton((genChTag=="E" or genChTag=="M") and
+                             (genVetoLeptons.size() == 1)); // only selected lepton in veto collection
+	const bool gen_singleLepton4Jets       (genSingleLepton and genJets.size() >= 4);
+	const bool gen_singleLepton4Jets2b     (gen_singleLepton4Jets and sel_ngbjets == 2 and gen_nu_found);
+	gen_singleLepton4Jets2b2W =  (gen_singleLepton4Jets2b and sel_ngwcand == 2);
+	const bool gen_pass[4] = {genSingleLepton, gen_singleLepton4Jets, gen_singleLepton4Jets2b, gen_singleLepton4Jets2b2W};
+	for (unsigned char gen_stage_ind = 0; gen_stage_ind < 4 and gen_pass[gen_stage_ind]; gen_stage_ind ++)
 	  {
-	    fill_selection_histo(allPlots, genChTag, tag_levels_types_[GEN], "1l + #geq4j(2b)", wgt);
+	    
+	    fill_selection_histo(allPlots, genChTag, tag_levels_types_[GEN], title_selection_stages_[gen_stage_ind], wgt);
 	  }
-	if (gen_lightJets.size() == 2 and gen_bJets.size() == 2 and gen_nu_found  and (genChTag == "E" or genChTag == "M"))
+
+	if (gen_singleLepton4Jets2b2W)
 	  {
-	    fill_selection_histo(allPlots, genChTag, tag_levels_types_[GEN], "1l + #geq4j(2b, 2lj)", wgt);
 	    GEN_selected = true;
 	    //printf("Running GEN\n");
 	    CFAT_Core_cmssw core_gen;
 	    CFAT_Event event_gen;
 	    core_gen.SetEvent(ev);
 	    event_gen.SetCore(core_gen);
- 
 	    core_gen.AddLightJets(gen_lightJets, gen_lightJets_index);
 	    core_gen.AddVector(Definitions::LEPTON, lp4);
 	    core_gen.AddVector(Definitions::NEUTRINO, gen_nu);
@@ -649,7 +663,6 @@ void RunTopJetPull(TString filename,
 	    event_gen.CompleteVectors();
 	    event_gen.SetWeight(wgt);
 	    event_gen.SetEventNumber(iev);
-
 
 	    colour_flow_analysis_tool.SetEvent(event_gen);
 	  
@@ -660,8 +673,6 @@ void RunTopJetPull(TString filename,
 	  }
     
       //event selected on gen level?
-        bool genSingleLepton((genChTag=="E" or genChTag=="M") and
-                             (genVetoLeptons.size() == 1)); // only selected lepton in veto collection
         if (sel_ngbjets==2 && sel_ngwcand>0 && genSingleLepton) tjsev.gen_sel = 1;
         
         tjsev.ngj = genJets.size();
@@ -696,17 +707,8 @@ void RunTopJetPull(TString filename,
       
       //proceed only if event is selected on gen or reco level
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
-      if (jets.size() >= 4)
+      if(singleLepton4Jets2b2W)
 	{
-	    fill_selection_histo(allPlots, chTag, tag_levels_types_[RECO], "1l + #geq4j", wgt);
-	}
-      if (jets.size() >= 4 and bJets.size() == 2)
-	{
-	    fill_selection_histo(allPlots, chTag, tag_levels_types_[RECO], "1l + #geq4j(2b)", wgt);
-	}
-      if(bJets.size() == 2 and lightJets.size() == 2)
-	{
-	  fill_selection_histo(allPlots, chTag, tag_levels_types_[RECO], "1l + #geq4j(2b, 2lj)", wgt);
 	  RECO_selected = true;
 	  
 	  CFAT_Core_cmssw core_reco;
@@ -746,12 +748,7 @@ void RunTopJetPull(TString filename,
 	      printf("Exception %s\n", e);
 	    }
 	}
-      if (isTTbar)
-	{
-	  //  getchar();
-
-	  colour_flow_analysis_tool.PlotMigrationValues();
-	}
+      colour_flow_analysis_tool.PlotMigrationValues();
       //printf("******************* !!! **********************\n");
       /*if (iev == 41)
 	getchar();*/
@@ -792,9 +789,6 @@ void RunTopJetPull(TString filename,
   for (auto& it : all2dPlots)  { 
     it.second->SetDirectory(fOut); it.second->Write(); 
   }
-  if (isTTbar)
-    {
-      colour_flow_analysis_tool.WriteMigrationTree();
-    }
+  colour_flow_analysis_tool.WriteMigrationTree();
   fOut->Close();
 }

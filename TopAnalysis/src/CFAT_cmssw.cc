@@ -7,16 +7,30 @@
 
 CFAT_cmssw::CFAT_cmssw():ColourFlowAnalysisTool()
 {
-  
-  migration_tree_[L] = NULL;
-  for (unsigned char migration_tree_ind = 1; migration_tree_ind < N_channels_types_; migration_tree_ind ++)
+  for (ChannelCode_t channel_code = 1; channel_code < N_channels_types_; channel_code ++)
     {
-      migration_tree_[migration_tree_ind] = new TTree(TString(tag_channels_types_[migration_tree_ind]) + "_migration", TString(tag_channels_types_[migration_tree_ind]) + "_migration");
-      migration_tree_[migration_tree_ind] -> SetDirectory(NULL);
-      migration_tree_[migration_tree_ind] -> Branch("pull_angle_reco", &pull_angle_reco_,  "pull_angle_reco/D");
-      migration_tree_[migration_tree_ind] -> Branch("pull_angle_gen",  &pull_angle_gen_,   "pull_angle_gen/D");
-      migration_tree_[migration_tree_ind] -> Branch("weight_reco",     &weight_reco_,      "weight_reco/D");
-      migration_tree_[migration_tree_ind] -> Branch("weight_gen",      &weight_gen_,       "weight_gen/D");
+      for (ChargeCode_t charge_code = 0; charge_code < 2; charge_code ++)
+	{
+	  for (unsigned short jet1_iter = 0; jet1_iter < 4; jet1_iter ++)
+	    {
+	      const TString name = 
+		TString(tag_channels_types_[channel_code]) + "_" + 
+		tag_charge_types_[charge_code] + "_" + 
+		tag_jet_types_[jet1_iter] + "_migration";
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] = 
+		new TTree(name, name);
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> SetDirectory(NULL);
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> 
+		Branch("pull_angle_reco", &pull_angle_[0][charge_code][jet1_iter],  "pull_angle_reco/F");
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> 
+		Branch("pull_angle_gen",  &pull_angle_[1][charge_code][jet1_iter],   "pull_angle_gen/F");
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> 
+		Branch("pvmag_reco",      &pvmag_[0][charge_code][jet1_iter],        "pvmag_reco/F");
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> 
+		Branch("pvmag_gen",       &pvmag_[1][charge_code][jet1_iter],         "pvmag_gen/F");
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> Branch("weight",     &weight_,     "weight/F");
+	    }
+	}
     }
 }
 
@@ -27,65 +41,48 @@ void CFAT_cmssw::SetMigrationOutput(const char * migration_output)
 
 void CFAT_cmssw::ResetMigrationValues()
 {
-
-  pull_angle_reco_           = 0;
-  pull_angle_reco_plottable_ = false;
-  weight_reco_               = 0;
-  pull_angle_gen_            = 0;
-  pull_angle_gen_plottable_  = false;
-  weight_gen_                = 0;
+      for (ChargeCode_t charge_code = 0; charge_code < 2; charge_code ++)
+	{
+	  for (unsigned short jet1_iter = 0; jet1_iter < 4; jet1_iter ++)
+	    {
+	      fill_[charge_code][jet1_iter] = false;
+	      for (WorkCode_t level_code = 0; level_code < N_levels_types_; level_code ++)
+		{
+		  pull_angle_[level_code][charge_code][jet1_iter] = - 10.0;
+		  pvmag_[level_code][charge_code][jet1_iter] = - 1.0;
+		}
+	    }
+    }
 }
 
-void CFAT_cmssw::StoreMigrationValues(double value)
+void CFAT_cmssw::StoreMigrationValues(ChargeCode_t chargecode, VectorCode_t jetcode, double pa, double mag)
 {
-  if (work_mode_ == RECO)
-    {
-      pull_angle_reco_ = value;
-      pull_angle_reco_plottable_ = true;
-      weight_reco_ = GetEvent() -> weight_;
-    }
-  if (work_mode_ == GEN)
-    {
-      pull_angle_gen_ = value;
-      pull_angle_gen_plottable_ = true;
-      weight_gen_ = GetEvent() -> weight_;
-    }
-
-  //printf("mode %u, value %f, weight %.9f\n", work_mode_, value, GetEvent() -> weight_);
-  //getchar();
+  weight_ = GetEvent() -> weight_;
+  fill_[chargecode][jetcode] = true;
+  pull_angle_[work_mode_][chargecode][jetcode] = pa;
+  pvmag_[work_mode_][chargecode][jetcode] = mag;
 }
 
 
 void CFAT_cmssw::PlotMigrationValues()
 { 
-  const TString histoname = "Migration";
-  if (pull_angle_reco_plottable_ and pull_angle_gen_plottable_)
+  for (ChargeCode_t charge_code = 0; charge_code < 2; charge_code ++)
     {
-      const double weight = (weight_reco_ + weight_gen_) * 0.5 ;
-      Fill2D(histoname, pull_angle_reco_, pull_angle_gen_, weight);
-      //      printf("PLOTTED pull_angle_reco_ %f, pull_angle_gen_ %f, weight %.9f\n", pull_angle_reco_, pull_angle_gen_, weight);
-      migration_tree_[channel_code_] -> Fill();
+      for (unsigned short jet1_iter = 0; jet1_iter < 4; jet1_iter ++)
+	{
+	  if (fill_[charge_code][jet1_iter])
+	    {
+	      migration_tree_[channel_code_ - 1][charge_code][jet1_iter] -> Fill();
+	      if (charge_code == 1 and jet1_iter == 3)
+		{
+		  //		  printf("filling values wgt %.9f pa %f pvmag %f\n", weight_, pull_angle_[0][1][3], pvmag_[0][1][3]);
+		  //getchar();
+		}
+	    }
+	}
     }
-  if (not pull_angle_reco_plottable_ and pull_angle_gen_plottable_)
-    {
-      pull_angle_reco_ = - 10;
-      const double weight = (weight_reco_ + weight_gen_) * 0.5 ;
-      Fill2D(histoname, pull_angle_reco_, pull_angle_gen_, weight);
-      //printf("PLOTTED pull_angle_reco_ %f, pull_angle_gen_ %f, weight %.9f\n", pull_angle_reco_, pull_angle_gen_, weight);
-      migration_tree_[channel_code_] -> Fill();
-
-    }
-  if (pull_angle_reco_plottable_ and not pull_angle_gen_plottable_)
-    {
-      pull_angle_gen_ = - 10;
-      const double weight = (weight_reco_ + weight_gen_) * 0.5 ;
-      Fill2D(histoname, pull_angle_reco_, pull_angle_gen_, weight);
-      //printf("PLOTTED pull_angle_reco_ %f, pull_angle_gen_ %f, weight %.9f\n", pull_angle_reco_, pull_angle_gen_, weight);
-      migration_tree_[channel_code_] -> Fill();
-
-    }
-  
 }
+
 
 void CFAT_cmssw::Fill1D(const TString & key, double value, double weight) const                                                                                                                        
 {                                                                                                                                                                                                       
@@ -102,11 +99,18 @@ void CFAT_cmssw::WriteMigrationTree()
   //migration_tree_ -> SetBranchAddress("pull_angle_gen", &y);
   migration_file_ = TFile::Open(file_tag_, "RECREATE");
   printf("Opened migration file %p %s\n", migration_file_, file_tag_.Data());
-  for (unsigned char migration_tree_ind = 1; migration_tree_ind < N_channels_types_; migration_tree_ind ++)
+  for (ChannelCode_t channel_code = 1; channel_code < N_channels_types_; channel_code ++)
     {
-      migration_tree_[migration_tree_ind] -> SetDirectory(migration_file_);
-      printf("migration tree collected %lld entries\n", migration_tree_[migration_tree_ind] -> GetEntries());
-      migration_tree_[migration_tree_ind] -> Write();
+      for (ChargeCode_t charge_code = 0; charge_code < 2; charge_code ++)
+	{
+	  for (unsigned short jet1_iter = 0; jet1_iter < 4; jet1_iter ++)
+	    {
+	      TTree * tree = migration_tree_[channel_code - 1][charge_code][jet1_iter];
+	      tree -> SetDirectory(migration_file_);
+	      printf("%s collected %lld entries\n", tree -> GetName(), tree -> GetEntries());
+	      tree -> Write();
+	    }
+	}
     }
   migration_file_ -> Close();
 }
