@@ -13,7 +13,6 @@ void CreateHistogram1D(map_hist_1D & target, const char * title, const char * ax
 {
   for (unsigned short channel_ind = 0; channel_ind < N_channels_types_; channel_ind ++)
     {
-      printf("creatin %s\n", (TString(tag_channels_types_[channel_ind]) + "_" + title).Data());
       target[TString(tag_channels_types_[channel_ind]) + "_" + title] = new TH1F(TString(tag_channels_types_[channel_ind]) + "_" + title, TString(title) + axes, nbins, min, max);
     }
 }

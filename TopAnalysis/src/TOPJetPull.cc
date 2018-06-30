@@ -231,8 +231,6 @@ void RunTopJetPull(TString filename,
   }
   CFAT_cmssw colour_flow_analysis_tool; 
   AssignHistograms(allPlots);
-  printf("finished assigning histograms\n");
-  getchar();
   AssignSpecificHistograms2D(all2dPlots);
   colour_flow_analysis_tool.plots_ptr_ = & allPlots;
   colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
@@ -297,27 +295,33 @@ void RunTopJetPull(TString filename,
         }
         else smearJetEnergies(ev);
         //b tagging
-	printf("vSystvar[0] %s period %s btvsfReaders[period] %p\n", vSystVar[0].c_str(), period.Data(), btvsfReaders[period]);
-        if (vSystVar[0] == "btag")
+	unsigned long iter = 0;
+	while (true)
 	  {
-	    if (vSystVar[1] == "heavy") 
+	    TString period = assignRunPeriod(runPeriods, random);
+	    printf("vSystvar[0] %s period %s btvsfReaders[period] %p\n", vSystVar[0].c_str(), period.Data(), btvsfReaders[period]);
+	    if (vSystVar[0] == "btag")
 	      {
-		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, vSystVar[2], "central");
-		printf("probe A\n");
+		if (vSystVar[1] == "heavy") 
+		  {
+		    updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, vSystVar[2], "central");
+		    printf("probe A\n");
+		  }
+		if (vSystVar[1] == "light") 
+		  {
+		    updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, "central", vSystVar[2]);
+		    printf("probe B\n");
+		  }
 	      }
-	    if (vSystVar[1] == "light") 
+	    else
 	      {
-		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, "central", vSystVar[2]);
-		printf("probe B\n");
+		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil);
+		printf("probe C\n");
 	      }
-	  }
-        else
-	  {
-	    updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil);
-	    printf("probe C\n");
+	    iter ++;
+	    printf("iter %lu\n", iter);
 	  }
       }
-      
       ///////////////////////////
       // RECO LEVEL SELECTION //
       /////////////////////////

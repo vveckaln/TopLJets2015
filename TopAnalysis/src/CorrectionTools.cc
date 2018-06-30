@@ -60,10 +60,9 @@ TString assignRunPeriod(std::vector<RunPeriod_t> &runPeriods,TRandom *rand)
   int iLumi(0);
   for (auto periodLumi : runPeriods) {
     testLumi += periodLumi.second;
-    if (pickLumi < testLumi) break;
+    if (pickLumi < testLumi * ( 1 - 1E-9)) break;
     else ++iLumi;
   }
-  printf("runPeriods.size() %lu testLumi %f, iLumi %u, pickLumi %f\n", runPeriods.size(), testLumi, iLumi, pickLumi);
   //return the period
   return runPeriods[iLumi].first;
 }
