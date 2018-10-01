@@ -15,20 +15,22 @@ def getBaseNames(dirname):
     names = set()
     for item in os.listdir(dirname):
         filename, ext = os.path.splitext(item)
+#        if not "MC13TeV_QCD" in  filename:
+#            continue
         if not ext == '.root': continue
         try:
             #if not ('MC13TeV' in filename or 'Data13TeV' in filename) : continue
-            fIn=ROOT.TFile.Open(dirname+'/'+item)
+            fIn = ROOT.TFile.Open(dirname + '/' +item)
             goodFile = False
             try:
                 if fIn and not fIn.IsZombie() and not fIn.TestBit(ROOT.TFile.kRecovered):
                     goodFile = True
             except:
                 pass
-            basename, number = filename.rsplit('_',1)
-            print basename,number,goodFile
+            basename, number = filename.rsplit('_', 1)
+            print basename, number, goodFile
             if (not goodFile):
-                badFiles.append(dirname+'/'+item)
+                badFiles.append(dirname + '/' + item)
                 continue
             if not number == 'missing' and not isint(number):
                 raise ValueError
@@ -53,13 +55,16 @@ except IndexError:
     exit(-1)
 
 noTrees=False
-if len(sys.argv)>2 and sys.argv[2]=='True': noTrees=True
+subfolder = 'Chunks'
+if len(sys.argv)>2 and sys.argv[2]== 'unfolding': 
+    subfolder = 'migration'
 
 outputdir = inputdir
 if len(sys.argv)>3 : outputdir=sys.argv[3]
 
-chunkdir  = os.path.join(inputdir, 'Chunks')
+chunkdir  = os.path.join(inputdir, subfolder)
 basenames = getBaseNames(chunkdir)
+
 print '-----------------------'
 print 'Will process the following samples:', basenames
 

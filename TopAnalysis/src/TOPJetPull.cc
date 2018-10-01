@@ -5,6 +5,7 @@
 #include <TSystem.h>
 #include <TGraph.h>
 #include <TLorentzVector.h>
+
 #include <TGraphAsymmErrors.h>
 
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
@@ -64,11 +65,10 @@ void RunTopJetPull(TString filename,
 		    TString era,
 		    Bool_t debug)
 {
-
+  printf("filename %s\n", filename.Data());
   /////////////////////
   // INITIALIZATION //
   ///////////////////
- 
   TRandom*  random = new TRandom(0); // random seed for period selection
   std::vector<RunPeriod_t> runPeriods = getRunPeriods(era);
 
@@ -129,10 +129,6 @@ void RunTopJetPull(TString filename,
   BTagSFUtil* myBTagSFUtil = new BTagSFUtil();
   std::map<TString, std::map<BTagEntry::JetFlavor, BTagCalibrationReader *> > btvsfReaders = getBTVcalibrationReadersMap(era, BTagEntry::OP_MEDIUM);
 
-  for (map<TString, std::map<BTagEntry::JetFlavor, BTagCalibrationReader *> >:: iterator it =  btvsfReaders.begin(); it !=  btvsfReaders.end(); it ++)
-    {
-      printf("map key %s\n", it -> first.Data());
-    }
   //dummy calls
   btvsfReaders[runPeriods[0].first][BTagEntry::FLAV_B] -> eval_auto_bounds("central", BTagEntry::FLAV_B,   0., 30.);
   btvsfReaders[runPeriods[0].first][BTagEntry::FLAV_UDSG] -> eval_auto_bounds("central", BTagEntry::FLAV_UDSG,   0., 30.);
@@ -253,15 +249,13 @@ void RunTopJetPull(TString filename,
   unsigned long nRECO_events = 0; 
   unsigned long nBOTH_events = 0;
   bool file_completed = false;
-  for (Int_t iev = 0; iev < nentries/10; iev ++)
+  for (Int_t iev = 0; iev < nentries; iev ++)
     {
       t->GetEntry(iev);
       resetTopJetShapeEvent(tjsev);
       if(iev%1000==0) printf ("\r [%3.0f%%] done", 100.*(float)iev/(float)nentries);
-      printf("iev %u\n", iev);
+      //printf("iev %u\n", iev);
       //assign randomly a run period
-      TString period = assignRunPeriod(runPeriods, random);
-      printf("period %s\n", period.Data());
       //////////////////
       // CORRECTIONS //
       ////////////////
@@ -271,18 +265,20 @@ void RunTopJetPull(TString filename,
       bool RECO_selected = false;
       double csvm = 0.8484;
       if (vSystVar[0] == "csv") {
-          if (vSystVar[1] == "heavy") {
-              //heavy flavor uncertainty +/-3.5%
-              if (vSystVar[2] == "up")   addBTagDecisions(ev, 0.8726, csvm);
-              if (vSystVar[2] == "down") addBTagDecisions(ev, 0.8190, csvm);
-          }
-          if (vSystVar[1] == "light") {
-              //light flavor uncertainty +/-10%
-              if (vSystVar[2] == "up")   addBTagDecisions(ev, csvm, 0.8557);
-              if (vSystVar[2] == "down") addBTagDecisions(ev, csvm, 0.8415);
-          }
+	if (vSystVar[1] == "heavy") {
+	  //heavy flavor uncertainty +/-3.5%
+	  if (vSystVar[2] == "up")   addBTagDecisions(ev, 0.8726, csvm);
+	  if (vSystVar[2] == "down") addBTagDecisions(ev, 0.8190, csvm);
+	}
+	if (vSystVar[1] == "light") {
+	  //light flavor uncertainty +/-10%
+	  if (vSystVar[2] == "up")   addBTagDecisions(ev, csvm, 0.8557);
+	  if (vSystVar[2] == "down") addBTagDecisions(ev, csvm, 0.8415);
+	}
       }
       else addBTagDecisions(ev, csvm, csvm);
+      TString period;
+      period = assignRunPeriod(runPeriods, random);
       
       if(!ev.isData) {
         //jec
@@ -296,32 +292,32 @@ void RunTopJetPull(TString filename,
         else smearJetEnergies(ev);
         //b tagging
 	unsigned long iter = 0;
-	while (true)
+	// while(true)
+	  
+	//   {
+	//     if (iter % 1000 == 0)
+	//       printf("iter %lu\r", iter);
+	//     period = assignRunPeriod(runPeriods, random);
+	//printf("period [%s]\n", period.Data());
+	if (vSystVar[0] == "btag")
 	  {
-	    TString period = assignRunPeriod(runPeriods, random);
-	    printf("vSystvar[0] %s period %s btvsfReaders[period] %p\n", vSystVar[0].c_str(), period.Data(), btvsfReaders[period]);
-	    if (vSystVar[0] == "btag")
+	    if (vSystVar[1] == "heavy") 
 	      {
-		if (vSystVar[1] == "heavy") 
-		  {
-		    updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, vSystVar[2], "central");
-		    printf("probe A\n");
-		  }
-		if (vSystVar[1] == "light") 
-		  {
-		    updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, "central", vSystVar[2]);
-		    printf("probe B\n");
-		  }
+		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, vSystVar[2], "central");
 	      }
-	    else
+	    if (vSystVar[1] == "light") 
 	      {
-		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil);
-		printf("probe C\n");
+		updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil, "central", vSystVar[2]);
 	      }
-	    iter ++;
-	    printf("iter %lu\n", iter);
 	  }
+	else
+	  {
+	    updateBTagDecisions(ev, btvsfReaders[period], expBtagEff, expBtagEffPy8, myBTagSFUtil);
+	  }
+	iter ++;
       }
+	
+      //	}
       ///////////////////////////
       // RECO LEVEL SELECTION //
       /////////////////////////
@@ -329,7 +325,9 @@ void RunTopJetPull(TString filename,
       //decide the lepton channel and get selected objects
       TString chTag = selector.flagFinalState(ev);
       if (chTag != "M" and chTag != "E")
-	continue;
+	{
+	  //  printf("no tag\n");
+	}
       std::vector<Particle> &leptons     = selector.getSelLeptons(); 
       std::vector<Jet>      &jets        = selector.getJets();  
       std::vector<unsigned int> jet_indices = selector.getJetIndices();
@@ -394,8 +392,7 @@ void RunTopJetPull(TString filename,
       if (!ev.isData) {
         // norm weight
         wgt  = (normH? normH->GetBinContent(1) : 1.0);
-        
-        // pu weight
+	// pu weight
         double puWgt(puWgtGr[period][0]->Eval(ev.g_pu));
         allPlots["puwgtctr"]->Fill(1,puWgt);
         wgt *= puWgt;
@@ -426,7 +423,6 @@ void RunTopJetPull(TString filename,
         
         // lhe weights
         wgt *= (ev.g_nw>0 ? ev.g_w[0] : 1.0);
-        
         std::set<std::string> scalesForPlotter = {
           "id1002muR1muF2hdampmt272.7225",
           "id1003muR1muF0.5hdampmt272.7225",
@@ -459,7 +455,6 @@ void RunTopJetPull(TString filename,
       //////////////////////////
       // RECO LEVEL ANALYSIS //
       ////////////////////////
-      
       //W and top masses
       std::vector<TLorentzVector> wCands;
       for (unsigned int i = 0; i < jets.size(); i++) {
@@ -537,35 +532,26 @@ void RunTopJetPull(TString filename,
 	  il++;
 	}
       
-      TLorentzVector lp4 = leptons[0].p4();
-      //fill MET
       TLorentzVector met(0.0, 0.0, 0.0, 0.0);
       met.SetPtEtaPhiM(ev.met_pt[0], 0.0, ev.met_phi[0], 0.0);
       met.SetPz(0.0); 
       met.SetE(met.Pt());
-      const float mt(computeMT(lp4, met));
-
-      //compute neutrino kinematics
-      neutrinoPzComputer.SetMET(met);
-      neutrinoPzComputer.SetLepton(lp4);
       
-      const float nupz = neutrinoPzComputer.Calculate();
-      const TLorentzVector neutrinoHypP4(met.Px(), met.Py(), nupz, TMath::Sqrt(TMath::Power(met.Pt(), 2) + TMath::Power(nupz, 2)));
       tjsev.met_pt=ev.met_pt[0];
       tjsev.met_phi=ev.met_phi[0];
       
       //fill jets (with jet shapes)
-      for(int ij=0; ij<(int)jets.size(); ij++) {
-        tjsev.j_pt[ij]      = jets[ij].p4().Pt();
-        tjsev.j_eta[ij]     = jets[ij].p4().Eta();
-        tjsev.j_phi[ij]     = jets[ij].p4().Phi();
-        tjsev.j_m[ij]       = jets[ij].p4().M(); 
-        tjsev.j_flavor[ij]  = jets[ij].flavor();
-        tjsev.j_overlap[ij] = jets[ij].overlap();
+      for(int ij=0; ij<(int)jets.size(); ij++) 
+	{
+	  tjsev.j_pt[ij]      = jets[ij].p4().Pt();
+	  tjsev.j_eta[ij]     = jets[ij].p4().Eta();
+	  tjsev.j_phi[ij]     = jets[ij].p4().Phi();
+	  tjsev.j_m[ij]       = jets[ij].p4().M(); 
+	  tjsev.j_flavor[ij]  = jets[ij].flavor();
+	  tjsev.j_overlap[ij] = jets[ij].overlap();
         
-        if (tjsev.reco_sel != 1) continue;
-      }
-      
+	  if (tjsev.reco_sel != 1) continue;
+	}
       
       ///////////////////////
       // GENERATOR LEVEL  //
@@ -577,16 +563,15 @@ void RunTopJetPull(TString filename,
 	  // GEN LEVEL SELECTION //
 	  ////////////////////////
        
-        
+         
 	  //decide the lepton channel at particle level
-	  std::vector<Particle> genVetoLeptons = selector.getGenLeptons(ev,15.,2.5);
-	  std::vector<Particle> genLeptons     = selector.getGenLeptons(ev,30.,2.1);
+	  std::vector<Particle> genVetoLeptons = selector.getGenLeptons(ev, 15.0, 2.5);
+	  std::vector<Particle> genLeptons     = selector.getGenLeptons(ev, 30.0, 2.1);
 	
 	  //  const TLorentzVector lp4 = leptons[0].p4()
 	  //	const TLorentzVector gen_lp4 = genLeptons[0].p4();
 
         TString genChTag = selector.flagGenFinalState(ev, genLeptons);
-
 	std::vector<Jet> genJets = selector.getGenJets();
 	std::vector<unsigned int> & genJets_indices = selector.getGenJetIndices();
         //count b and W candidates
@@ -621,19 +606,21 @@ void RunTopJetPull(TString filename,
        
 	//	printf("gen_bJets.size() %lu, gen_lightJets.size() %lu, genJets.size() %lu\n", gen_bJets.size(), gen_lightJets.size(), genJets.size());
 	static const unsigned char gtop_size = 25;
-	TLorentzVector gen_nu; 
+	TLorentzVector  * gen_nu = nullptr; 
+	TLorentzVector  gen_nu_store;
 	bool gen_nu_found = false;
 	for (unsigned char gtop_ind = 0; gtop_ind < gtop_size; gtop_ind ++)
 	  {
 	    if (abs(ev.gtop_id[gtop_ind]) == 12000 or abs(ev.gtop_id[gtop_ind]) == 14000)
 	      {
-		gen_nu.SetPtEtaPhiM(ev.gtop_pt[gtop_ind], ev.gtop_eta[gtop_ind], ev.gtop_phi[gtop_ind], ev.gtop_m[gtop_ind]);
+		gen_nu_store.SetPtEtaPhiM(ev.gtop_pt[gtop_ind], ev.gtop_eta[gtop_ind], ev.gtop_phi[gtop_ind], ev.gtop_m[gtop_ind]);
 		if (gen_nu_found)
 		  {
 		    gen_nu_found = false;
 		    break;
 		  }
 		gen_nu_found = true;
+		gen_nu = & gen_nu_store;
 	      }
 	    
 	  }
@@ -642,7 +629,7 @@ void RunTopJetPull(TString filename,
         const bool genSingleLepton((genChTag=="E" or genChTag=="M") and
                              (genVetoLeptons.size() == 1)); // only selected lepton in veto collection
 	const bool gen_singleLepton4Jets       (genSingleLepton and genJets.size() >= 4);
-	const bool gen_singleLepton4Jets2b     (gen_singleLepton4Jets and sel_ngbjets == 2 and gen_nu_found);
+	const bool gen_singleLepton4Jets2b     (gen_singleLepton4Jets and sel_ngbjets == 2/* and gen_nu_found*/);
 	gen_singleLepton4Jets2b2W =  (gen_singleLepton4Jets2b and sel_ngwcand == 2);
 	const bool gen_pass[4] = {genSingleLepton, gen_singleLepton4Jets, gen_singleLepton4Jets2b, gen_singleLepton4Jets2b2W};
 	for (unsigned char gen_stage_ind = 0; gen_stage_ind < 4 and gen_pass[gen_stage_ind]; gen_stage_ind ++)
@@ -650,9 +637,10 @@ void RunTopJetPull(TString filename,
 	    
 	    fill_selection_histo(allPlots, genChTag, tag_levels_types_[GEN], title_selection_stages_[gen_stage_ind], wgt);
 	  }
-
 	if (gen_singleLepton4Jets2b2W)
 	  {
+	    
+	    const TLorentzVector gen_lp4(genVetoLeptons[0].p4()); 
 	    GEN_selected = true;
 	    //printf("Running GEN\n");
 	    CFAT_Core_cmssw core_gen;
@@ -660,7 +648,7 @@ void RunTopJetPull(TString filename,
 	    core_gen.SetEvent(ev);
 	    event_gen.SetCore(core_gen);
 	    core_gen.AddLightJets(gen_lightJets, gen_lightJets_index);
-	    core_gen.AddVector(Definitions::LEPTON, lp4);
+	    core_gen.AddVector(Definitions::LEPTON, & gen_lp4);
 	    core_gen.AddVector(Definitions::NEUTRINO, gen_nu);
 	    core_gen.AddBJets(gen_bJets, gen_bJets_index);
 	    core_gen.SetEventDisplayMode(0);
@@ -675,9 +663,9 @@ void RunTopJetPull(TString filename,
 	    colour_flow_analysis_tool.SetChannel(genChTag == "E" ? E : M);
 	    colour_flow_analysis_tool.Work();
 	  }
-    
       //event selected on gen level?
-        if (sel_ngbjets==2 && sel_ngwcand>0 && genSingleLepton) tjsev.gen_sel = 1;
+        if (sel_ngbjets==2 && sel_ngwcand>0 && genSingleLepton) 
+	  tjsev.gen_sel = 1;
         
         tjsev.ngj = genJets.size();
             
@@ -686,26 +674,28 @@ void RunTopJetPull(TString filename,
         ///////////////////////
 
         //store jets to tree
-        for (int i = 0; i < tjsev.ngj; i++) {
-          tjsev.gj_pt     [i] = genJets[i].p4().Pt();
-          tjsev.gj_eta    [i] = genJets[i].p4().Eta();
-          tjsev.gj_phi    [i] = genJets[i].p4().Phi();
-          tjsev.gj_m      [i] = genJets[i].p4().M();
-          tjsev.gj_flavor [i] = genJets[i].flavor();
-          tjsev.gj_overlap[i] = genJets[i].overlap();
+        for (int i = 0; i < tjsev.ngj; i++) 
+	  {
+	    tjsev.gj_pt     [i] = genJets[i].p4().Pt();
+	    tjsev.gj_eta    [i] = genJets[i].p4().Eta();
+	    tjsev.gj_phi    [i] = genJets[i].p4().Phi();
+	    tjsev.gj_m      [i] = genJets[i].p4().M();
+	    tjsev.gj_flavor [i] = genJets[i].flavor();
+	    tjsev.gj_overlap[i] = genJets[i].overlap();
           
-          //matching to reco jet
-          for(unsigned int ij = 0; ij< jets.size(); ij++) {
-            int ig = i;
-            if(jets[ij].p4().DeltaR(genJets[ig].p4())>0.4) continue;
-            tjsev.j_gj[ij] = ig;
-            tjsev.gj_j[ig] = ij;
-            break;
-          }
+	    //matching to reco jet
+	    for(unsigned int ij = 0; ij< jets.size(); ij++) 
+	      {
+		int ig = i;
+		if(jets[ij].p4().DeltaR(genJets[ig].p4())>0.4) continue;
+		tjsev.j_gj[ij] = ig;
+		tjsev.gj_j[ig] = ij;
+		break;
+	      }
           
-          if (tjsev.gen_sel != 1) continue;
+	    if (tjsev.gen_sel != 1) continue;
           
-        }
+	  }
       }
       else tjsev.gen_sel = -1;
       
@@ -713,6 +703,16 @@ void RunTopJetPull(TString filename,
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
       if(singleLepton4Jets2b2W)
 	{
+	  TLorentzVector lp4(leptons[0].p4());
+	  //fill MET
+	  const float mt(computeMT(lp4, met));
+
+	  //compute neutrino kinematics
+	  neutrinoPzComputer.SetMET(met);
+	  neutrinoPzComputer.SetLepton(lp4);
+      
+	  const float nupz = neutrinoPzComputer.Calculate();
+	  const TLorentzVector neutrinoHypP4(met.Px(), met.Py(), nupz, TMath::Sqrt(TMath::Power(met.Pt(), 2) + TMath::Power(nupz, 2)));
 	  RECO_selected = true;
 	  
 	  CFAT_Core_cmssw core_reco;
@@ -721,8 +721,8 @@ void RunTopJetPull(TString filename,
 	  event_reco.SetCore(core_reco);
 	  core_reco.AddLightJets(lightJets, lightJets_index);
  
-	  core_reco.AddVector(Definitions::LEPTON, lp4);
-	  core_reco.AddVector(Definitions::NEUTRINO, neutrinoHypP4);
+	  core_reco.AddVector(Definitions::LEPTON, &lp4);
+	  core_reco.AddVector(Definitions::NEUTRINO, &neutrinoHypP4);
 
 	  core_reco.AddBJets(bJets, bJets_index);
 	  core_reco.SetEventDisplayMode(0);

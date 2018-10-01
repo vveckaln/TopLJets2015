@@ -1,0 +1,346 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_27642/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting     Expires            Service principal
+09/06/18 17:00:48  09/07/18 18:00:48  krbtgt/CERN.CH@CERN.CH
+	renew until 09/09/18 20:55:15
+09/06/18 17:00:49  09/07/18 18:00:48  afs/cern.ch@CERN.CH
+	renew until 09/09/18 20:55:15
+end klist
+ls EOS
+analysis_MC13TeV_TTJets
+analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJetsfix
+analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJetsswap
+bins
+cernbox
+Chunks
+Chunks_test
+copy_test
+data
+flipped
+flipped_old
+LSF
+merged_plots
+migration
+processing
+reserve
+rivet
+rivet_results_23_March
+rivet_test
+rivet_test_21_March
+SWAN_projects
+test
+unfolding_cflip_old
+unfolding_-m
+unfolding_nominal
+unfolding_nominal_old
+end ls EOS
+EXIT_CODE_SCRAM 0
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root
+rm: cannot remove `/eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/plotter_E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_had_w_DeltaRle1p0.root': No such file or directory
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_had_w_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_had_w_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_had_w_DeltaRle1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRTotal.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRgt1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRle1p0 ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRTotal.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRgt1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_b_DeltaRle1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRTotal.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRgt1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_t_DeltaRle1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRTotal.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRgt1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lept_w_DeltaRle1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRTotal.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRgt1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_lepton_DeltaRle1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRTotal.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRgt1p0.png has been created
+processing E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_pull_angle_hadWPtle50p0GeV_reco_scnd_leading_jet_neutrino_DeltaRle1p0.png has been created
+processing E_reco_selection ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_reco_selection.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_reco_selection.png has been created
+processing L_chiblb2l_E_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_gen_allpart.png has been created
+processing L_chiblb2l_E_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_gen_jetprt.png has been created
+processing L_chiblb2l_E_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_reco_allpart.png has been created
+processing L_chiblb2l_E_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_allconst_reco_jetprt.png has been created
+processing L_chiblb2l_E_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_gen_allpart.png has been created
+processing L_chiblb2l_E_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_gen_jetprt.png has been created
+processing L_chiblb2l_E_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_reco_allpart.png has been created
+processing L_chiblb2l_E_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_E_chconst_reco_jetprt.png has been created
+processing L_chiblb2l_N_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_gen_allpart.png has been created
+processing L_chiblb2l_N_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_gen_jetprt.png has been created
+processing L_chiblb2l_N_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_reco_allpart.png has been created
+processing L_chiblb2l_N_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_allconst_reco_jetprt.png has been created
+processing L_chiblb2l_N_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_gen_allpart.png has been created
+processing L_chiblb2l_N_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_gen_jetprt.png has been created
+processing L_chiblb2l_N_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_reco_allpart.png has been created
+processing L_chiblb2l_N_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_N_chconst_reco_jetprt.png has been created
+processing L_chiblb2l_Pt_allconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chiblb2l_Pt_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_allconst_gen_jetprt.png has been created
+processing L_chiblb2l_Pt_allconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chiblb2l_Pt_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_allconst_reco_jetprt.png has been created
+processing L_chiblb2l_Pt_chconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chiblb2l_Pt_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_chconst_gen_jetprt.png has been created
+processing L_chiblb2l_Pt_chconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chiblb2l_Pt_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiblb2l_Pt_chconst_reco_jetprt.png has been created
+processing L_chihbqc_E_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_gen_allpart.png has been created
+processing L_chihbqc_E_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_gen_jetprt.png has been created
+processing L_chihbqc_E_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_reco_allpart.png has been created
+processing L_chihbqc_E_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_allconst_reco_jetprt.png has been created
+processing L_chihbqc_E_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_gen_allpart.png has been created
+processing L_chihbqc_E_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_gen_jetprt.png has been created
+processing L_chihbqc_E_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_reco_allpart.png has been created
+processing L_chihbqc_E_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_E_chconst_reco_jetprt.png has been created
+processing L_chihbqc_N_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_gen_allpart.png has been created
+processing L_chihbqc_N_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_gen_jetprt.png has been created
+processing L_chihbqc_N_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_reco_allpart.png has been created
+processing L_chihbqc_N_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_allconst_reco_jetprt.png has been created
+processing L_chihbqc_N_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_gen_allpart.png has been created
+processing L_chihbqc_N_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_gen_jetprt.png has been created
+processing L_chihbqc_N_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_reco_allpart.png has been created
+processing L_chihbqc_N_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_N_chconst_reco_jetprt.png has been created
+processing L_chihbqc_Pt_allconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqc_Pt_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_allconst_gen_jetprt.png has been created
+processing L_chihbqc_Pt_allconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqc_Pt_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_allconst_reco_jetprt.png has been created
+processing L_chihbqc_Pt_chconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqc_Pt_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_chconst_gen_jetprt.png has been created
+processing L_chihbqc_Pt_chconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqc_Pt_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqc_Pt_chconst_reco_jetprt.png has been created
+processing L_chihbqf_E_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_gen_allpart.png has been created
+processing L_chihbqf_E_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_gen_jetprt.png has been created
+processing L_chihbqf_E_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_reco_allpart.png has been created
+processing L_chihbqf_E_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_allconst_reco_jetprt.png has been created
+processing L_chihbqf_E_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_gen_allpart.png has been created
+processing L_chihbqf_E_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_gen_jetprt.png has been created
+processing L_chihbqf_E_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_reco_allpart.png has been created
+processing L_chihbqf_E_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_E_chconst_reco_jetprt.png has been created
+processing L_chihbqf_N_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_gen_allpart.png has been created
+processing L_chihbqf_N_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_gen_jetprt.png has been created
+processing L_chihbqf_N_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_reco_allpart.png has been created
+processing L_chihbqf_N_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_allconst_reco_jetprt.png has been created
+processing L_chihbqf_N_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_gen_allpart.png has been created
+processing L_chihbqf_N_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_gen_jetprt.png has been created
+processing L_chihbqf_N_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_reco_allpart.png has been created
+processing L_chihbqf_N_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_N_chconst_reco_jetprt.png has been created
+processing L_chihbqf_Pt_allconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqf_Pt_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_allconst_gen_jetprt.png has been created
+processing L_chihbqf_Pt_allconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqf_Pt_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_allconst_reco_jetprt.png has been created
+processing L_chihbqf_Pt_chconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqf_Pt_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_chconst_gen_jetprt.png has been created
+processing L_chihbqf_Pt_chconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing L_chihbqf_Pt_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chihbqf_Pt_chconst_reco_jetprt.png has been created
+processing L_chiqcqf_E_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_gen_allpart.png has been created
+processing L_chiqcqf_E_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_gen_jetprt.png has been created
+processing L_chiqcqf_E_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_reco_allpart.png has been created
+processing L_chiqcqf_E_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_allconst_reco_jetprt.png has been created
+processing L_chiqcqf_E_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_gen_allpart.png has been created
+processing L_chiqcqf_E_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_gen_jetprt.png has been created
+processing L_chiqcqf_E_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_reco_allpart.png has been created
+processing L_chiqcqf_E_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/L_chiqcqf_E_chconst_reco_jetprt.png has been created

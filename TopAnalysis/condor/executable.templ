@@ -1,0 +1,21 @@
+#!/bin/bash
+CLUSTERID=$1
+PROCID=$2
+echo -e "@JOB_TAG\t${PROCID}\t"`date` >> @PROJECT/condor/registry_$CLUSTERID.txt
+echo "hostname " `hostname`
+echo "pwd" `pwd`
+echo "klist" >&2
+klist >&2
+echo "end klist" >&2
+echo "ls EOS" >&2
+ls /eos/user/v/vveckaln >&2
+echo "end ls EOS" >&2
+
+source @PROJECT/condor/run_job.sh @OUTPUTDIR @INPUT_FILE @OUTPUT_FILE_BASENAME "@RUN_OPTS" @TAG @SYS
+#EXIT_CODE=$?
+if [ $(( $EXIT_CODE_SCRAM || $EXIT_CODE_PYTHON )) = 0 ];
+then
+sh @PROJECT/condor/success.sh $EXIT_CODE_SCRAM $EXIT_CODE_PYTHON $CLUSTERID $PROCID @JOB_TAG 
+else
+sh @PROJECT/condor/failure.sh $EXIT_CODE_SCRAM $EXIT_CODE_PYTHON $CLUSTERID $PROCID @JOB_TAG
+fi

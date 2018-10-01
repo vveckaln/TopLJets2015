@@ -15,7 +15,7 @@ Wrapper to be used when run in parallel
 """
 def RunMethodPacked(args):
 
-    method,inF,outF,channel,charge,flav,runSysts,systVar,era,tag,debug=args
+    method, inF, outF, channel, charge, flav, runSysts, systVar, era, tag, debug=args
     print 'Running ',method,' on ',inF
     print 'Output file',outF
     print 'Selection ch=',channel,' charge=',charge,' flavSplit=',flav,' systs=',runSysts
@@ -23,12 +23,17 @@ def RunMethodPacked(args):
     print 'Corrections will be retrieved for era=',era
 
     try:
-        cmd='analysisWrapper --era %s --normTag %s --in %s --out %s --method %s --charge %d --channel %d --flav %d --systVar %s'\
-            %(era, tag, inF, outF, method, charge, channel, flav, systVar)
-        if runSysts : cmd += ' --runSysts'
+        args = '--era %s --normTag %s --in %s --out %s --method %s --charge %d --channel %d --flav %d --systVar %s' % (era, tag, inF, outF, method, charge, channel, flav, systVar)
+        if runSysts: 
+            args += ' --runSysts'
+        cmd = 'analysisWrapper ' + args
+        #cmd = 'gdb -ex \'break src/TOPJetPull.cc:254\' -ex \'break src/TOPJetPull.cc:567\' -ex \'break src/TOPJetPull.cc:767\' -ex \'run ' + args + '\' analysisWrapper' 
         if debug : cmd += ' --debug'
         print(cmd)
-        os.system(cmd)
+        exit_code = os.system(cmd)
+        print "exit code in RunMethodPacked %s" % str(exit_code)
+        os.system('echo "exit code in RunMethodPacked ' + str(exit_code) + '" 1>&2')
+        return exit_code
 
     except :
         print 50*'<'
@@ -64,9 +69,11 @@ def main():
     parser.add_option(      '--outputonly',        dest='outputonly',        help='filter job submission for a csv list of output files  [%default]',             default=None,       type='string')
     parser.add_option(      '--farmappendix',        dest='farmappendix',        help='Appendix to condor FARM directory [%default]',             default=None,       type='string')
     (opt, args) = parser.parse_args()
-    PROJECT=os.getenv('PROJECT')
+    PROJECT = os.getenv('PROJECT')
+
+    skipexisting=opt.skipexisting
     #parse selection lists
-    onlyList=[]
+    onlyList = []
     try:
         for t in opt.only.split(','):
             if '.json' in t:
@@ -109,10 +116,10 @@ def main():
     if not '.root' in opt.output :
         print opt.output
         if not '/store/' in opt.output:
-            os.system('mkdir -p %s/Chunks'%opt.output)
+            os.system('mkdir -p %s/Chunks' % opt.output)
         else:
-            os.system('eos mkdir %s'%opt.output)
-            os.system('eos mkdir %s/Chunks'%opt.output)
+            os.system('eos mkdir %s' % opt.output)
+            os.system('eos mkdir %s/Chunks' % opt.output)
     #correct location of corrections to be used using cmsswBase, if needed
     cmsswBase=os.environ['CMSSW_BASE']
     if not cmsswBase in opt.era : opt.era=cmsswBase+'/src/TopLJets2015/TopAnalysis/data/'+opt.era
@@ -129,10 +136,10 @@ def main():
             task_list.append( (opt.method,inF,outF,opt.channel,opt.charge,opt.flav,opt.runSysts,systVar,opt.era,opt.tag,opt.debug) )
     else:
 
-        inputTags=getEOSlslist(directory=opt.input,prepend='')
+        inputTags = getEOSlslist(directory = opt.input, prepend='')
         for baseDir in inputTags:
 
-            tag=os.path.basename(baseDir)
+            tag = os.path.basename(baseDir)
             if tag=='backup' : continue
 
             #filter tags
@@ -151,91 +158,106 @@ def main():
                         processThisTag=False
                         break
                 if not processThisTag : continue
-
-            input_list=getEOSlslist(directory='%s/%s' % (opt.input,tag) )
-            
+                
+            input_list = getEOSlslist(directory='%s/%s' % (opt.input, tag) )
+                
             for systVar in varList:
                 nexisting = 0
-                for ifile in xrange(0,len(input_list)):
-                    inF=input_list[ifile]
-                
-                    outF=os.path.join(opt.output,'Chunks','%s_%d.root' %(tag,ifile))
-                    if systVar != 'nominal' and not systVar in tag: outF=os.path.join(opt.output,'Chunks','%s_%s_%d.root' %(tag,systVar,ifile))
-                    if (opt.skipexisting and os.path.isfile(outF)):
+                for ifile in xrange(0, len(input_list)):
+                    inF = input_list[ifile]
+
+                    outF           = os.path.join(opt.output, 'Chunks', tag, '%s_%d.root' % (tag, ifile))
+                    migration_outF = os.path.join(opt.output, 'migration', tag, 'migration_%s_%d.root' %(tag, ifile))
+                    if systVar != 'nominal' and not systVar in tag: 
+                        outF           = os.path.join(opt.output,'Chunks', tag + '_' + systVar, '%s_%s_%d.root' % (tag, systVar, ifile))
+                        migration_outF = os.path.join(opt.output, 'migration', tag + '_' + systVar, 'migration_%s_%s_%d.root' % (tag, systVar, ifile))
+#                    print "%s %s %s %s" % (outF, migration_outF, os.path.isfile(outF), os.path.isfile(migration_outF))
+#                    raw_input("press Enter")
+                    if (opt.skipexisting and os.path.isfile(outF) and os.path.isfile(migration_outF)):
                         nexisting += 1
                         continue
                     if (len(outputOnlyList) > 1 and not outF in outputOnlyList):
                         continue
-                    task_list.append( (opt.method,inF,outF,opt.channel,opt.charge,opt.flav,opt.runSysts,systVar,opt.era,tag,opt.debug) )
-                if (opt.skipexisting and nexisting): print '--skipexisting: %s - skipping %d of %d tasks as files already exist'%(systVar,nexisting,len(input_list))
+                    task_list.append( (opt.method, inF, outF, opt.channel, opt.charge, opt.flav, opt.runSysts, systVar, opt.era, tag, opt.debug) )
+                if (opt.skipexisting and nexisting): 
+                    print '--skipexisting: %s - skipping %d of %d tasks as files already exist' % (systVar, nexisting, len(input_list))
 
     #run the analysis jobs
+                
     if opt.queue=='local':
         print 'launching %d tasks in %d parallel jobs'%(len(task_list),opt.njobs)
         if opt.njobs == 0:
-            for args in task_list: RunMethodPacked(args)
+            for args in task_list: 
+                catch_error_code = RunMethodPacked(args)
+                print "caught error code %u" % catch_error_code
+                os.system('echo "caught error code ' + str(catch_error_code) + '" 1>&2')
+                sys.exit(catch_error_code >> 8)
         else:
             from multiprocessing import Pool
             pool = Pool(opt.njobs)
             pool.map(RunMethodPacked, task_list)
     else:
-        
+        MigrationDirectory = '%s/migration' % opt.output
         FarmOutputDirectory = '%s/FARM%s'%(opt.output, opt.farmappendix)
         FarmCfgDirectory = '%s/FARM' % PROJECT
         os.system('mkdir -p %s' %FarmOutputDirectory)
         os.system('mkdir -p %s' %FarmCfgDirectory)
+        os.system('mkdir -p %s' %MigrationDirectory)
+
         print 'Preparing %d tasks to submit to the batch'%len(task_list)
         print 'Executables and condor wrapper are stored in %s'%FarmCfgDirectory
 
         with open ('%s/condor.sub'%FarmCfgDirectory,'w') as condor:
 
-            condor.write('executable = {0}/$(cfgFile).sh\n'.format(FarmCfgDirectory))
-            condor.write('output     = {0}/output_$(cfgFile).out\n'.format(FarmOutputDirectory))
-            condor.write('error      = {0}/output_$(cfgFile).err\n'.format(FarmOutputDirectory))
-            condor.write('log        = {0}/*.$(ClusterId).log\n'.format(FarmCfgDirectory))
-
-#            condor.write('log        = {0}/$(cfgFile).log\n'.format(FarmDirectory))
+            condor.write('executable  = {0}/$(cfgFile).sh\n'.format(FarmCfgDirectory))
+            condor.write('output      = {0}/CONDOROUT/$(cfgFile).out\n'.format(PROJECT))
+            condor.write('error       = {0}/CONDOROUT/$(cfgFile).err\n'.format(PROJECT))
+            condor.write('log         = {0}/*.$(ClusterId).log\n'.format(FarmCfgDirectory))
+            condor.write('arguments   = $(ClusterId) $(ProcId)\n')
             condor.write('+JobFlavour = "{0}"\n'.format(opt.queue))
 
-            jobNb=0
-            for method,inF,outF,channel,charge,flav,runSysts,systVar,era,tag,debug in task_list:
+            jobNb = 0
+            for method, inF, outF, channel, charge, flav, runSysts, systVar, era, tag, debug in task_list:
+#                if (jobNb > 1500):
+#                    break
+#                jobNb += 1
+#                if (jobNb <1450):
+#                    continue
 
-                jobNb+=1
-                cfgFile='%s'%(os.path.splitext(os.path.basename(outF))[0])
+                job_tag = os.path.splitext(os.path.basename(outF))[0]
+                outfile_basename_noext = job_tag
+                localOutF = os.path.basename(outF)
+                isTTbar = False
+                isTTbar_string = "false"
+                if "TTJets" in localOutF:
+                    isTTbar = True
+                    isTTbar_string = "true"
+                runOpts='--charge %d --ch %d --era %s --tag %s --flav %d --method %s --systVar %s'\
+                        %(charge, channel, era, tag, flav, method, systVar)
+                if runSysts : runOpts += ' --runSysts'
+                if debug :    runOpts += ' --debug'
 
-                condor.write('cfgFile=%s\n'%cfgFile)
+                cfgFile = '%s' % job_tag
+
+                condor.write('cfgFile=%s\n' % cfgFile)
                 condor.write('queue 1\n')
+                sedcmd  = 'sed \''
+                sedcmd += 's%@OUTPUTDIR%'            + opt.output             + '%g;'
+                sedcmd += 's%@INPUT_FILE%'           + inF                    + '%g;'
+                sedcmd += 's%@OUTPUT_FILE_BASENAME%' + outfile_basename_noext + '%g;'
+                sedcmd += 's%@JOB_TAG%'              + job_tag                + '%g;'
+                sedcmd += 's%@PROJECT%'              + PROJECT                + '%g;'
+                sedcmd += 's%@RUN_OPTS%'             + runOpts                + '%g;'
+                sedcmd += 's%@TAG%'                  + tag                    + '%g;'
+                sedcmd += 's%@SYS%'                  + systVar                + '%g;'
+                sedcmd += '\''
                 
-                with open('%s/%s.sh'%(FarmCfgDirectory, cfgFile),'w') as cfg:
-
-                    cfg.write('#!/bin/bash\n')
-                    cfg.write('WORKDIR=`pwd`\n')
-                    cfg.write('echo "Working directory is ${WORKDIR}"\n')
-                    cfg.write('cd %s\n'%cmsswBase)
-                    cfg.write('eval `scram r -sh`\n')
-                    cfg.write('cd ${WORKDIR}\n')
-                    localOutF=os.path.basename(outF)
-                    isTTbar = False
-                    if "TTJets" in localOutF:
-                        isTTbar = True
-                    MigrationFile=opt.output + '/migration/migration_' + localOutF
-                    runOpts='-i %s -o ${WORKDIR}/%s --charge %d --ch %d --era %s --tag %s --flav %d --method %s --systVar %s'\
-                        %(inF, localOutF, charge, channel, era, tag, flav, method, systVar)
-                    if runSysts : runOpts += ' --runSysts'
-                    if debug :    runOpts += ' --debug'
-                    cfg.write('python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py %s\n'%(cmsswBase,runOpts))
-                    if '/store' in outF:
-                        cfg.write('xrdcp ${WORKDIR}/%s root://eoscms//eos/cms/%s\n'%(localOutF,outF))
-                        cfg.write('rm ${WORKDIR}/%s'%localOutF)
-                    elif outF!=localOutF:
-                        cfg.write('  mv -v ${WORKDIR}/%s %s\n'%(localOutF,outF))
-                        if isTTbar:
-                            cfg.write('  mv -v ${WORKDIR}/migration_%s %s\n'%(localOutF, MigrationFile))
-
-                os.system('chmod u+x %s/%s.sh'%(FarmCfgDirectory,cfgFile))
+                os.system('cat ' + PROJECT + '/condor/executable.templ | ' + sedcmd + ' > FARM/' + cfgFile + '.sh')
+                
+                os.system('chmod u+x %s/%s.sh' % (FarmCfgDirectory, cfgFile))
 
         print 'Submitting jobs to condor, flavour "%s"'%(opt.queue)
-        os.system('condor_submit %s/condor.sub'%FarmCfgDirectory)
+        os.system('condor_config_val -dump | grep CONDOR; condor_submit %s/condor.sub' % FarmCfgDirectory)
         
 
 """

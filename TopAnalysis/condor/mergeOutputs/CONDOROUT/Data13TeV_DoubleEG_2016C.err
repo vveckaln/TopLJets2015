@@ -1,0 +1,48 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_5551/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting     Expires            Service principal
+09/05/18 11:45:31  09/06/18 12:45:31  krbtgt/CERN.CH@CERN.CH
+	renew until 09/10/18 09:42:32
+09/05/18 11:52:12  09/06/18 12:45:31  afs/cern.ch@CERN.CH
+	renew until 09/10/18 09:42:32
+end klist
+ls EOS
+analysis_MC13TeV_TTJets
+analysis_MC13TeV_TTJets2l2nu_amcatnlo
+analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJetsfix
+analysis_MC13TeV_TTJets_herwig
+bins
+cernbox
+Chunks
+Chunks_test
+copy_test
+data
+flipped
+flipped_old
+LSF
+merged_plots
+migration
+processing
+reserve
+rivet
+rivet_results_23_March
+rivet_test
+rivet_test_21_March
+SWAN_projects
+test
+unfolding_cflip_old
+unfolding_-m
+unfolding_nominal
+unfolding_nominal_old
+end ls EOS
+EXIT_CODE_SCRAM 0
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDChunks/Data13TeV_DoubleEG_2016C.root
+file is good
+Sanity test done
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDmigration/migration_Data13TeV_DoubleEG_2016C.root
+file is good
+Sanity test done
+EXIT_CODE_PYTHON  0

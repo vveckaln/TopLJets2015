@@ -1,0 +1,139 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_25714/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting     Expires            Service principal
+09/07/18 09:30:12  09/08/18 10:30:12  krbtgt/CERN.CH@CERN.CH
+	renew until 09/12/18 08:47:41
+09/07/18 09:33:01  09/08/18 10:30:12  afs/cern.ch@CERN.CH
+	renew until 09/12/18 08:47:41
+end klist
+ls EOS
+analysis_MC13TeV_TTJets
+analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJetsfix
+analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJetsswap
+bins
+cernbox
+Chunks
+Chunks_test
+copy_test
+data
+flipped
+flipped_old
+LSF
+merged_plots
+migration
+processing
+reserve
+rivet
+rivet_results_23_March
+rivet_test
+rivet_test_21_March
+SWAN_projects
+test
+unfolding_cflip_old
+unfolding_-m
+unfolding_nominal
+unfolding_nominal_old
+end ls EOS
+EXIT_CODE_SCRAM 0
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root
+Info in <TCanvas::MakeDefCanvas>:  created default TCanvas with name c1
+rm: cannot remove `/eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/plotter_L4_1l4j2b2w_j0eta_syst.root': No such file or directory
+processing L4_1l4j2b2w_j0eta ***********************
+processing L4_1l4j2b2w_j0pt ***********************
+processing L4_1l4j2b2w_j1eta ***********************
+processing L4_1l4j2b2w_j1pt ***********************
+processing L4_1l4j2b2w_j2eta ***********************
+processing L4_1l4j2b2w_j2pt ***********************
+processing L4_1l4j2b2w_j3eta ***********************
+processing L4_1l4j2b2w_j3pt ***********************
+processing L4_1l4j2b2w_j4eta ***********************
+processing L4_1l4j2b2w_j4pt ***********************
+processing L4_1l4j2b2w_j5eta ***********************
+processing L4_1l4j2b2w_j5pt ***********************
+processing L4_1l4j2b2w_l0eta ***********************
+processing L4_1l4j2b2w_l0pt ***********************
+processing L4_1l4j2b2w_met ***********************
+processing L4_1l4j2b2w_nbjets ***********************
+processing L4_1l4j2b2w_njets ***********************
+processing L4_1l4j2b2w_nleps ***********************
+processing L4_1l4j2b2w_nvtx ***********************
+processing L4_1l4j2b2w_nwjets ***********************
+processing L4_1l4j2b2w_tcandm ***********************
+processing L4_1l4j2b2w_tcandwcutm ***********************
+processing L4_1l4j2b2w_wcandm ***********************
+processing M0_pre_j0eta ***********************
+processing M0_pre_j0pt ***********************
+processing M0_pre_j1eta ***********************
+processing M0_pre_j1pt ***********************
+processing M0_pre_j2eta ***********************
+processing M0_pre_j2pt ***********************
+processing M0_pre_j3eta ***********************
+processing M0_pre_j3pt ***********************
+processing M0_pre_j4eta ***********************
+processing M0_pre_j4pt ***********************
+processing M0_pre_j5eta ***********************
+processing M0_pre_j5pt ***********************
+processing M0_pre_l0eta ***********************
+processing M0_pre_l0pt ***********************
+processing M0_pre_met ***********************
+processing M0_pre_nbjets ***********************
+processing M0_pre_njets ***********************
+processing M0_pre_nleps ***********************
+processing M0_pre_nvtx ***********************
+processing M0_pre_nwjets ***********************
+processing M0_pre_tcandm ***********************
+processing M0_pre_tcandwcutm ***********************
+processing M0_pre_wcandm ***********************
+processing M1_1l_j0eta ***********************
+processing M1_1l_j0pt ***********************
+processing M1_1l_j1eta ***********************
+processing M1_1l_j1pt ***********************
+processing M1_1l_j2eta ***********************
+processing M1_1l_j2pt ***********************
+processing M1_1l_j3eta ***********************
+processing M1_1l_j3pt ***********************
+processing M1_1l_j4eta ***********************
+processing M1_1l_j4pt ***********************
+processing M1_1l_j5eta ***********************
+processing M1_1l_j5pt ***********************
+processing M1_1l_l0eta ***********************
+processing M1_1l_l0pt ***********************
+processing M1_1l_met ***********************
+processing M1_1l_nbjets ***********************
+processing M1_1l_njets ***********************
+processing M1_1l_nleps ***********************
+processing M1_1l_nvtx ***********************
+processing M1_1l_nwjets ***********************
+processing M1_1l_tcandm ***********************
+processing M1_1l_tcandwcutm ***********************
+processing M1_1l_wcandm ***********************
+processing M2_1l4j_j0eta ***********************
+processing M2_1l4j_j0pt ***********************
+processing M2_1l4j_j1eta ***********************
+processing M2_1l4j_j1pt ***********************
+processing M2_1l4j_j2eta ***********************
+processing M2_1l4j_j2pt ***********************
+processing M2_1l4j_j3eta ***********************
+processing M2_1l4j_j3pt ***********************
+processing M2_1l4j_j4eta ***********************
+processing M2_1l4j_j4pt ***********************
+processing M2_1l4j_j5eta ***********************
+processing M2_1l4j_j5pt ***********************
+processing M2_1l4j_l0eta ***********************
+processing M2_1l4j_l0pt ***********************
+processing M2_1l4j_met ***********************
+processing M2_1l4j_nbjets ***********************
+processing M2_1l4j_njets ***********************
+processing M2_1l4j_nleps ***********************
+processing M2_1l4j_nvtx ***********************
+processing M2_1l4j_nwjets ***********************
+processing M2_1l4j_tcandm ***********************
+processing M2_1l4j_tcandwcutm ***********************
+processing M2_1l4j_wcandm ***********************

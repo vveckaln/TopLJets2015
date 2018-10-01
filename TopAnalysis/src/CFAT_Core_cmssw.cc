@@ -347,34 +347,37 @@ void CFAT_Core_cmssw::AddLightJets(const vector<TLorentzVector> & light_jets, co
 
 void CFAT_Core_cmssw::AddBJets(const vector<TLorentzVector> & b_jets, const vector<unsigned short> & b_jets_indices)
 {
-  const TLorentzVector had_W = *leading_light_jet_ptr_ + *second_leading_light_jet_ptr_;
-  const TLorentzVector lept_W = *lepton_ptr_ + *neutrino_ptr_;
-  static const float t_mass = 173.34;
-  double mass_dif[2][2] = 
+  if (neutrino_ptr_)
     {
-      {1000, 1000}, 
-      {1000, 1000}
-    };
-  unsigned char min_index[2] = {2, 2}; 
-  for (unsigned char index = 0; index < 2; index ++)
-    {
-      mass_dif[index][0] = (b_jets[index] + had_W).M() - t_mass;
-      mass_dif[index][1] = (b_jets[index] + lept_W).M() - t_mass;
-    }
-  for (unsigned char index = 0; index < 2; index ++)
-    {
-      min_index[index] = fabs(mass_dif[index][0]) >= fabs(mass_dif[index][1]) ? 1 : 0;
-    }
-  unsigned char had_b_local_index = 2;
-  unsigned char lept_b_local_index = 2;
-  if (min_index[0] != min_index[1])
-    {
-      had_b_local_index  = min_index[0] == 0 ? 0 : 1;
-      lept_b_local_index = min_index[0] == 0 ? 1 : 0;
-      GetVectorRef(HAD_B)         = &b_jets.at(had_b_local_index);
-      GetVectorRef(LEPT_B)        = &b_jets.at(lept_b_local_index);
-      had_b_index_       = b_jets_indices.at(had_b_local_index);
-      lept_b_index_      = b_jets_indices.at(lept_b_local_index);
+      const TLorentzVector had_W = *leading_light_jet_ptr_ + *second_leading_light_jet_ptr_;
+      const TLorentzVector lept_W = *lepton_ptr_ + *neutrino_ptr_;
+      static const float t_mass = 173.34;
+      double mass_dif[2][2] = 
+	{
+	  {1000, 1000}, 
+	  {1000, 1000}
+	};
+      unsigned char min_index[2] = {2, 2}; 
+      for (unsigned char index = 0; index < 2; index ++)
+	{
+	  mass_dif[index][0] = (b_jets[index] + had_W).M() - t_mass;
+	  mass_dif[index][1] = (b_jets[index] + lept_W).M() - t_mass;
+	}
+      for (unsigned char index = 0; index < 2; index ++)
+	{
+	  min_index[index] = fabs(mass_dif[index][0]) >= fabs(mass_dif[index][1]) ? 1 : 0;
+	}
+      unsigned char had_b_local_index = 2;
+      unsigned char lept_b_local_index = 2;
+      if (min_index[0] != min_index[1])
+	{
+	  had_b_local_index  = min_index[0] == 0 ? 0 : 1;
+	  lept_b_local_index = min_index[0] == 0 ? 1 : 0;
+	  GetVectorRef(HAD_B)         = &b_jets.at(had_b_local_index);
+	  GetVectorRef(LEPT_B)        = &b_jets.at(lept_b_local_index);
+	  had_b_index_       = b_jets_indices.at(had_b_local_index);
+	  lept_b_index_      = b_jets_indices.at(lept_b_local_index);
+	}
     }
   if (b_jets.at(0) . Pt() >= b_jets.at(1) . Pt())
 	{
@@ -391,11 +394,12 @@ void CFAT_Core_cmssw::AddBJets(const vector<TLorentzVector> & b_jets, const vect
 	  scnd_leading_b_index_                  = b_jets_indices.at(0);
 	}
     
-  printf("leading b %p sec lb %p hb %p lb%p\n", GetVector(LEADING_B) , GetVector(SCND_LEADING_B), GetVector(HAD_B), GetVector(LEPT_B) );
+  //  printf("leading b %p sec lb %p hb %p lb%p\n", GetVector(LEADING_B) , GetVector(SCND_LEADING_B), GetVector(HAD_B), GetVector(LEPT_B) );
 }
 
-void CFAT_Core_cmssw::AddVector(VectorCode_t code, const TLorentzVector & other)
+void CFAT_Core_cmssw::AddVector(VectorCode_t code, const TLorentzVector * other)
 {
-  GetVectorRef(code) = &other;
+  
+  GetVectorRef(code) =  other;
 }
 

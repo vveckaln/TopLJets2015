@@ -49,20 +49,25 @@ std::vector<RunPeriod_t> getRunPeriods(TString era)
 }
 
 //
-TString assignRunPeriod(std::vector<RunPeriod_t> &runPeriods,TRandom *rand)
+TString assignRunPeriod(std::vector<RunPeriod_t> & runPeriods, TRandom * rand)
 {
-  float totalLumi(0.);
+  float totalLumi(0.0);
   for (auto periodLumi : runPeriods) totalLumi += periodLumi.second;
 
   //generate randomly in the total lumi range to pick one of the periods
-  float pickLumi( rand!=0 ? rand->Uniform(totalLumi) : gRandom->Uniform(totalLumi) );
-  float testLumi(0); 
+  float pickLumi( rand != 0 ? rand -> Uniform(totalLumi) : gRandom -> Uniform(totalLumi) );
+  float testLumi(0.0); 
   int iLumi(0);
-  for (auto periodLumi : runPeriods) {
-    testLumi += periodLumi.second;
-    if (pickLumi < testLumi * ( 1 - 1E-9)) break;
-    else ++iLumi;
-  }
+  for (auto periodLumi : runPeriods) 
+    {
+      testLumi += periodLumi.second;
+      if (pickLumi < testLumi * ( 1 + 1E-9)) 
+	{
+	  //printf("pickLumi %.9f testLumi %.9f\n", pickLumi, testLumi);
+	  break;
+	}
+      else ++ iLumi;
+    }
   //return the period
   return runPeriods[iLumi].first;
 }

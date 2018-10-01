@@ -19,6 +19,8 @@ def main():
     parser.add_option('-j', '--json',        dest='json'  ,      help='json with list of files',        default=None,              type='string')
     parser.add_option( '--systJson', dest='systJson', help='json with list of systematics', default=None, type='string')
     parser.add_option(      '--signalJson',  dest='signalJson',  help='signal json list',               default=None,              type='string')
+    parser.add_option(      '--overlayJson',  dest='overlayJson',  help='overlay json list',               default=None,              type='string')
+
     parser.add_option('-i', '--inDir',       dest='inDir' ,      help='input directory',                default=None,              type='string')
     parser.add_option('-O', '--outDir',      dest='outDir' ,     help='output directory',                default=None,              type='string')
     parser.add_option('-o', '--outName',     dest='outName' ,    help='name of the output file',        default='plotter.root',    type='string')
@@ -34,8 +36,11 @@ def main():
     parser.add_option(      '--skip',        dest='skip',        help='skip these samples (csv)',          default='MC13TeV_TTJets_cflip',                type='string')
     parser.add_option(      '--puNormSF',    dest='puNormSF',    help='Use this histogram to correct pu weight normalization', default=None, type='string')
     parser.add_option(      '--procSF',      dest='procSF',      help='Use this to scale a given process component e.g. "W":.wjetscalefactors.pck,"DY":dyscalefactors.pck', default=None, type='string')
+    parser.add_option('-m', '--method',      dest = 'method' ,     help = 'method - nominal, cflip, amc@nlo',  default = 'nominal',       type = 'string')
+    
     (opt, args) = parser.parse_args()
-
+    print "opt.lumi ",  opt.lumi
+    method = opt.method
     #read lists of samples
     samplesList=[]
     jsonList = opt.json.split(',')
@@ -61,7 +66,10 @@ def main():
         jsonFile.close()
     except:
         pass
-    
+
+    if method == cflip:
+        
+     
     skipList=opt.skip.split(',')
 
     #lumi specifications per tag
@@ -89,24 +97,25 @@ def main():
     plots=OrderedDict()
 
     report=''
-    for slist,isSignal,isSyst in [ (samplesList,False,False),(signalSamplesList,True,False),(systSamplesList,False,True) ]:
+    for slist, isSignal, isSyst in [ (samplesList, False, False, False), (signalSamplesList, True, False, False), (systSamplesList, False, True, False) ]:
         if slist is None: continue
         for tag,sample in slist: 
             if isSyst and not 't#bar{t}' in sample[3] : continue
             if tag in skipList:
               print("SKIPPED "+tag)
               continue
-            xsec=sample[0]
-            isData=sample[1]
-            doFlavourSplitting=sample[6]
-            subProcs=[(tag,sample[3],sample[4])]
+            xsec                = sample[0]
+            isData              = sample[1]
+            doFlavourSplitting  = sample[6]
+            subProcs            = [(tag, sample[3], sample[4])]
             if doFlavourSplitting:
-                subProcs=[]
-                for flav in [(1,sample[3]+'+l'),(4,sample[3]+'+c'),(5,sample[3]+'+b',sample[4])]:
+                subProcs = []
+                for flav in [(1, sample[3] + '+l'), (4,sample[3]+'+c'),(5,sample[3]+'+b',sample[4])]:
                     subProcs.append(('%d_%s'%(flav[0],tag),flav[1],sample[4]+3*len(subProcs)))
             for sp in subProcs:
 
-                fIn=ROOT.TFile.Open('%s/%s.root' % ( opt.inDir, sp[0]) )
+                fIn = ROOT.TFile.Open('%s/%s.root' % ( opt.inDir, sp[0]) )
+            
                 if not fIn : continue
 
                 #fix pileup weighting normalization
@@ -122,13 +131,15 @@ def main():
                             report += '%s wasn\'t be scaled as too large SF was found (probably low stats)\n' % sp[0]
                         else :
                             report += '%s was scaled by %3.3f for pileup normalization\n' % (sp[0],puNormSF)
-
                 for tkey in fIn.GetListOfKeys():
-                    keyIsSyst=False
+                    keyIsSyst = False
 
                     try:
-                        key=tkey.GetName()
-
+                        key = tkey.GetName()
+#                        if not (key == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal" ):
+#                            continue
+                         
+#                        print tag
                         #filter plots using a selection list
                         keep=False if len(onlyList)>0 else True
                         for pname in onlyList: 
@@ -138,7 +149,7 @@ def main():
                         if not keep: continue
 
                         histos = []
-                        obj=fIn.Get(key)
+                        obj = fIn.Get(key)
                         if obj.InheritsFrom('TH2'):
                             if key[-5:]=='_syst':
                                 if sample[3]=='t#bar{t}':
@@ -182,7 +193,6 @@ def main():
                                     if not tag in key: continue
                                     lumi=lumiSpecs[tag]
                                     break
-                                            
                                 hist.Scale(xsec*lumi*puNormSF*sfVal)                    
                             
                             #rebin if needed
@@ -194,11 +204,11 @@ def main():
                             #add process to plot
                             title = hist.GetTitle()
                             isSystN = isSyst or keyIsSyst
-                            if isSystN and not ("no SC" in title or "aMC@NLO" in title or "m=166.5" in title or "m=169.5" in title or "m=173.5" in title or "m=175.5" in title or "m=178.5" in title or "width" in title or "t#bar{t}t#bar{t}" in title) or not isSystN:
-                                
-#                                if key == "pull_angle_allconst_reco_leading_jet_:_2nd_leading_jet_DeltaRTotal_4j2t":
-#                                    print "key %s title %s isSyst %s keyIsSyst %s fIn %s" % (key, title, isSyst, keyIsSyst, fIn)
-                                plots[key].add(h=hist,title=hist.GetTitle(),color=sp[2],isData=sample[1],spImpose=isSignal,isSyst=(isSyst or keyIsSyst))
+                            #if isSystN and not ("no SC" in title or "aMC@NLO" in title or "m=166.5" in title or "m=169.5" in title or "m=173.5" in title or "m=175.5" in title or "m=178.5" in title or "width" in title or "t#bar{t}t#bar{t}" in title) or not isSystN:
+                            if isSystN and not ("no SC" in title or "aMC@NLO" in title or "m=166.5" in title or "m=169.5" in title in title or "m=175.5" in title or "m=178.5" in title or "width" in title or "t#bar{t}t#bar{t}" in title) or not isSystN:
+ #                               print tag
+#                                print "key %s title %s isSyst %s keyIsSyst %s fIn %s" % (key, title, isSyst, keyIsSyst, fIn)
+                                plots[key].add(h=hist,title=hist.GetTitle(),color=sp[2],isData=sample[1],spImpose=isSignal,isSyst=(isSyst or keyIsSyst), isOverlay = isOverlay)
                             else:
   #                              if key == "pull_angle_allconst_reco_leading_jet_:_2nd_leading_jet_DeltaRTotal_4j2t":
  #                                   print "SKIPPED %s"% title
@@ -206,7 +216,6 @@ def main():
                                 
                     except:
                         pass
-
     #show plots
     ROOT.gStyle.SetOptTitle(0)
     ROOT.gStyle.SetOptStat(0)
@@ -216,18 +225,14 @@ def main():
     os.system('mkdir -p %s' % outDir)
     os.system('rm %s/%s'%(outDir,opt.outName))
     for p in plots :
-        if "chi_" in p:
-#p == "JetConst_M_allconst_gen_leading_jet": 
-    #p == "pull_angle_allconst_reco_leading_jet_:_2nd_leading_jet_DeltaRTotal_4j2t" or p == "E3_1l4j2b_j2eta":
-            #print "\n !!!!!  p %s  !!!!!\n" % p
-            plots[p].mcUnc=opt.mcUnc
-            if opt.saveLog    : plots[p].savelog=True
-            skipPlot=False
-            if opt.onlyData and plots[p].dataH is None: skipPlot=True 
-            if opt.silent : skipPlot=True
-            if not skipPlot : plots[p].show(outDir=outDir,lumi=opt.lumi,noStack=opt.noStack,saveTeX=opt.saveTeX)
-            plots[p].appendTo('%s/%s'%(outDir,opt.outName))
-            plots[p].reset()
+        plots[p].mcUnc=opt.mcUnc
+        if opt.saveLog    : plots[p].savelog=True
+        skipPlot=False
+        if opt.onlyData and plots[p].dataH is None: skipPlot=True 
+        if opt.silent : skipPlot=True
+        if not skipPlot : plots[p].show(outDir=outDir,lumi=opt.lumi,noStack=opt.noStack,saveTeX=opt.saveTeX)
+        plots[p].appendTo('%s/%s'%(outDir,opt.outName))
+        plots[p].reset()
             #raw_input("Press Enter to continue...")
 
     print '-'*50

@@ -1,0 +1,346 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_12831/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting     Expires            Service principal
+09/07/18 09:30:12  09/08/18 10:30:12  krbtgt/CERN.CH@CERN.CH
+	renew until 09/12/18 08:47:41
+09/07/18 09:33:03  09/08/18 10:30:12  afs/cern.ch@CERN.CH
+	renew until 09/12/18 08:47:41
+end klist
+ls EOS
+analysis_MC13TeV_TTJets
+analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJetsfix
+analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJetsswap
+bins
+cernbox
+Chunks
+Chunks_test
+copy_test
+data
+flipped
+flipped_old
+LSF
+merged_plots
+migration
+processing
+reserve
+rivet
+rivet_results_23_March
+rivet_test
+rivet_test_21_March
+SWAN_projects
+test
+unfolding_cflip_old
+unfolding_-m
+unfolding_nominal
+unfolding_nominal_old
+end ls EOS
+EXIT_CODE_SCRAM 0
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root
+rm: cannot remove `/eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/plotter_E_mag_PV_bckg_PFPtle0p5GeV_reco_lept_b.root': No such file or directory
+processing E_mag_PV_bckg_PFPtle0p5GeV_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_PFPtle0p5GeV_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_PFPtle0p5GeV_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_PFPtle0p5GeV_reco_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_PFPtle0p5GeV_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_PFPtle0p5GeV_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_PFPtle0p5GeV_reco_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_allconst_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_allconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_leading_b.png has been created
+processing E_mag_PV_bckg_allconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_leading_jet.png has been created
+processing E_mag_PV_bckg_allconst_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_allconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_allconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_gen_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_allconst_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_allconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_leading_b.png has been created
+processing E_mag_PV_bckg_allconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_leading_jet.png has been created
+processing E_mag_PV_bckg_allconst_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_allconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_allconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_allconst_reco_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_chconst_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_chconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_leading_b.png has been created
+processing E_mag_PV_bckg_chconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_leading_jet.png has been created
+processing E_mag_PV_bckg_chconst_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_chconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_chconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_gen_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_chconst_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_chconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_leading_b.png has been created
+processing E_mag_PV_bckg_chconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_leading_jet.png has been created
+processing E_mag_PV_bckg_chconst_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_chconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_chconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_chconst_reco_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_gen_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtgt50p0GeV_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtgt50p0GeV_reco_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtle50p0GeV_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtle50p0GeV_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_gen_scnd_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtle50p0GeV_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_leading_jet.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_bckg_hadWPtle50p0GeV_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_scnd_leading_b.png has been created
+processing E_mag_PV_bckg_hadWPtle50p0GeV_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_bckg_hadWPtle50p0GeV_reco_scnd_leading_jet.png has been created
+processing E_mag_PV_chconst_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_chconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_leading_b.png has been created
+processing E_mag_PV_chconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_leading_jet.png has been created
+processing E_mag_PV_chconst_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_chconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_scnd_leading_b.png has been created
+processing E_mag_PV_chconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_gen_scnd_leading_jet.png has been created
+processing E_mag_PV_chconst_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_chconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_leading_b.png has been created
+processing E_mag_PV_chconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_leading_jet.png has been created
+processing E_mag_PV_chconst_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_chconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_scnd_leading_b.png has been created
+processing E_mag_PV_chconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_chconst_reco_scnd_leading_jet.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtgt50p0GeV_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_leading_b.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_leading_jet.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtgt50p0GeV_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_scnd_leading_b.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_gen_scnd_leading_jet.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtgt50p0GeV_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_leading_b.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_leading_jet.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtgt50p0GeV_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_scnd_leading_b.png has been created
+processing E_mag_PV_hadWPtgt50p0GeV_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtgt50p0GeV_reco_scnd_leading_jet.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtle50p0GeV_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_leading_b.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_leading_jet.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtle50p0GeV_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_scnd_leading_b.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_gen_scnd_leading_jet.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtle50p0GeV_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_leading_b.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_leading_jet.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_mag_PV_hadWPtle50p0GeV_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_scnd_leading_b.png has been created
+processing E_mag_PV_hadWPtle50p0GeV_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_mag_PV_hadWPtle50p0GeV_reco_scnd_leading_jet.png has been created
+processing E_phi_PV_PFNgt20_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_phi_PV_PFNgt20_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_leading_b.png has been created
+processing E_phi_PV_PFNgt20_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_leading_jet.png has been created
+processing E_phi_PV_PFNgt20_gen_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_phi_PV_PFNgt20_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_scnd_leading_b.png has been created
+processing E_phi_PV_PFNgt20_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_gen_scnd_leading_jet.png has been created
+processing E_phi_PV_PFNgt20_reco_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_phi_PV_PFNgt20_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_leading_b.png has been created
+processing E_phi_PV_PFNgt20_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_leading_jet.png has been created
+processing E_phi_PV_PFNgt20_reco_lept_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing E_phi_PV_PFNgt20_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_scnd_leading_b.png has been created
+processing E_phi_PV_PFNgt20_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_cflip/plots/E_phi_PV_PFNgt20_reco_scnd_leading_jet.png has been created
+processing E_phi_PV_PFNle20_gen_had_b ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
