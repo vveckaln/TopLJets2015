@@ -1,18 +1,16 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_3703/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_29580/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
 Valid starting     Expires            Service principal
-09/05/18 11:45:31  09/06/18 12:45:31  krbtgt/CERN.CH@CERN.CH
-	renew until 09/10/18 09:42:32
-09/05/18 11:51:42  09/06/18 12:45:31  afs/cern.ch@CERN.CH
-	renew until 09/10/18 09:42:32
+01/03/19 11:07:12  01/04/19 12:07:12  krbtgt/CERN.CH@CERN.CH
+	renew until 01/08/19 10:56:26
+01/03/19 11:21:12  01/04/19 12:07:12  afs/cern.ch@CERN.CH
+	renew until 01/08/19 10:56:26
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets2l2nu_amcatnlo
 analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJetsfix
 analysis_MC13TeV_TTJets_herwig
 bins
 cernbox
@@ -25,24 +23,165 @@ flipped_old
 LSF
 merged_plots
 migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
 processing
 reserve
 rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
+save.root
 SWAN_projects
 test
-unfolding_cflip_old
-unfolding_-m
+testdir
+unfolding_cflip
 unfolding_nominal
-unfolding_nominal_old
 end ls EOS
 EXIT_CODE_SCRAM 0
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDChunks/MC13TeV_TTJets.root
+[16MB/87.08MB][ 18%][=========>                                        ][5.333MB/s]  [48MB/87.08MB][ 55%][===========================>                      ][12MB/s]  [64MB/87.08MB][ 73%][====================================>             ][12.8MB/s]  [80MB/87.08MB][ 91%][=============================================>    ][13.33MB/s]  [87.08MB/87.08MB][100%][==================================================][14.51MB/s]  [87.08MB/87.08MB][100%][==================================================][14.51MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets.root
 file is good
 Sanity test done
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDmigration/migration_MC13TeV_TTJets.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets/.sys.v does not exist
+[16MB/3.472GB][  0%][>                                                 ][8MB/s]  [32MB/3.472GB][  0%][>                                                 ][10.67MB/s]  [48MB/3.472GB][  1%][>                                                 ][12MB/s]  [96MB/3.472GB][  2%][=>                                                ][19.2MB/s]  [144MB/3.472GB][  4%][==>                                               ][24MB/s]  [176MB/3.472GB][  4%][==>                                               ][22MB/s]  [208MB/3.472GB][  5%][==>                                               ][23.11MB/s]  [256MB/3.472GB][  7%][===>                                              ][25.6MB/s]  [304MB/3.472GB][  8%][====>                                             ][25.33MB/s]  [320MB/3.472GB][  9%][====>                                             ][24.62MB/s]  [352MB/3.472GB][  9%][====>                                             ][25.14MB/s]  [384MB/3.472GB][ 10%][=====>                                            ][25.6MB/s]  [416MB/3.472GB][ 11%][=====>                                            ][26MB/s]  [480MB/3.472GB][ 13%][======>                                           ][28.24MB/s]  [544MB/3.472GB][ 15%][=======>                                          ][30.22MB/s]  [560MB/3.472GB][ 15%][=======>                                          ][29.47MB/s]  [608MB/3.472GB][ 17%][========>                                         ][30.4MB/s]  [624MB/3.472GB][ 17%][========>                                         ][29.71MB/s]  [672MB/3.472GB][ 18%][=========>                                        ][30.55MB/s]  [704MB/3.472GB][ 19%][=========>                                        ][30.61MB/s]  [736MB/3.472GB][ 20%][==========>                                       ][30.67MB/s]  [784MB/3.472GB][ 22%][===========>                                      ][31.36MB/s]  [864MB/3.472GB][ 24%][============>                                     ][33.23MB/s]  [912MB/3.472GB][ 25%][============>                                     ][33.78MB/s]  [960MB/3.472GB][ 27%][=============>                                    ][34.29MB/s]  [1024MB/3.472GB][ 28%][==============>                                   ][35.31MB/s]  [1.031GB/3.472GB][ 29%][==============>                                   ][35.2MB/s]  [1.078GB/3.472GB][ 31%][===============>                                  ][35.61MB/s]  [1.109GB/3.472GB][ 31%][===============>                                  ][35.5MB/s]  [1.141GB/3.472GB][ 32%][================>                                 ][35.39MB/s]  [1.172GB/3.472GB][ 33%][================>                                 ][35.29MB/s]  [1.203GB/3.472GB][ 34%][=================>                                ][35.2MB/s]  [1.219GB/3.472GB][ 35%][=================>                                ][33.73MB/s]  [1.234GB/3.472GB][ 35%][=================>                                ][33.26MB/s]  [1.25GB/3.472GB][ 36%][==================>                               ][31.22MB/s]  [1.266GB/3.472GB][ 36%][==================>                               ][30.14MB/s]  [1.281GB/3.472GB][ 36%][==================>                               ][29.82MB/s]  [1.297GB/3.472GB][ 37%][==================>                               ][28.87MB/s]  [1.312GB/3.472GB][ 37%][==================>                               ][25.85MB/s]  [1.328GB/3.472GB][ 38%][===================>                              ][23.86MB/s]  [1.344GB/3.472GB][ 38%][===================>                              ][23.32MB/s]  [1.359GB/3.472GB][ 39%][===================>                              ][21.75MB/s]  [1.375GB/3.472GB][ 39%][===================>                              ][21.66MB/s]  [1.391GB/3.472GB][ 40%][====================>                             ][21.25MB/s]  [1.406GB/3.472GB][ 40%][====================>                             ][21.18MB/s]  [1.422GB/3.472GB][ 40%][====================>                             ][20.22MB/s]  [1.438GB/3.472GB][ 41%][====================>                             ][20.16MB/s]  [1.453GB/3.472GB][ 41%][====================>                             ][20.11MB/s]  [1.5GB/3.472GB][ 43%][=====================>                            ][20.48MB/s]  [1.516GB/3.472GB][ 43%][=====================>                            ][20.42MB/s]  [1.547GB/3.472GB][ 44%][======================>                           ][20.57MB/s]  [1.562GB/3.472GB][ 45%][======================>                           ][20.51MB/s]  [1.578GB/3.472GB][ 45%][======================>                           ][20.46MB/s]  [1.609GB/3.472GB][ 46%][=======================>                          ][20.6MB/s]  [1.641GB/3.472GB][ 47%][=======================>                          ][20.74MB/s]  [1.656GB/3.472GB][ 47%][=======================>                          ][20.68MB/s]  [1.688GB/3.472GB][ 48%][========================>                         ][20.82MB/s]  [1.703GB/3.472GB][ 49%][========================>                         ][20.76MB/s]  [1.719GB/3.472GB][ 49%][========================>                         ][20.71MB/s]  [1.734GB/3.472GB][ 49%][========================>                         ][20.65MB/s]  [1.766GB/3.472GB][ 50%][=========================>                        ][20.78MB/s]  [1.781GB/3.472GB][ 51%][=========================>                        ][20.73MB/s]  [1.828GB/3.472GB][ 52%][==========================>                       ][21.03MB/s]  [1.844GB/3.472GB][ 53%][==========================>                       ][20.98MB/s]  [1.875GB/3.472GB][ 54%][===========================>                      ][20.21MB/s]  [1.906GB/3.472GB][ 54%][===========================>                      ][20.33MB/s]  [1.922GB/3.472GB][ 55%][===========================>                      ][20.29MB/s]  [1.938GB/3.472GB][ 55%][===========================>                      ][20.24MB/s]  [1.969GB/3.472GB][ 56%][============================>                     ][20.36MB/s]  [1.984GB/3.472GB][ 57%][============================>                     ][20.32MB/s]  [2GB/3.472GB][ 57%][============================>                     ][20.28MB/s]  [2.031GB/3.472GB][ 58%][=============================>                    ][20.39MB/s]  [2.062GB/3.472GB][ 59%][=============================>                    ][20.11MB/s]  [2.094GB/3.472GB][ 60%][==============================>                   ][20.23MB/s]  [2.141GB/3.472GB][ 61%][==============================>                   ][20.49MB/s]  [2.203GB/3.472GB][ 63%][===============================>                  ][20.89MB/s]  [2.25GB/3.472GB][ 64%][================================>                 ][20.95MB/s]  [2.266GB/3.472GB][ 65%][================================>                 ][20.9MB/s]  [2.312GB/3.472GB][ 66%][=================================>                ][21.14MB/s]  [2.328GB/3.472GB][ 67%][=================================>                ][21.1MB/s]  [2.375GB/3.472GB][ 68%][==================================>               ][21.33MB/s]  [2.406GB/3.472GB][ 69%][==================================>               ][21.24MB/s]  [2.422GB/3.472GB][ 69%][==================================>               ][21.02MB/s]  [2.469GB/3.472GB][ 71%][===================================>              ][21.24MB/s]  [2.516GB/3.472GB][ 72%][====================================>             ][21.47MB/s]  [2.562GB/3.472GB][ 73%][====================================>             ][21.69MB/s]  [2.594GB/3.472GB][ 74%][=====================================>            ][21.77MB/s]  [2.609GB/3.472GB][ 75%][=====================================>            ][21.72MB/s]  [2.641GB/3.472GB][ 76%][======================================>           ][21.81MB/s]  [2.688GB/3.472GB][ 77%][======================================>           ][22.02MB/s]  [2.719GB/3.472GB][ 78%][=======================================>          ][21.92MB/s]  [2.75GB/3.472GB][ 79%][=======================================>          ][22MB/s]  [2.766GB/3.472GB][ 79%][=======================================>          ][21.95MB/s]  [2.797GB/3.472GB][ 80%][========================================>         ][22.03MB/s]  [2.828GB/3.472GB][ 81%][========================================>         ][22.11MB/s]  [2.859GB/3.472GB][ 82%][=========================================>        ][22.02MB/s]  [2.891GB/3.472GB][ 83%][=========================================>        ][22.09MB/s]  [2.906GB/3.472GB][ 83%][=========================================>        ][21.72MB/s]  [2.922GB/3.472GB][ 84%][==========================================>       ][21.68MB/s]  [2.953GB/3.472GB][ 85%][==========================================>       ][21.76MB/s]  [2.984GB/3.472GB][ 85%][==========================================>       ][21.67MB/s]  [3.016GB/3.472GB][ 86%][===========================================>      ][21.59MB/s]  [3.047GB/3.472GB][ 87%][===========================================>      ][21.67MB/s]  [3.094GB/3.472GB][ 89%][============================================>     ][21.85MB/s]  [3.109GB/3.472GB][ 89%][============================================>     ][21.81MB/s]  [3.141GB/3.472GB][ 90%][=============================================>    ][21.88MB/s]  [3.172GB/3.472GB][ 91%][=============================================>    ][21.95MB/s]  [3.203GB/3.472GB][ 92%][==============================================>   ][22.01MB/s]  [3.234GB/3.472GB][ 93%][==============================================>   ][22.08MB/s]  [3.266GB/3.472GB][ 94%][===============================================>  ][22.15MB/s]  [3.297GB/3.472GB][ 94%][===============================================>  ][22.21MB/s]  [3.328GB/3.472GB][ 95%][===============================================>  ][22.27MB/s]  [3.344GB/3.472GB][ 96%][================================================> ][22.23MB/s]  [3.359GB/3.472GB][ 96%][================================================> ][22.19MB/s]  [3.391GB/3.472GB][ 97%][================================================> ][22.26MB/s]  [3.406GB/3.472GB][ 98%][=================================================>][22.22MB/s]  [3.422GB/3.472GB][ 98%][=================================================>][22.18MB/s]  [3.438GB/3.472GB][ 99%][=================================================>][22.14MB/s]  [3.453GB/3.472GB][ 99%][=================================================>][22.1MB/s]  [3.472GB/3.472GB][100%][==================================================][22.22MB/s]  [3.472GB/3.472GB][100%][==================================================][22.08MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

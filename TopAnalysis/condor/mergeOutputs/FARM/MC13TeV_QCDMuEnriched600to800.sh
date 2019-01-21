@@ -11,7 +11,7 @@ echo "ls EOS" >&2
 ls /eos/user/v/vveckaln >&2
 echo "end ls EOS" >&2
 
-source /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/mergeOutputs/run_job.sh /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix/ /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix/ MC13TeV_QCDMuEnriched600to800 $CLUSTERID 
+source /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/mergeOutputs/run_job.sh /eos/user/v/vveckaln/analysis_MC13TeV_TTJets /eos/user/v/vveckaln/analysis_MC13TeV_TTJets MC13TeV_QCDMuEnriched600to800 $CLUSTERID 
 #EXIT_CODE=$?
 if [ $(( $EXIT_CODE_SCRAM || $EXIT_CODE_PYTHON )) = 0 ];
 then

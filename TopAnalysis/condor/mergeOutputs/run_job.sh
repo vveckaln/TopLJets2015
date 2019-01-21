@@ -17,8 +17,9 @@ echo "EXIT_CODE_SCRAM" $EXIT_CODE_SCRAM >&2
 eval $scram_result
 cd ${WORKDIR}
 #valgrind --track-origins=yes --leak-check=yes --suppressions=$ROOTSYS/etc/valgrind-root.supp 
-python ${PROJECT}/condor/mergeOutputs/mergejob.py -i ${INPUTDIR}/Chunks -o ${OUTPUTDIR}/HADDChunks -s ${SAMPLENAME} -T
+python ${PROJECT}/condor/mergeOutputs/mergejob.py -i ${INPUTDIR}/Chunks  -s ${SAMPLENAME} -T
 EXIT_CODE_PYTHON=$?
+sh $PROJECT/scripts/EOS_file_copy.sh ${SAMPLENAME}.root ${OUTPUTDIR}/HADDChunks
 python ${PROJECT}/condor/testfilesanity.py ${OUTPUTDIR}/HADDChunks/${SAMPLENAME}.root
 EXIT_CODE_PYTHON=$(($? | $EXIT_CODE_PYTHON))
 
@@ -28,9 +29,11 @@ then
     rm badfilereport.txt
 fi
 
-python ${PROJECT}/condor/mergeOutputs/mergejob.py -i ${INPUTDIR}/migration -o ${OUTPUTDIR}/HADDmigration -s ${SAMPLENAME} 
+python ${PROJECT}/condor/mergeOutputs/mergejob.py -i ${INPUTDIR}/migration  -s ${SAMPLENAME} 
 EXIT_CODE_PYTHON=$?
-mv ${OUTPUTDIR}/HADDmigration/${SAMPLENAME}.root ${OUTPUTDIR}/HADDmigration/migration_${SAMPLENAME}.root
+sh $PROJECT/scripts/EOS_file_copy.sh ${SAMPLENAME}.root ${OUTPUTDIR}/HADDmigration
+
+eos root://eosuser.cern.ch mv ${OUTPUTDIR}/HADDmigration/${SAMPLENAME}.root ${OUTPUTDIR}/HADDmigration/migration_${SAMPLENAME}.root
 python ${PROJECT}/condor/testfilesanity.py ${OUTPUTDIR}/HADDmigration/migration_${SAMPLENAME}.root
 EXIT_CODE_PYTHON=$(($? | $EXIT_CODE_PYTHON))
 if [ -f badfilereport.txt ];

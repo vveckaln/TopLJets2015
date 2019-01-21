@@ -20,9 +20,9 @@ const char * title_flow[nflows] = {"particle", "energy", "$P_{T}$"};
 const char * model_tag[] = {"SM", "cflip"};
 const char * model_title[] = {"SM", " colour octet $W$"};
 const unsigned char npairs = 4;
-const char * jetpairs[npairs] = {"blb2l", "hbqf", "qcqf", "hbqc"};
+const char * jetpairs[npairs] = {"blb2l", "qfhb", "hbqc", "qlq2l"};
 const char * jetpairstitle[npairs] = {"$j_{1}^{b}$,$j_{2}^{b}$", 
-				      "$j_{h}^{b}$,$j_{f}^{W}$", 
+				      "$j_{f}^{W}$,$j_{h}^{b}$", 
 				      "$j_{h}^{b}$,$j_{c}^{W}$", 
 				      "$j_{1}^{W}$,$j_{2}^{W}$"};
 const unsigned char nsources = 2;
@@ -85,9 +85,9 @@ int main(int argc, char *argv[])
 		    model_tag[model] + ".txt";
 		  file_map[file_name] = fopen(file_name.Data(), "w");
 		  char caption[128];
-		  sprintf(caption, "Value of $R'$ for the %s channel at %s level for %s, %s flow for the %s model.", channel_titles_[ch_ind], level_titles_[level_ind], tag_source_type[type_ind], title_flow[flow_ind], model_title[model]); 
+		  sprintf(caption, "Value of $R^{-1}$ for the %s channel at %s level for %s, %s flow for the %s model.", channel_titles_[ch_ind], level_titles_[level_ind], tag_source_type[type_ind], title_flow[flow_ind], model_title[model]); 
 		  char label[128];
-		  sprintf(label, "R_%s_%s_%s_%s_%s", tag_channels_types_[ch_ind], tag_levels_types_[level_ind], tag_flow[type_ind], tag_source_type[type_ind], model_tag[model]); 
+		  sprintf(label, "R_%s_%s_%s_%s_%s", tag_channels_types_[ch_ind], tag_levels_types_[level_ind], tag_flow[flow_ind], tag_source_type[type_ind], model_tag[model]); 
 		  prepare_header(file_map[file_name], caption, label);
 		}
 	    }
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 	    {
 	      for (unsigned short flow_ind = 0; flow_ind < nflows; flow_ind ++)
 		{
-		  //	      printf("model %u type_ind %u tag_sources_types_ %s model_tag %s, \n", model, type_ind, tag_sources_types_[type_ind], model_tag[model]);
+		  printf("model %u type_ind %u tag_sources_types_ %s model_tag %s, \n", model, type_ind, tag_sources_types_[type_ind], model_tag[model]);
 		  const TString file_name = dir + "/R_" + 
 		    tag_channels_types_[ch_ind] + "_" + 
 		    tag_levels_types_[level_ind] + "_" + 
@@ -135,12 +135,16 @@ int main(int argc, char *argv[])
 			      h_chi_syst = (TH1F *) plotter_file -> Get(dir + "/totalmcunc") ;
 
 			    }
-			  if (h_chi_syst)
-			    h_chi_syst -> Scale(1.0 / h_chi_syst -> Integral());
-			  h_chi -> Scale(1.0 / h_chi -> Integral());
+			  // if (h_chi_syst)
+			  //   {
+			  //     printf("%f %f\n", h_chi_syst -> Integral(), h_chi -> Integral());
+			  //     h_chi_syst -> Scale(1.0 / h_chi_syst -> Integral());
+			  //     getchar();
+			  //   }
+			  //			  h_chi -> Scale(1.0 / h_chi -> Integral());
 			  Int[charge_ind][pair_ind] = CalculateResult(h_chi, h_chi_syst, R);
 			  if (flow_ind == 0 and charge_ind == 0)
-			    printf("%f\n", Int[charge_ind][pair_ind].value);
+			    printf("Int[charge_ind][pair_ind].value %f\n", Int[charge_ind][pair_ind].value);
 			}
 
 		    }
@@ -152,6 +156,7 @@ int main(int argc, char *argv[])
 			  Rvalue[charge_ind][pair_ind] = Result(Int[charge_ind][pair_ind]);
 			  
 			  Rvalue[charge_ind][pair_ind].normalise(Int[charge_ind][3].value);
+			  printf("normalised \n");
 			}
 		    }
 		  for (unsigned short pair_ind = 0; pair_ind < npairs; pair_ind ++)
@@ -222,11 +227,18 @@ TH1F * sum_MC(const char * dir)
 double R(TH1F * h)
 {
   TAxis * axis = h -> GetXaxis();
-  return h -> Integral(axis -> FindBin(0.3), axis -> FindBin(0.7))/h -> Integral();
+  printf ("h-> Integral() %f\n", h-> Integral());
+  double ret = h -> Integral(axis -> FindBin(0.3), axis -> FindBin(0.7))/h -> Integral();
+  printf ("ret %f\n", ret);
+  return ret;
 }
 
 Result CalculateResult(TH1F *h, TH1F * h_syst, double ( *funcptr )(TH1F*))
 {
+  // printf("h\n");
+  // h -> Print("all");
+  // printf("h_syst\n");
+  // h_syst -> Print("all");
   Result result;
   result.value = funcptr(h);
   //  static const char * error_directions[2] = {"HIGH", "LOW"};
@@ -244,6 +256,9 @@ Result CalculateResult(TH1F *h, TH1F * h_syst, double ( *funcptr )(TH1F*))
 	      
 	      h_clone -> SetBinContent(bin_ind, h_clone -> GetBinContent(bin_ind) + error_signs[direction_ind] * bin_error); 
 	    }
+	  // printf("h_clone \n");
+	  // h_clone -> Print("all");
+	  // printf("%f %f\n", result.value, funcptr(h_clone));
 	  const double error = result.value - funcptr(h_clone);
 	  unsigned short high_low = error > 0 ? 0 : 1; 
 	  if (not result.error_set[type_ind][high_low])
@@ -261,6 +276,8 @@ Result CalculateResult(TH1F *h, TH1F * h_syst, double ( *funcptr )(TH1F*))
 	}
 			       
     }
+  //  getchar();
+  printf("result calculated\n");
   return result;
 }
 
@@ -290,14 +307,14 @@ void add_entry(FILE * table_file, Result Int, Result Rval)
 {
   if (Rval.error_set[1][0] and Rval.error_set[1][1])
     {
-      fprintf(table_file, "\t& %.2f \t$\\pm$ %.2f \t$\\pm$ %.2f \t& %.2f \t$\\pm$ %.2f \t$\\pm$ %.2f \\\\\n", 
+      fprintf(table_file, "\t& %.3f \t$\\pm$ %.3f \t$\\pm$ %.3f \t& %.3f \t$\\pm$ %.3f \t$\\pm$ %.3f \\\\\n", 
 	      Int.value, Int.GetAverageStats(), Int.GetAverageSyst(),
 	      Rval.value, Rval.GetAverageStats(), Rval.GetAverageSyst()
 	      );
     }
   else
     {
-      fprintf(table_file, "\t& %.2f \t$\\pm$ %.2f \t& %.2f \t$\\pm$ %.2f \\\\\n", Int.value, Int.GetAverageStats(),
+      fprintf(table_file, "\t& %.3f \t$\\pm$ %.3f \t& %.3f \t$\\pm$ %.3f \\\\\n", Int.value, Int.GetAverageStats(),
 	      Rval.value, Rval.GetAverageStats());
 
     }

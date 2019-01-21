@@ -25,7 +25,7 @@ Color_t color[2] = {kRed, kBlue};
 const char * model_tag[] = {"SM", "cflip"};
 const char * model_title[] = {"", " for the colour octet $W$ model"};
 const unsigned char npairs = 4;
-const char * jetpairs[npairs] = {"blb2l", "hbqf", "qcqf", "hbqc"};
+const char * jetpairs[npairs] = {"blb2l", "qfhb", "hbqc", "qlq2l"};
 const char * jetpairstitle[npairs] = {"j_{1}^{b},j_{2}^{b}", 
 				      "j_{f}^{W},j_{h}^{b}", 
 				      "j_{h}^{b},j_{c}^{W}",

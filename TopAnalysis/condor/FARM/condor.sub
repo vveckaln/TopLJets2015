@@ -1,0 +1,6 @@
+executable  = /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/FARM/$(cfgFile).sh
+output      = /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/CONDOROUT/$(cfgFile).out
+error       = /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/CONDOROUT/$(cfgFile).err
+log         = /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/FARM/*.$(ClusterId).log
+arguments   = $(ClusterId) $(ProcId)
++JobFlavour = "workday"

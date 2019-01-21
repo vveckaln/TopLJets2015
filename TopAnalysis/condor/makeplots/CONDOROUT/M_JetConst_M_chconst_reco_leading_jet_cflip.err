@@ -1,0 +1,532 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_20732/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting     Expires            Service principal
+01/03/19 13:22:52  01/04/19 14:22:52  krbtgt/CERN.CH@CERN.CH
+	renew until 01/08/19 10:56:26
+01/03/19 13:47:31  01/04/19 14:22:52  afs/cern.ch@CERN.CH
+	renew until 01/08/19 10:56:26
+end klist
+ls EOS
+analysis_MC13TeV_TTJets
+analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_herwig
+bins
+cernbox
+Chunks
+Chunks_test
+copy_test
+data
+flipped
+flipped_old
+LSF
+merged_plots
+migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
+processing
+reserve
+rivet
+rivet_results_23_March
+rivet_test
+rivet_test_21_March
+save.root
+SWAN_projects
+test
+testdir
+unfolding_cflip
+unfolding_nominal
+end ls EOS
+EXIT_CODE_SCRAM 0
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToLNu.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root does not exist
+failed to open /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks//MC13TeV_TTWToQQ.root
+Info in <TCanvas::MakeDefCanvas>:  created default TCanvas with name c1
+rm: cannot remove `batchnodeplots/plotter_M_JetConst_M_chconst_reco_leading_jet.root': No such file or directory
+processing M_JetConst_M_chconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_M_chconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_M_chconst_reco_leading_jet.png has been created
+processing M_JetConst_M_chconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_M_chconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_M_chconst_reco_scnd_leading_b.png has been created
+processing M_JetConst_M_chconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_M_chconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_M_chconst_reco_scnd_leading_jet.png has been created
+processing M_JetConst_N_allconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_gen_leading_b.png has been created
+processing M_JetConst_N_allconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_gen_leading_jet.png has been created
+processing M_JetConst_N_allconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_gen_scnd_leading_b.png has been created
+processing M_JetConst_N_allconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_gen_scnd_leading_jet.png has been created
+processing M_JetConst_N_allconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_reco_leading_b.png has been created
+processing M_JetConst_N_allconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_reco_leading_jet.png has been created
+processing M_JetConst_N_allconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_reco_scnd_leading_b.png has been created
+processing M_JetConst_N_allconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_allconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_allconst_reco_scnd_leading_jet.png has been created
+processing M_JetConst_N_chconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_gen_leading_b.png has been created
+processing M_JetConst_N_chconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_gen_leading_jet.png has been created
+processing M_JetConst_N_chconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_gen_scnd_leading_b.png has been created
+processing M_JetConst_N_chconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_gen_scnd_leading_jet.png has been created
+processing M_JetConst_N_chconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_reco_leading_b.png has been created
+processing M_JetConst_N_chconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_reco_leading_jet.png has been created
+processing M_JetConst_N_chconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_reco_scnd_leading_b.png has been created
+processing M_JetConst_N_chconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_N_chconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_N_chconst_reco_scnd_leading_jet.png has been created
+processing M_JetConst_Pt_allconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_gen_leading_b.png has been created
+processing M_JetConst_Pt_allconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_gen_leading_jet.png has been created
+processing M_JetConst_Pt_allconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_gen_scnd_leading_b.png has been created
+processing M_JetConst_Pt_allconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_gen_scnd_leading_jet.png has been created
+processing M_JetConst_Pt_allconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_reco_leading_b.png has been created
+processing M_JetConst_Pt_allconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_reco_leading_jet.png has been created
+processing M_JetConst_Pt_allconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_reco_scnd_leading_b.png has been created
+processing M_JetConst_Pt_allconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_allconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_allconst_reco_scnd_leading_jet.png has been created
+processing M_JetConst_Pt_chconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_gen_leading_b.png has been created
+processing M_JetConst_Pt_chconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_gen_leading_jet.png has been created
+processing M_JetConst_Pt_chconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_gen_scnd_leading_b.png has been created
+processing M_JetConst_Pt_chconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_gen_scnd_leading_jet.png has been created
+processing M_JetConst_Pt_chconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_reco_leading_b.png has been created
+processing M_JetConst_Pt_chconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_reco_leading_jet.png has been created
+processing M_JetConst_Pt_chconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_reco_scnd_leading_b.png has been created
+processing M_JetConst_Pt_chconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_Pt_chconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_Pt_chconst_reco_scnd_leading_jet.png has been created
+processing M_JetConst_TotalE_allconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_gen_leading_b.png has been created
+processing M_JetConst_TotalE_allconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_gen_leading_jet.png has been created
+processing M_JetConst_TotalE_allconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_gen_scnd_leading_b.png has been created
+processing M_JetConst_TotalE_allconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_gen_scnd_leading_jet.png has been created
+processing M_JetConst_TotalE_allconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_reco_leading_b.png has been created
+processing M_JetConst_TotalE_allconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_reco_leading_jet.png has been created
+processing M_JetConst_TotalE_allconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_reco_scnd_leading_b.png has been created
+processing M_JetConst_TotalE_allconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_allconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_allconst_reco_scnd_leading_jet.png has been created
+processing M_JetConst_TotalE_chconst_gen_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_gen_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_gen_leading_b.png has been created
+processing M_JetConst_TotalE_chconst_gen_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_gen_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_gen_leading_jet.png has been created
+processing M_JetConst_TotalE_chconst_gen_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_gen_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_gen_scnd_leading_b.png has been created
+processing M_JetConst_TotalE_chconst_gen_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_gen_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_gen_scnd_leading_jet.png has been created
+processing M_JetConst_TotalE_chconst_reco_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_reco_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_reco_leading_b.png has been created
+processing M_JetConst_TotalE_chconst_reco_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_reco_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_reco_leading_jet.png has been created
+processing M_JetConst_TotalE_chconst_reco_scnd_leading_b ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_reco_scnd_leading_b.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_reco_scnd_leading_b.png has been created
+processing M_JetConst_TotalE_chconst_reco_scnd_leading_jet ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_JetConst_TotalE_chconst_reco_scnd_leading_jet.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_JetConst_TotalE_chconst_reco_scnd_leading_jet.png has been created
+processing M_angle_leading_jet_beam_gen_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_beam_gen_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_beam_gen_DeltaRTotal.png has been created
+processing M_angle_leading_jet_beam_gen_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_beam_gen_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_beam_gen_DeltaRgt1p0.png has been created
+processing M_angle_leading_jet_beam_gen_DeltaRle1p0 ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_angle_leading_jet_beam_reco_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_beam_reco_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_beam_reco_DeltaRTotal.png has been created
+processing M_angle_leading_jet_beam_reco_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_beam_reco_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_beam_reco_DeltaRgt1p0.png has been created
+processing M_angle_leading_jet_beam_reco_DeltaRle1p0 ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_angle_leading_jet_lepton_gen_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_lepton_gen_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_lepton_gen_DeltaRTotal.png has been created
+processing M_angle_leading_jet_lepton_gen_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_lepton_gen_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_lepton_gen_DeltaRgt1p0.png has been created
+processing M_angle_leading_jet_lepton_gen_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_lepton_gen_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_lepton_gen_DeltaRle1p0.png has been created
+processing M_angle_leading_jet_lepton_reco_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_lepton_reco_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_lepton_reco_DeltaRTotal.png has been created
+processing M_angle_leading_jet_lepton_reco_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_lepton_reco_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_lepton_reco_DeltaRgt1p0.png has been created
+processing M_angle_leading_jet_lepton_reco_DeltaRle1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_leading_jet_lepton_reco_DeltaRle1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_leading_jet_lepton_reco_DeltaRle1p0.png has been created
+processing M_angle_lepton_beam_gen_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_lepton_beam_gen_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_lepton_beam_gen_DeltaRTotal.png has been created
+processing M_angle_lepton_beam_gen_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_lepton_beam_gen_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_lepton_beam_gen_DeltaRgt1p0.png has been created
+processing M_angle_lepton_beam_gen_DeltaRle1p0 ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_angle_lepton_beam_reco_DeltaRTotal ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_lepton_beam_reco_DeltaRTotal.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_lepton_beam_reco_DeltaRTotal.png has been created
+processing M_angle_lepton_beam_reco_DeltaRgt1p0 ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_angle_lepton_beam_reco_DeltaRgt1p0.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_angle_lepton_beam_reco_DeltaRgt1p0.png has been created
+processing M_angle_lepton_beam_reco_DeltaRle1p0 ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_chiblb2l_E_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_allconst_gen_allpart.png has been created
+processing M_chiblb2l_E_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_allconst_gen_jetprt.png has been created
+processing M_chiblb2l_E_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_allconst_reco_allpart.png has been created
+processing M_chiblb2l_E_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_allconst_reco_jetprt.png has been created
+processing M_chiblb2l_E_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_chconst_gen_allpart.png has been created
+processing M_chiblb2l_E_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_chconst_gen_jetprt.png has been created
+processing M_chiblb2l_E_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_chconst_reco_allpart.png has been created
+processing M_chiblb2l_E_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_E_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_E_chconst_reco_jetprt.png has been created
+processing M_chiblb2l_N_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_allconst_gen_allpart.png has been created
+processing M_chiblb2l_N_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_allconst_gen_jetprt.png has been created
+processing M_chiblb2l_N_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_allconst_reco_allpart.png has been created
+processing M_chiblb2l_N_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_allconst_reco_jetprt.png has been created
+processing M_chiblb2l_N_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_chconst_gen_allpart.png has been created
+processing M_chiblb2l_N_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_chconst_gen_jetprt.png has been created
+processing M_chiblb2l_N_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_chconst_reco_allpart.png has been created
+processing M_chiblb2l_N_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_N_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_N_chconst_reco_jetprt.png has been created
+processing M_chiblb2l_Pt_allconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_chiblb2l_Pt_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_Pt_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_Pt_allconst_gen_jetprt.png has been created
+processing M_chiblb2l_Pt_allconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_chiblb2l_Pt_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_Pt_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_Pt_allconst_reco_jetprt.png has been created
+processing M_chiblb2l_Pt_chconst_gen_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_chiblb2l_Pt_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_Pt_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_Pt_chconst_gen_jetprt.png has been created
+processing M_chiblb2l_Pt_chconst_reco_allpart ***********************
+totalMC.Integral() == 0.0 is True
+self.dataH.Integral() == 0.0 is True
+processing M_chiblb2l_Pt_chconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chiblb2l_Pt_chconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chiblb2l_Pt_chconst_reco_jetprt.png has been created
+processing M_chihbqc_E_allconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chihbqc_E_allconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chihbqc_E_allconst_gen_allpart.png has been created
+processing M_chihbqc_E_allconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chihbqc_E_allconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chihbqc_E_allconst_gen_jetprt.png has been created
+processing M_chihbqc_E_allconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chihbqc_E_allconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chihbqc_E_allconst_reco_allpart.png has been created
+processing M_chihbqc_E_allconst_reco_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chihbqc_E_allconst_reco_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chihbqc_E_allconst_reco_jetprt.png has been created
+processing M_chihbqc_E_chconst_gen_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chihbqc_E_chconst_gen_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chihbqc_E_chconst_gen_allpart.png has been created
+processing M_chihbqc_E_chconst_gen_jetprt ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chihbqc_E_chconst_gen_jetprt.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chihbqc_E_chconst_gen_jetprt.png has been created
+processing M_chihbqc_E_chconst_reco_allpart ***********************
+Info in <TCanvas::Print>: pdf file batchnodeplots/M_chihbqc_E_chconst_reco_allpart.pdf has been created
+Info in <TCanvas::Print>: png file batchnodeplots/M_chihbqc_E_chconst_reco_allpart.png has been created
+[29.35kB/29.35kB][100%][==================================================][29.35kB/s]  [29.35kB/29.35kB][100%][==================================================][29.35kB/s]  
+[14.78kB/14.78kB][100%][==================================================][14.78kB/s]  [14.78kB/14.78kB][100%][==================================================][14.78kB/s]  
+[29.07kB/29.07kB][100%][==================================================][29.07kB/s]  [29.07kB/29.07kB][100%][==================================================][29.07kB/s]  
+[15.3kB/15.3kB][100%][==================================================][15.3kB/s]  [15.3kB/15.3kB][100%][==================================================][15.3kB/s]  
+[27.85kB/27.85kB][100%][==================================================][27.85kB/s]  [27.85kB/27.85kB][100%][==================================================][27.85kB/s]  
+[14.65kB/14.65kB][100%][==================================================][14.65kB/s]  [14.65kB/14.65kB][100%][==================================================][14.65kB/s]  
+[30.48kB/30.48kB][100%][==================================================][30.48kB/s]  [30.48kB/30.48kB][100%][==================================================][30.48kB/s]  
+[18.6kB/18.6kB][100%][==================================================][18.6kB/s]  [18.6kB/18.6kB][100%][==================================================][18.6kB/s]  
+[29.35kB/29.35kB][100%][==================================================][29.35kB/s]  [29.35kB/29.35kB][100%][==================================================][29.35kB/s]  
+[19.18kB/19.18kB][100%][==================================================][19.18kB/s]  [19.18kB/19.18kB][100%][==================================================][19.18kB/s]  
+[30.54kB/30.54kB][100%][==================================================][30.54kB/s]  [30.54kB/30.54kB][100%][==================================================][30.54kB/s]  
+[19.61kB/19.61kB][100%][==================================================][19.61kB/s]  [19.61kB/19.61kB][100%][==================================================][19.61kB/s]  
+[28.5kB/28.5kB][100%][==================================================][28.5kB/s]  [28.5kB/28.5kB][100%][==================================================][28.5kB/s]  
+[17.2kB/17.2kB][100%][==================================================][17.2kB/s]  [17.2kB/17.2kB][100%][==================================================][17.2kB/s]  
+[34.82kB/34.82kB][100%][==================================================][34.82kB/s]  [34.82kB/34.82kB][100%][==================================================][34.82kB/s]  
+[22.93kB/22.93kB][100%][==================================================][22.93kB/s]  [22.93kB/22.93kB][100%][==================================================][22.93kB/s]  
+[34.93kB/34.93kB][100%][==================================================][34.93kB/s]  [34.93kB/34.93kB][100%][==================================================][34.93kB/s]  
+[23.68kB/23.68kB][100%][==================================================][23.68kB/s]  [23.68kB/23.68kB][100%][==================================================][23.68kB/s]  
+[36.21kB/36.21kB][100%][==================================================][36.21kB/s]  [36.21kB/36.21kB][100%][==================================================][36.21kB/s]  
+[25.66kB/25.66kB][100%][==================================================][25.66kB/s]  [25.66kB/25.66kB][100%][==================================================][25.66kB/s]  
+[34.93kB/34.93kB][100%][==================================================][34.93kB/s]  [34.93kB/34.93kB][100%][==================================================][34.93kB/s]  
+[22.15kB/22.15kB][100%][==================================================][22.15kB/s]  [22.15kB/22.15kB][100%][==================================================][22.15kB/s]  
+[29.68kB/29.68kB][100%][==================================================][29.68kB/s]  [29.68kB/29.68kB][100%][==================================================][29.68kB/s]  
+[18.04kB/18.04kB][100%][==================================================][18.04kB/s]  [18.04kB/18.04kB][100%][==================================================][18.04kB/s]  
+[27.05kB/27.05kB][100%][==================================================][27.05kB/s]  [27.05kB/27.05kB][100%][==================================================][27.05kB/s]  
+[16.01kB/16.01kB][100%][==================================================][16.01kB/s]  [16.01kB/16.01kB][100%][==================================================][16.01kB/s]  
+[27.02kB/27.02kB][100%][==================================================][27.02kB/s]  [27.02kB/27.02kB][100%][==================================================][27.02kB/s]  
+[16.58kB/16.58kB][100%][==================================================][16.58kB/s]  [16.58kB/16.58kB][100%][==================================================][16.58kB/s]  
+[25.48kB/25.48kB][100%][==================================================][25.48kB/s]  [25.48kB/25.48kB][100%][==================================================][25.48kB/s]  
+[15.59kB/15.59kB][100%][==================================================][15.59kB/s]  [15.59kB/15.59kB][100%][==================================================][15.59kB/s]  
+[33.71kB/33.71kB][100%][==================================================][33.71kB/s]  [33.71kB/33.71kB][100%][==================================================][33.71kB/s]  
+[21.23kB/21.23kB][100%][==================================================][21.23kB/s]  [21.23kB/21.23kB][100%][==================================================][21.23kB/s]  
+[31.88kB/31.88kB][100%][==================================================][31.88kB/s]  [31.88kB/31.88kB][100%][==================================================][31.88kB/s]  
+[20.08kB/20.08kB][100%][==================================================][20.08kB/s]  [20.08kB/20.08kB][100%][==================================================][20.08kB/s]  
+[30.44kB/30.44kB][100%][==================================================][30.44kB/s]  [30.44kB/30.44kB][100%][==================================================][30.44kB/s]  
+[19.82kB/19.82kB][100%][==================================================][19.82kB/s]  [19.82kB/19.82kB][100%][==================================================][19.82kB/s]  
+[26.56kB/26.56kB][100%][==================================================][26.56kB/s]  [26.56kB/26.56kB][100%][==================================================][26.56kB/s]  
+[18.59kB/18.59kB][100%][==================================================][18.59kB/s]  [18.59kB/18.59kB][100%][==================================================][18.59kB/s]  
+[30.47kB/30.47kB][100%][==================================================][30.47kB/s]  [30.47kB/30.47kB][100%][==================================================][30.47kB/s]  
+[16.35kB/16.35kB][100%][==================================================][16.35kB/s]  [16.35kB/16.35kB][100%][==================================================][16.35kB/s]  
+[30kB/30kB][100%][==================================================][30kB/s]  [30kB/30kB][100%][==================================================][30kB/s]  
+[16.38kB/16.38kB][100%][==================================================][16.38kB/s]  [16.38kB/16.38kB][100%][==================================================][16.38kB/s]  
+[29.05kB/29.05kB][100%][==================================================][29.05kB/s]  [29.05kB/29.05kB][100%][==================================================][29.05kB/s]  
+[15.93kB/15.93kB][100%][==================================================][15.93kB/s]  [15.93kB/15.93kB][100%][==================================================][15.93kB/s]  
+[28.72kB/28.72kB][100%][==================================================][28.72kB/s]  [28.72kB/28.72kB][100%][==================================================][28.72kB/s]  
+[16.08kB/16.08kB][100%][==================================================][16.08kB/s]  [16.08kB/16.08kB][100%][==================================================][16.08kB/s]  
+[34.4kB/34.4kB][100%][==================================================][34.4kB/s]  [34.4kB/34.4kB][100%][==================================================][34.4kB/s]  
+[19.95kB/19.95kB][100%][==================================================][19.95kB/s]  [19.95kB/19.95kB][100%][==================================================][19.95kB/s]  
+[33.84kB/33.84kB][100%][==================================================][33.84kB/s]  [33.84kB/33.84kB][100%][==================================================][33.84kB/s]  
+[19.6kB/19.6kB][100%][==================================================][19.6kB/s]  [19.6kB/19.6kB][100%][==================================================][19.6kB/s]  
+[33.1kB/33.1kB][100%][==================================================][33.1kB/s]  [33.1kB/33.1kB][100%][==================================================][33.1kB/s]  
+[19.68kB/19.68kB][100%][==================================================][19.68kB/s]  [19.68kB/19.68kB][100%][==================================================][19.68kB/s]  
+[32.93kB/32.93kB][100%][==================================================][32.93kB/s]  [32.93kB/32.93kB][100%][==================================================][32.93kB/s]  
+[19.04kB/19.04kB][100%][==================================================][19.04kB/s]  [19.04kB/19.04kB][100%][==================================================][19.04kB/s]  
+[30.11kB/30.11kB][100%][==================================================][30.11kB/s]  [30.11kB/30.11kB][100%][==================================================][30.11kB/s]  
+[17.06kB/17.06kB][100%][==================================================][17.06kB/s]  [17.06kB/17.06kB][100%][==================================================][17.06kB/s]  
+[30.34kB/30.34kB][100%][==================================================][30.34kB/s]  [30.34kB/30.34kB][100%][==================================================][30.34kB/s]  
+[16.94kB/16.94kB][100%][==================================================][16.94kB/s]  [16.94kB/16.94kB][100%][==================================================][16.94kB/s]  
+[29.47kB/29.47kB][100%][==================================================][29.47kB/s]  [29.47kB/29.47kB][100%][==================================================][29.47kB/s]  
+[16.45kB/16.45kB][100%][==================================================][16.45kB/s]  [16.45kB/16.45kB][100%][==================================================][16.45kB/s]  
+[29.67kB/29.67kB][100%][==================================================][29.67kB/s]  [29.67kB/29.67kB][100%][==================================================][29.67kB/s]  
+[16.79kB/16.79kB][100%][==================================================][16.79kB/s]  [16.79kB/16.79kB][100%][==================================================][16.79kB/s]  
+[35.74kB/35.74kB][100%][==================================================][35.74kB/s]  [35.74kB/35.74kB][100%][==================================================][35.74kB/s]  
+[21.75kB/21.75kB][100%][==================================================][21.75kB/s]  [21.75kB/21.75kB][100%][==================================================][21.75kB/s]  
+[35.03kB/35.03kB][100%][==================================================][35.03kB/s]  [35.03kB/35.03kB][100%][==================================================][35.03kB/s]  
+[20.67kB/20.67kB][100%][==================================================][20.67kB/s]  [20.67kB/20.67kB][100%][==================================================][20.67kB/s]  
+[34.79kB/34.79kB][100%][==================================================][34.79kB/s]  [34.79kB/34.79kB][100%][==================================================][34.79kB/s]  
+[20.93kB/20.93kB][100%][==================================================][20.93kB/s]  [20.93kB/20.93kB][100%][==================================================][20.93kB/s]  
+[34.3kB/34.3kB][100%][==================================================][34.3kB/s]  [34.3kB/34.3kB][100%][==================================================][34.3kB/s]  
+[20.38kB/20.38kB][100%][==================================================][20.38kB/s]  [20.38kB/20.38kB][100%][==================================================][20.38kB/s]  
+[43.37kB/43.37kB][100%][==================================================][43.37kB/s]  [43.37kB/43.37kB][100%][==================================================][43.37kB/s]  
+[20.24kB/20.24kB][100%][==================================================][20.24kB/s]  [20.24kB/20.24kB][100%][==================================================][20.24kB/s]  
+[40.25kB/40.25kB][100%][==================================================][40.25kB/s]  [40.25kB/40.25kB][100%][==================================================][40.25kB/s]  
+[19.43kB/19.43kB][100%][==================================================][19.43kB/s]  [19.43kB/19.43kB][100%][==================================================][19.43kB/s]  
+[37.24kB/37.24kB][100%][==================================================][37.24kB/s]  [37.24kB/37.24kB][100%][==================================================][37.24kB/s]  
+[18.95kB/18.95kB][100%][==================================================][18.95kB/s]  [18.95kB/18.95kB][100%][==================================================][18.95kB/s]  
+[52.62kB/52.62kB][100%][==================================================][52.62kB/s]  [52.62kB/52.62kB][100%][==================================================][52.62kB/s]  
+[20.69kB/20.69kB][100%][==================================================][20.69kB/s]  [20.69kB/20.69kB][100%][==================================================][20.69kB/s]  
+[71.81kB/71.81kB][100%][==================================================][71.81kB/s]  [71.81kB/71.81kB][100%][==================================================][71.81kB/s]  
+[32.15kB/32.15kB][100%][==================================================][32.15kB/s]  [32.15kB/32.15kB][100%][==================================================][32.15kB/s]  
+[68.24kB/68.24kB][100%][==================================================][68.24kB/s]  [68.24kB/68.24kB][100%][==================================================][68.24kB/s]  
+[31.49kB/31.49kB][100%][==================================================][31.49kB/s]  [31.49kB/31.49kB][100%][==================================================][31.49kB/s]  
+[73.53kB/73.53kB][100%][==================================================][73.53kB/s]  [73.53kB/73.53kB][100%][==================================================][73.53kB/s]  
+[29.9kB/29.9kB][100%][==================================================][29.9kB/s]  [29.9kB/29.9kB][100%][==================================================][29.9kB/s]  
+[87.33kB/87.33kB][100%][==================================================][87.33kB/s]  [87.33kB/87.33kB][100%][==================================================][87.33kB/s]  
+[33.71kB/33.71kB][100%][==================================================][33.71kB/s]  [33.71kB/33.71kB][100%][==================================================][33.71kB/s]  
+[46.16kB/46.16kB][100%][==================================================][46.16kB/s]  [46.16kB/46.16kB][100%][==================================================][46.16kB/s]  
+[21kB/21kB][100%][==================================================][21kB/s]  [21kB/21kB][100%][==================================================][21kB/s]  
+[46.94kB/46.94kB][100%][==================================================][46.94kB/s]  [46.94kB/46.94kB][100%][==================================================][46.94kB/s]  
+[19.17kB/19.17kB][100%][==================================================][19.17kB/s]  [19.17kB/19.17kB][100%][==================================================][19.17kB/s]  
+[67.27kB/67.27kB][100%][==================================================][67.27kB/s]  [67.27kB/67.27kB][100%][==================================================][67.27kB/s]  
+[23.34kB/23.34kB][100%][==================================================][23.34kB/s]  [23.34kB/23.34kB][100%][==================================================][23.34kB/s]  
+[69.55kB/69.55kB][100%][==================================================][69.55kB/s]  [69.55kB/69.55kB][100%][==================================================][69.55kB/s]  
+[22.87kB/22.87kB][100%][==================================================][22.87kB/s]  [22.87kB/22.87kB][100%][==================================================][22.87kB/s]  
+[72.12kB/72.12kB][100%][==================================================][72.12kB/s]  [72.12kB/72.12kB][100%][==================================================][72.12kB/s]  
+[32.86kB/32.86kB][100%][==================================================][32.86kB/s]  [32.86kB/32.86kB][100%][==================================================][32.86kB/s]  
+[81.92kB/81.92kB][100%][==================================================][81.92kB/s]  [81.92kB/81.92kB][100%][==================================================][81.92kB/s]  
+[32.59kB/32.59kB][100%][==================================================][32.59kB/s]  [32.59kB/32.59kB][100%][==================================================][32.59kB/s]  
+[93.3kB/93.3kB][100%][==================================================][93.3kB/s]  [93.3kB/93.3kB][100%][==================================================][93.3kB/s]  
+[34.04kB/34.04kB][100%][==================================================][34.04kB/s]  [34.04kB/34.04kB][100%][==================================================][34.04kB/s]  
+[89.38kB/89.38kB][100%][==================================================][89.38kB/s]  [89.38kB/89.38kB][100%][==================================================][89.38kB/s]  
+[31.66kB/31.66kB][100%][==================================================][31.66kB/s]  [31.66kB/31.66kB][100%][==================================================][31.66kB/s]  
+[23.05kB/23.05kB][100%][==================================================][23.05kB/s]  [23.05kB/23.05kB][100%][==================================================][23.05kB/s]  
+[14.37kB/14.37kB][100%][==================================================][14.37kB/s]  [14.37kB/14.37kB][100%][==================================================][14.37kB/s]  
+[23.05kB/23.05kB][100%][==================================================][23.05kB/s]  [23.05kB/23.05kB][100%][==================================================][23.05kB/s]  
+[14.37kB/14.37kB][100%][==================================================][14.37kB/s]  [14.37kB/14.37kB][100%][==================================================][14.37kB/s]  
+[32.19kB/32.19kB][100%][==================================================][32.19kB/s]  [32.19kB/32.19kB][100%][==================================================][32.19kB/s]  
+[19.79kB/19.79kB][100%][==================================================][19.79kB/s]  [19.79kB/19.79kB][100%][==================================================][19.79kB/s]  
+[32.19kB/32.19kB][100%][==================================================][32.19kB/s]  [32.19kB/32.19kB][100%][==================================================][32.19kB/s]  
+[19.79kB/19.79kB][100%][==================================================][19.79kB/s]  [19.79kB/19.79kB][100%][==================================================][19.79kB/s]  
+[25.86kB/25.86kB][100%][==================================================][25.86kB/s]  [25.86kB/25.86kB][100%][==================================================][25.86kB/s]  
+[16.2kB/16.2kB][100%][==================================================][16.2kB/s]  [16.2kB/16.2kB][100%][==================================================][16.2kB/s]  
+[26.36kB/26.36kB][100%][==================================================][26.36kB/s]  [26.36kB/26.36kB][100%][==================================================][26.36kB/s]  
+[16.7kB/16.7kB][100%][==================================================][16.7kB/s]  [16.7kB/16.7kB][100%][==================================================][16.7kB/s]  
+[21.41kB/21.41kB][100%][==================================================][21.41kB/s]  [21.41kB/21.41kB][100%][==================================================][21.41kB/s]  
+[14.57kB/14.57kB][100%][==================================================][14.57kB/s]  [14.57kB/14.57kB][100%][==================================================][14.57kB/s]  
+[35.85kB/35.85kB][100%][==================================================][35.85kB/s]  [35.85kB/35.85kB][100%][==================================================][35.85kB/s]  
+[22.46kB/22.46kB][100%][==================================================][22.46kB/s]  [22.46kB/22.46kB][100%][==================================================][22.46kB/s]  
+[35.21kB/35.21kB][100%][==================================================][35.21kB/s]  [35.21kB/35.21kB][100%][==================================================][35.21kB/s]  
+[23.51kB/23.51kB][100%][==================================================][23.51kB/s]  [23.51kB/23.51kB][100%][==================================================][23.51kB/s]  
+[25.06kB/25.06kB][100%][==================================================][25.06kB/s]  [25.06kB/25.06kB][100%][==================================================][25.06kB/s]  
+[18.15kB/18.15kB][100%][==================================================][18.15kB/s]  [18.15kB/18.15kB][100%][==================================================][18.15kB/s]  
+[24.47kB/24.47kB][100%][==================================================][24.47kB/s]  [24.47kB/24.47kB][100%][==================================================][24.47kB/s]  
+[15.79kB/15.79kB][100%][==================================================][15.79kB/s]  [15.79kB/15.79kB][100%][==================================================][15.79kB/s]  
+[24.47kB/24.47kB][100%][==================================================][24.47kB/s]  [24.47kB/24.47kB][100%][==================================================][24.47kB/s]  
+[15.79kB/15.79kB][100%][==================================================][15.79kB/s]  [15.79kB/15.79kB][100%][==================================================][15.79kB/s]  
+[32.62kB/32.62kB][100%][==================================================][32.62kB/s]  [32.62kB/32.62kB][100%][==================================================][32.62kB/s]  
+[20.27kB/20.27kB][100%][==================================================][20.27kB/s]  [20.27kB/20.27kB][100%][==================================================][20.27kB/s]  
+[32.62kB/32.62kB][100%][==================================================][32.62kB/s]  [32.62kB/32.62kB][100%][==================================================][32.62kB/s]  
+[20.27kB/20.27kB][100%][==================================================][20.27kB/s]  [20.27kB/20.27kB][100%][==================================================][20.27kB/s]  
+[30.56kB/30.56kB][100%][==================================================][30.56kB/s]  [30.56kB/30.56kB][100%][==================================================][30.56kB/s]  
+[14.71kB/14.71kB][100%][==================================================][14.71kB/s]  [14.71kB/14.71kB][100%][==================================================][14.71kB/s]  
+[31.9kB/31.9kB][100%][==================================================][31.9kB/s]  [31.9kB/31.9kB][100%][==================================================][31.9kB/s]  
+[16.64kB/16.64kB][100%][==================================================][16.64kB/s]  [16.64kB/16.64kB][100%][==================================================][16.64kB/s]  
+[38.19kB/38.19kB][100%][==================================================][38.19kB/s]  [38.19kB/38.19kB][100%][==================================================][38.19kB/s]  
+[19.2kB/19.2kB][100%][==================================================][19.2kB/s]  [19.2kB/19.2kB][100%][==================================================][19.2kB/s]  
+[37.89kB/37.89kB][100%][==================================================][37.89kB/s]  [37.89kB/37.89kB][100%][==================================================][37.89kB/s]  
+[23.15kB/23.15kB][100%][==================================================][23.15kB/s]  [23.15kB/23.15kB][100%][==================================================][23.15kB/s]  
+[31.01kB/31.01kB][100%][==================================================][31.01kB/s]  [31.01kB/31.01kB][100%][==================================================][31.01kB/s]  
+[14.92kB/14.92kB][100%][==================================================][14.92kB/s]  [14.92kB/14.92kB][100%][==================================================][14.92kB/s]  
+[32.45kB/32.45kB][100%][==================================================][32.45kB/s]  [32.45kB/32.45kB][100%][==================================================][32.45kB/s]  
+[17.27kB/17.27kB][100%][==================================================][17.27kB/s]  [17.27kB/17.27kB][100%][==================================================][17.27kB/s]  
+[38.65kB/38.65kB][100%][==================================================][38.65kB/s]  [38.65kB/38.65kB][100%][==================================================][38.65kB/s]  
+[19.42kB/19.42kB][100%][==================================================][19.42kB/s]  [19.42kB/19.42kB][100%][==================================================][19.42kB/s]  
+[36.87kB/36.87kB][100%][==================================================][36.87kB/s]  [36.87kB/36.87kB][100%][==================================================][36.87kB/s]  
+[22.73kB/22.73kB][100%][==================================================][22.73kB/s]  [22.73kB/22.73kB][100%][==================================================][22.73kB/s]  
+[29.01kB/29.01kB][100%][==================================================][29.01kB/s]  [29.01kB/29.01kB][100%][==================================================][29.01kB/s]  
+[14.49kB/14.49kB][100%][==================================================][14.49kB/s]  [14.49kB/14.49kB][100%][==================================================][14.49kB/s]  
+[29.98kB/29.98kB][100%][==================================================][29.98kB/s]  [29.98kB/29.98kB][100%][==================================================][29.98kB/s]  
+[15.78kB/15.78kB][100%][==================================================][15.78kB/s]  [15.78kB/15.78kB][100%][==================================================][15.78kB/s]  
+[35.52kB/35.52kB][100%][==================================================][35.52kB/s]  [35.52kB/35.52kB][100%][==================================================][35.52kB/s]  
+[17.48kB/17.48kB][100%][==================================================][17.48kB/s]  [17.48kB/17.48kB][100%][==================================================][17.48kB/s]  
+[36.66kB/36.66kB][100%][==================================================][36.66kB/s]  [36.66kB/36.66kB][100%][==================================================][36.66kB/s]  
+[22.51kB/22.51kB][100%][==================================================][22.51kB/s]  [22.51kB/22.51kB][100%][==================================================][22.51kB/s]  
+[29.16kB/29.16kB][100%][==================================================][29.16kB/s]  [29.16kB/29.16kB][100%][==================================================][29.16kB/s]  
+[14.61kB/14.61kB][100%][==================================================][14.61kB/s]  [14.61kB/14.61kB][100%][==================================================][14.61kB/s]  
+[30.37kB/30.37kB][100%][==================================================][30.37kB/s]  [30.37kB/30.37kB][100%][==================================================][30.37kB/s]  
+[16.13kB/16.13kB][100%][==================================================][16.13kB/s]  [16.13kB/16.13kB][100%][==================================================][16.13kB/s]  
+[35.65kB/35.65kB][100%][==================================================][35.65kB/s]  [35.65kB/35.65kB][100%][==================================================][35.65kB/s]  
+[17.5kB/17.5kB][100%][==================================================][17.5kB/s]  [17.5kB/17.5kB][100%][==================================================][17.5kB/s]  
+[38.02kB/38.02kB][100%][==================================================][38.02kB/s]  [38.02kB/38.02kB][100%][==================================================][38.02kB/s]  
+[23.24kB/23.24kB][100%][==================================================][23.24kB/s]  [23.24kB/23.24kB][100%][==================================================][23.24kB/s]  
+[31.3kB/31.3kB][100%][==================================================][31.3kB/s]  [31.3kB/31.3kB][100%][==================================================][31.3kB/s]  
+[16.7kB/16.7kB][100%][==================================================][16.7kB/s]  [16.7kB/16.7kB][100%][==================================================][16.7kB/s]  
+[38.56kB/38.56kB][100%][==================================================][38.56kB/s]  [38.56kB/38.56kB][100%][==================================================][38.56kB/s]  
+[24.48kB/24.48kB][100%][==================================================][24.48kB/s]  [24.48kB/24.48kB][100%][==================================================][24.48kB/s]  
+[31.71kB/31.71kB][100%][==================================================][31.71kB/s]  [31.71kB/31.71kB][100%][==================================================][31.71kB/s]  
+[17.05kB/17.05kB][100%][==================================================][17.05kB/s]  [17.05kB/17.05kB][100%][==================================================][17.05kB/s]  
+[39.5kB/39.5kB][100%][==================================================][39.5kB/s]  [39.5kB/39.5kB][100%][==================================================][39.5kB/s]  
+[25.39kB/25.39kB][100%][==================================================][25.39kB/s]  [25.39kB/25.39kB][100%][==================================================][25.39kB/s]  
+[31.57kB/31.57kB][100%][==================================================][31.57kB/s]  [31.57kB/31.57kB][100%][==================================================][31.57kB/s]  
+[15.33kB/15.33kB][100%][==================================================][15.33kB/s]  [15.33kB/15.33kB][100%][==================================================][15.33kB/s]  
+[36.27kB/36.27kB][100%][==================================================][36.27kB/s]  [36.27kB/36.27kB][100%][==================================================][36.27kB/s]  
+[18.01kB/18.01kB][100%][==================================================][18.01kB/s]  [18.01kB/18.01kB][100%][==================================================][18.01kB/s]  
+[39.46kB/39.46kB][100%][==================================================][39.46kB/s]  [39.46kB/39.46kB][100%][==================================================][39.46kB/s]  
+[20.43kB/20.43kB][100%][==================================================][20.43kB/s]  [20.43kB/20.43kB][100%][==================================================][20.43kB/s]  
+[42.09kB/42.09kB][100%][==================================================][42.09kB/s]  [42.09kB/42.09kB][100%][==================================================][42.09kB/s]  
+[24.47kB/24.47kB][100%][==================================================][24.47kB/s]  [24.47kB/24.47kB][100%][==================================================][24.47kB/s]  
+[31.93kB/31.93kB][100%][==================================================][31.93kB/s]  [31.93kB/31.93kB][100%][==================================================][31.93kB/s]  
+[15.54kB/15.54kB][100%][==================================================][15.54kB/s]  [15.54kB/15.54kB][100%][==================================================][15.54kB/s]  
+[36.13kB/36.13kB][100%][==================================================][36.13kB/s]  [36.13kB/36.13kB][100%][==================================================][36.13kB/s]  
+[18.18kB/18.18kB][100%][==================================================][18.18kB/s]  [18.18kB/18.18kB][100%][==================================================][18.18kB/s]  
+[40.03kB/40.03kB][100%][==================================================][40.03kB/s]  [40.03kB/40.03kB][100%][==================================================][40.03kB/s]  
+[20.51kB/20.51kB][100%][==================================================][20.51kB/s]  [20.51kB/20.51kB][100%][==================================================][20.51kB/s]  
+[884.1kB/884.1kB][100%][==================================================][884.1kB/s]  [884.1kB/884.1kB][100%][==================================================][884.1kB/s]  

@@ -1,7 +1,7 @@
 #!/bin/bash
 CLUSTERID=$1
 PROCID=$2
-echo -e "@BEGINNAME\t${PROCID}\t"`date` >> @PROJECT/condor/makeplots/registry_$CLUSTERID.txt
+echo -e "@BEGINNAME\t${PROCID}\t"`date` >> @PROJECT/condor/makeplots/registry_@METHOD_$CLUSTERID.txt
 echo "hostname " `hostname`
 echo "pwd" `pwd`
 echo "klist" >&2

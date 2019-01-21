@@ -6,7 +6,7 @@ Takes a directory on eos (starting from /store/...) and returns a list of all fi
 """
 def getEOSlslist(directory, mask='', prepend='root://eoscms//eos/cms/'):
     from subprocess import Popen, PIPE
-    print 'looking into: '+directory+'...'
+    print 'looking into: '+directory
 
     eos_cmd = 'eos'
     data = Popen([eos_cmd, 'ls', directory],stdout=PIPE)

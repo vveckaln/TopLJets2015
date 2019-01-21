@@ -82,13 +82,13 @@ void RunTopJetPull(TString filename,
   //PREPARE OUTPUT
   TopJetShapeEvent_t tjsev;
   const TString baseName = gSystem -> BaseName(outname); 
-  const TString dirName=gSystem->DirName(outname);
+  const TString dirName= gSystem -> DirName(outname);
   printf("outname %s, output file name %s\n", outname.Data(), (dirName+"/"+baseName).Data());
   /*  TFile *fOut=TFile::Open(dirName+"/"+baseName, "RECREATE");
       fOut->cd();*/
-  TTree *outT=new TTree("tjsev","tjsev");
-  createTopJetShapeEventTree(outT,tjsev);
-  outT->SetDirectory(0/*fOut*/);
+  TTree *outT = new TTree("tjsev", "tjsev");
+  createTopJetShapeEventTree(outT, tjsev);
+  outT -> SetDirectory(0/*fOut*/);
 
 
   //READ TREE FROM FILE
@@ -99,7 +99,7 @@ void RunTopJetPull(TString filename,
   TH1 * genPU = (TH1 *) f -> Get("analysis/putrue");
   TH1 *triggerList=(TH1 *)f->Get("analysis/triggerList");
   TTree *t = (TTree*) f -> Get("analysis/data");
-  attachToMiniEventTree(t,ev,true);
+  attachToMiniEventTree(t, ev, true);
   Int_t nentries(t->GetEntriesFast());
   if (debug) nentries = 10000; //restrict number of entries for testing
   t->GetEntry(0);
@@ -167,7 +167,14 @@ void RunTopJetPull(TString filename,
 
   //BOOK HISTOGRAMS
   HistTool ht;
-  if (isData) ht.setNsyst(0);
+  //unsigned char Definitions::nsyst_ = 20;
+  
+  if (isData) 
+    {
+      ht.setNsyst(0);
+      Definitions::nsyst_ = 0;
+    }
+  printf("nsyst_ %u\n", Definitions::nsyst_);
   std::map<TString, TH1 *> allPlots;
   std::map<TString, TH2 *> all2dPlots;
   allPlots["puwgtctr"] = new TH1F("puwgtctr","Weight sums",2,0,2);
@@ -225,10 +232,20 @@ void RunTopJetPull(TString filename,
       ht.addHist(tag+"met", new TH1F(tag+"met",";MET [GeV];Events",50,0,250));
     }
   }
-  CFAT_cmssw colour_flow_analysis_tool; 
-  AssignHistograms(allPlots);
+  CFAT_cmssw colour_flow_analysis_tool;
+  map<TString, pair<TH1*, TH2*>*> allPlotsCFAT;
+  AssignHistograms(allPlotsCFAT);
+  for (map<TString, pair<TH1*, TH2*>*>::iterator it = allPlotsCFAT.begin(); it != allPlotsCFAT.end(); it ++)
+    {
+      allPlots[it -> first] = it -> second -> first;
+      if (it -> second -> second) 
+      all2dPlots[it ->first] = it -> second -> second; 
+    }
   AssignSpecificHistograms2D(all2dPlots);
-  colour_flow_analysis_tool.plots_ptr_ = & allPlots;
+
+  // printf("check B %p %p %p\n", allPlotsCFAT["M_jet_mass_gen_leading_jet"], allPlotsCFAT["M_jet_mass_gen_leading_jet"] -> first, allPlots["M_jet_mass_gen_leading_jet"]);
+  // getchar();
+  colour_flow_analysis_tool.plots_ptr_ = & allPlotsCFAT;
   colour_flow_analysis_tool.plots2D_ptr_ = & all2dPlots;
   colour_flow_analysis_tool.SetMigrationOutput(dirName + "/migration_" + baseName);
 
@@ -557,6 +574,8 @@ void RunTopJetPull(TString filename,
       // GENERATOR LEVEL  //
       /////////////////////
       colour_flow_analysis_tool.ResetMigrationValues();
+      //printf("check C %p %p\n", allPlotsCFAT["M_jet_mass_gen_leading_jet"], allPlotsCFAT["M_jet_mass_gen_leading_jet"] -> first);
+  // getchar();
       if (isTTbar) 
 	{
 	  //////////////////////////
@@ -653,7 +672,7 @@ void RunTopJetPull(TString filename,
 	    core_gen.AddBJets(gen_bJets, gen_bJets_index);
 	    core_gen.SetEventDisplayMode(0);
 	    event_gen.CompleteVectors();
-	    event_gen.SetWeight(wgt);
+	    event_gen.SetWeights(plotwgts);
 	    event_gen.SetEventNumber(iev);
 
 	    colour_flow_analysis_tool.SetEvent(event_gen);
@@ -661,6 +680,7 @@ void RunTopJetPull(TString filename,
 	    colour_flow_analysis_tool.SetWorkMode(Definitions::GEN);
 	  
 	    colour_flow_analysis_tool.SetChannel(genChTag == "E" ? E : M);
+	    //	    printf("check D %p %p\n", allPlotsCFAT["M_jet_mass_gen_leading_jet"], allPlotsCFAT["M_jet_mass_gen_leading_jet"] -> first);
 	    colour_flow_analysis_tool.Work();
 	  }
       //event selected on gen level?
@@ -725,9 +745,9 @@ void RunTopJetPull(TString filename,
 	  core_reco.AddVector(Definitions::NEUTRINO, &neutrinoHypP4);
 
 	  core_reco.AddBJets(bJets, bJets_index);
-	  core_reco.SetEventDisplayMode(0);
+	  core_reco.SetEventDisplayMode(kFALSE);
 	  event_reco.CompleteVectors();
-	  event_reco.SetWeight(wgt);
+	  event_reco.SetWeights(plotwgts);
 	  event_reco.SetEventNumber(iev);
 
 	  
@@ -770,16 +790,18 @@ void RunTopJetPull(TString filename,
 	{
 	  nBOTH_events ++;
 	}
-      //getchar();
+      // char c = getchar();
+   //    if (c == 0)
+   // 	exit(0);
    }
   
   //close input file
   f->Close();
 
   //save histos to file  
-  TFile *fOut=TFile::Open(dirName+"/"+baseName, "RECREATE");
+  TFile *fOut = TFile::Open(dirName + "/" + baseName, "RECREATE");
 
-  fOut->cd();
+  fOut -> cd();
   //  outT->Write();
   for (auto& it : ht.getPlots())  { 
     it.second->SetDirectory(fOut); it.second->Write(); 

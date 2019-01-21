@@ -1,18 +1,16 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_8349/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_24810/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
 Valid starting     Expires            Service principal
-09/05/18 11:45:31  09/06/18 12:45:31  krbtgt/CERN.CH@CERN.CH
-	renew until 09/10/18 09:42:32
-09/05/18 11:51:44  09/06/18 12:45:31  afs/cern.ch@CERN.CH
-	renew until 09/10/18 09:42:32
+12/28/18 01:11:19  12/29/18 02:11:19  krbtgt/CERN.CH@CERN.CH
+	renew until 12/30/18 12:19:54
+12/28/18 01:11:19  12/29/18 02:11:19  afs/cern.ch@CERN.CH
+	renew until 12/30/18 12:19:54
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets2l2nu_amcatnlo
 analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJetsfix
 analysis_MC13TeV_TTJets_herwig
 bins
 cernbox
@@ -25,24 +23,30 @@ flipped_old
 LSF
 merged_plots
 migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
 processing
 reserve
 rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
+save.root
 SWAN_projects
 test
-unfolding_cflip_old
-unfolding_-m
+testdir
+unfolding_cflip
 unfolding_nominal
-unfolding_nominal_old
 end ls EOS
 EXIT_CODE_SCRAM 0
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDChunks/MC13TeV_TTJets_isrdn.root
+[16MB/86.48MB][ 18%][=========>                                        ][16MB/s]  [80MB/86.48MB][ 92%][==============================================>   ][80MB/s]  [86.48MB/86.48MB][100%][==================================================][86.48MB/s]  [86.48MB/86.48MB][100%][==================================================][43.24MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets_isrdn.root
 file is good
 Sanity test done
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDmigration/migration_MC13TeV_TTJets_isrdn.root
+[16MB/954.9MB][  1%][>                                                 ][16MB/s]  [80MB/954.9MB][  8%][====>                                             ][40MB/s]  [144MB/954.9MB][ 15%][=======>                                          ][48MB/s]  [224MB/954.9MB][ 23%][===========>                                      ][56MB/s]  [288MB/954.9MB][ 30%][===============>                                  ][57.6MB/s]  [352MB/954.9MB][ 36%][==================>                               ][58.67MB/s]  [416MB/954.9MB][ 43%][=====================>                            ][59.43MB/s]  [464MB/954.9MB][ 48%][========================>                         ][58MB/s]  [544MB/954.9MB][ 56%][============================>                     ][60.44MB/s]  [608MB/954.9MB][ 63%][===============================>                  ][60.8MB/s]  [672MB/954.9MB][ 70%][===================================>              ][61.09MB/s]  [736MB/954.9MB][ 77%][======================================>           ][61.33MB/s]  [800MB/954.9MB][ 83%][=========================================>        ][61.54MB/s]  [864MB/954.9MB][ 90%][=============================================>    ][61.71MB/s]  [928MB/954.9MB][ 97%][================================================> ][61.87MB/s]  [954.9MB/954.9MB][100%][==================================================][63.66MB/s]  [954.9MB/954.9MB][100%][==================================================][59.68MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets_isrdn.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

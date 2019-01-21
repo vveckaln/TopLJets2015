@@ -1,18 +1,16 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_18499/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_12668/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
 Valid starting     Expires            Service principal
-09/05/18 11:45:31  09/06/18 12:45:31  krbtgt/CERN.CH@CERN.CH
-	renew until 09/10/18 09:42:32
-09/05/18 11:51:43  09/06/18 12:45:31  afs/cern.ch@CERN.CH
-	renew until 09/10/18 09:42:32
+12/28/18 14:46:30  12/29/18 15:46:30  krbtgt/CERN.CH@CERN.CH
+	renew until 01/02/19 13:48:55
+12/28/18 15:03:44  12/29/18 15:46:30  afs/cern.ch@CERN.CH
+	renew until 01/02/19 13:48:55
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets2l2nu_amcatnlo
 analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJetsfix
 analysis_MC13TeV_TTJets_herwig
 bins
 cernbox
@@ -25,24 +23,30 @@ flipped_old
 LSF
 merged_plots
 migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
 processing
 reserve
 rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
+save.root
 SWAN_projects
 test
-unfolding_cflip_old
-unfolding_-m
+testdir
+unfolding_cflip
 unfolding_nominal
-unfolding_nominal_old
 end ls EOS
 EXIT_CODE_SCRAM 0
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDChunks/MC13TeV_TTJets_jec_FlavorPureQuark_up.root
+[16MB/87.07MB][ 18%][=========>                                        ][16MB/s]  [80MB/87.07MB][ 91%][=============================================>    ][40MB/s]  [87.07MB/87.07MB][100%][==================================================][29.02MB/s]  [87.07MB/87.07MB][100%][==================================================][29.02MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets_jec_FlavorPureQuark_up.root
 file is good
 Sanity test done
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDmigration/migration_MC13TeV_TTJets_jec_FlavorPureQuark_up.root
+[16MB/3.471GB][  0%][>                                                 ][16MB/s]  [64MB/3.471GB][  1%][>                                                 ][32MB/s]  [112MB/3.471GB][  3%][=>                                                ][37.33MB/s]  [192MB/3.471GB][  5%][==>                                               ][48MB/s]  [304MB/3.471GB][  8%][====>                                             ][60.8MB/s]  [400MB/3.471GB][ 11%][=====>                                            ][66.67MB/s]  [496MB/3.471GB][ 13%][======>                                           ][70.86MB/s]  [576MB/3.471GB][ 16%][========>                                         ][72MB/s]  [672MB/3.471GB][ 18%][=========>                                        ][74.67MB/s]  [752MB/3.471GB][ 21%][==========>                                       ][75.2MB/s]  [832MB/3.471GB][ 23%][===========>                                      ][75.64MB/s]  [896MB/3.471GB][ 25%][============>                                     ][74.67MB/s]  [960MB/3.471GB][ 27%][=============>                                    ][73.85MB/s]  [1024MB/3.471GB][ 28%][==============>                                   ][73.14MB/s]  [1.062GB/3.471GB][ 30%][===============>                                  ][72.53MB/s]  [1.141GB/3.471GB][ 32%][================>                                 ][73MB/s]  [1.219GB/3.471GB][ 35%][=================>                                ][73.41MB/s]  [1.297GB/3.471GB][ 37%][==================>                               ][73.78MB/s]  [1.375GB/3.471GB][ 39%][===================>                              ][74.11MB/s]  [1.453GB/3.471GB][ 41%][====================>                             ][74.4MB/s]  [1.516GB/3.471GB][ 43%][=====================>                            ][73.9MB/s]  [1.594GB/3.471GB][ 45%][======================>                           ][74.18MB/s]  [1.672GB/3.471GB][ 48%][========================>                         ][74.43MB/s]  [1.75GB/3.471GB][ 50%][=========================>                        ][74.67MB/s]  [1.844GB/3.471GB][ 53%][==========================>                       ][75.52MB/s]  [1.922GB/3.471GB][ 55%][===========================>                      ][75.69MB/s]  [2GB/3.471GB][ 57%][============================>                     ][75.85MB/s]  [2.094GB/3.471GB][ 60%][==============================>                   ][76.57MB/s]  [2.188GB/3.471GB][ 63%][===============================>                  ][77.24MB/s]  [2.266GB/3.471GB][ 65%][================================>                 ][77.33MB/s]  [2.344GB/3.471GB][ 67%][=================================>                ][77.42MB/s]  [2.438GB/3.471GB][ 70%][===================================>              ][78MB/s]  [2.547GB/3.471GB][ 73%][====================================>             ][79.03MB/s]  [2.672GB/3.471GB][ 76%][======================================>           ][80.47MB/s]  [2.781GB/3.471GB][ 80%][========================================>         ][81.37MB/s]  [2.891GB/3.471GB][ 83%][=========================================>        ][82.22MB/s]  [3GB/3.471GB][ 86%][===========================================>      ][83.03MB/s]  [3.094GB/3.471GB][ 89%][============================================>     ][83.37MB/s]  [3.203GB/3.471GB][ 92%][==============================================>   ][84.1MB/s]  [3.328GB/3.471GB][ 95%][===============================================>  ][85.2MB/s]  [3.438GB/3.471GB][ 99%][=================================================>][85.85MB/s]  [3.471GB/3.471GB][100%][==================================================][86.7MB/s]  [3.471GB/3.471GB][100%][==================================================][84.64MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets_jec_FlavorPureQuark_up.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

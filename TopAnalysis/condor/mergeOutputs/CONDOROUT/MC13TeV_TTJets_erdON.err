@@ -1,18 +1,16 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_13748/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_28906/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
 Valid starting     Expires            Service principal
-09/05/18 11:45:31  09/06/18 12:45:31  krbtgt/CERN.CH@CERN.CH
-	renew until 09/10/18 09:42:32
-09/05/18 11:51:58  09/06/18 12:45:31  afs/cern.ch@CERN.CH
-	renew until 09/10/18 09:42:32
+12/28/18 14:46:30  12/29/18 15:46:30  krbtgt/CERN.CH@CERN.CH
+	renew until 01/02/19 13:48:55
+12/28/18 15:03:44  12/29/18 15:46:30  afs/cern.ch@CERN.CH
+	renew until 01/02/19 13:48:55
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets2l2nu_amcatnlo
 analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJetsfix
 analysis_MC13TeV_TTJets_herwig
 bins
 cernbox
@@ -25,24 +23,30 @@ flipped_old
 LSF
 merged_plots
 migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
 processing
 reserve
 rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
+save.root
 SWAN_projects
 test
-unfolding_cflip_old
-unfolding_-m
+testdir
+unfolding_cflip
 unfolding_nominal
-unfolding_nominal_old
 end ls EOS
 EXIT_CODE_SCRAM 0
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDChunks/MC13TeV_TTJets_erdON.root
+[16MB/86.62MB][ 18%][=========>                                        ][16MB/s]  [86.62MB/86.62MB][100%][==================================================][43.31MB/s]  [86.62MB/86.62MB][100%][==================================================][43.31MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets_erdON.root
 file is good
 Sanity test done
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDmigration/migration_MC13TeV_TTJets_erdON.root
+[16MB/1.233GB][  1%][>                                                 ][16MB/s]  [80MB/1.233GB][  6%][===>                                              ][80MB/s]  [112MB/1.233GB][  8%][====>                                             ][56MB/s]  [208MB/1.233GB][ 16%][========>                                         ][69.33MB/s]  [272MB/1.233GB][ 21%][==========>                                       ][68MB/s]  [320MB/1.233GB][ 25%][============>                                     ][64MB/s]  [384MB/1.233GB][ 30%][===============>                                  ][64MB/s]  [448MB/1.233GB][ 35%][=================>                                ][64MB/s]  [512MB/1.233GB][ 40%][====================>                             ][64MB/s]  [576MB/1.233GB][ 45%][======================>                           ][64MB/s]  [640MB/1.233GB][ 50%][=========================>                        ][64MB/s]  [688MB/1.233GB][ 54%][===========================>                      ][62.55MB/s]  [736MB/1.233GB][ 58%][=============================>                    ][61.33MB/s]  [784MB/1.233GB][ 62%][===============================>                  ][60.31MB/s]  [848MB/1.233GB][ 67%][=================================>                ][60.57MB/s]  [912MB/1.233GB][ 72%][====================================>             ][60.8MB/s]  [960MB/1.233GB][ 76%][======================================>           ][60MB/s]  [1024MB/1.233GB][ 81%][========================================>         ][60.24MB/s]  [1.062GB/1.233GB][ 86%][===========================================>      ][60.44MB/s]  [1.109GB/1.233GB][ 89%][============================================>     ][59.79MB/s]  [1.172GB/1.233GB][ 95%][===============================================>  ][60MB/s]  [1.233GB/1.233GB][100%][==================================================][60.12MB/s]  [1.233GB/1.233GB][100%][==================================================][57.39MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets_erdON.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

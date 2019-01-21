@@ -1,0 +1,25 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_20305/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting     Expires            Service principal
+12/26/18 09:10:26  12/27/18 10:10:26  krbtgt/CERN.CH@CERN.CH
+	renew until 12/30/18 12:19:54
+12/26/18 09:10:26  12/27/18 10:10:26  afs/cern.ch@CERN.CH
+	renew until 12/30/18 12:19:54
+end klist
+ls EOS
+ls: cannot access /eos/user/v/vveckaln: No such file or directory
+end ls EOS
+EXIT_CODE_SCRAM 0
+exit code in RunMethodPacked 0
+caught error code 0
+checking sanity of file /pool/condor/dir_20305/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_up_38.root
+file is good
+Sanity test done
+checking sanity of file /pool/condor/dir_20305/migration_MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_up_38.root
+file is good
+Sanity test done
+EXIT_CODE_PYTHON  0
+[16MB/81.61MB][ 19%][=========>                                        ][963.8kB/s]  [32MB/81.61MB][ 39%][===================>                              ][1.524MB/s]  [48MB/81.61MB][ 58%][=============================>                    ][2.182MB/s]  [64MB/81.61MB][ 78%][=======================================>          ][2.783MB/s]  [80MB/81.61MB][ 98%][=================================================>][3.333MB/s]  [81.61MB/81.61MB][100%][==================================================][3.265MB/s]  [81.61MB/81.61MB][100%][==================================================][1.7MB/s]  
+[16MB/27.26MB][ 58%][=============================>                    ][3.2MB/s]  [27.26MB/27.26MB][100%][==================================================][4.543MB/s]  [27.26MB/27.26MB][100%][==================================================][3.029MB/s]  

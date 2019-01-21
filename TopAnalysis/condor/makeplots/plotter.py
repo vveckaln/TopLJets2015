@@ -137,6 +137,17 @@ def main():
         methodtag     = "nominal"
         deltags = ["MC13TeV_TTJets_cflip"]
         ind = 0
+        ind_TTJets_cflip = 0
+        found = False
+        while ind_TTJets_cflip < len(systTheorSamplesList) and not found:
+            tag, sample = systTheorSamplesList[ind_TTJets_cflip]
+            if tag == "MC13TeV_TTJets_cflip":
+                found = True
+            if not found:
+                ind_TTJets_cflip += 1
+        TTJets_cflip = systTheorSamplesList[ind_TTJets_cflip]
+        print TTJets_cflip
+        overlaySamplesList.append((TTJets_cflip[0], TTJets_cflip[1]))
         for tag, sample in systTheorSamplesList:
             if tag in deltags:
                 del systTheorSamplesList[ind]
@@ -179,11 +190,15 @@ def main():
 
     inputfiles = []
     inputfiles.append(listfile)
-    
+    print overlaySamplesList
+    # try:
+    #     raw_input("penter")
+    # except (EOFError):
+    #     pass
     for slist, isSignal, isTheorSyst, isExpSyst, isOverlay in [ (samplesList, False, False, False, False), (signalSamplesList, True, False, False, False), (systTheorSamplesList, False, True, False, False), (systExpSamplesList, False, False, True, False), (overlaySamplesList, False, False, False, True) ]:
         if slist is None: continue
         isSyst = isTheorSyst or isExpSyst
-        for tag, sample in slist: 
+        for tag, sample in slist:
             if isSyst and not 't#bar{t}' in sample[3] : continue
             if tag in skipList:
               print("SKIPPED "+tag)
@@ -199,14 +214,18 @@ def main():
             for sp in subProcs:
 #                raw_input("penter")
                 file_name = '%s/%s.root' % ( opt.inDir, sp[0])
+                
                 if method != "nominal" and not isExpSyst:
                     file_name = '%s/%s.root' % ( opt.inDir.replace("MC13TeV_TTJets" + methodtag, "MC13TeV_TTJets"), sp[0])
   #                  print "file name %s" % file_name
  #                   raw_input("penter")
-
+                if method == "nominal" and isOverlay:
+                    file_name = '%s/%s.root' % ( opt.inDir.replace("MC13TeV_TTJets" + methodtag, "MC13TeV_TTJets_cflip"), sp[0])
+                    
                 fIn = None
-                if file_name != opt.listfile:
+                if os.path.abspath(file_name) != os.path.abspath(opt.listfile):
                     fIn = ROOT.TFile.Open(file_name )
+#                    print "reading %s " % file_name
                     inputfiles.append(fIn)
                 else:
                     fIn = listfile
@@ -232,9 +251,10 @@ def main():
                 find = 0
                 kind = 0
                 for tkey in keylist:
-                    keyIsSyst = False
+                    #keyIsSyst = False
                     try:
                         key = tkey.GetName()
+#                        if key == "L_pull_angle_PFNgt20_reco_leading_jet_had_w_DeltaRle1p0":
                         if key == opt.begin:
                             kStart = True
                         if not kStart:
@@ -244,43 +264,44 @@ def main():
                         if key == opt.end:
                             kEnd = True
 #                        print "kind %u key %s" % (kind, key)
+                        obj = fIn.Get(key)
+                        if obj.InheritsFrom("TH2"):
+                            #                            print "inherits from th2"
+                            continue
                         kind += 1
-#                        if not (key == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal" ):
-#                            continue
-                         
+                        #print key
+                        if not (key == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal"):
+                            continue
+                        
 #                        print tag
                         #filter plots using a selection list
                         histos = []
-                        obj = fIn.Get(key)
-                        if obj.InheritsFrom('TH2'):
-                            if key[-5:]=='_syst':
-                                if sample[3]=='t#bar{t}':
-                                    keyIsSyst=True
-                                    key = key[:-5]
-                                    for ybin in xrange(1,obj.GetNbinsY()+1):
-                                        for xbin in xrange(0,obj.GetNbinsX()+2):
-                                            if math.isnan(obj.GetBinContent(xbin, ybin)):
-                                                obj.SetBinContent(xbin, ybin, 0)
-                                                obj.SetBinError(xbin, ybin, 0)
-                                        weighthist = obj.ProjectionX('_px'+str(ybin), ybin, ybin)
-                                        weighthist.SetTitle(sp[1]+' weight '+str(ybin))
-                                        fixExtremities(weighthist, False, False)
-                                        weighthist.Draw()
-                                        if (weighthist.Integral() > 0): histos.append(weighthist)
-                                else:
-                                    continue
-                            else:
-                                histos.append(obj)
-                                histos[-1].SetTitle(sp[1])
-                        else:
-                            if method != "nominal" and isTheorSyst:
-                                objnom = fTTJets.Get(key)
-                                obj_method = fTTJets_method.Get(key)
-                                for binindex in range(1, obj.GetNbinsX() + 1):
-                                    obj.SetBinContent(binindex, obj.GetBinContent(binindex) * obj_method.GetBinContent(binindex)/objnom.GetBinContent(binindex))
-                            fixExtremities(obj, False, False)
-                            histos.append(obj)
-                            histos[-1].SetTitle(sp[1])
+                        if sample[3] == 't#bar{t}':
+                            systobj = fIn.Get(key + '_syst')
+                            if systobj:
+                                #keyIsSyst = True
+                                    #key = key[:-5]
+                                for ybin in xrange(1, systobj.GetNbinsY() + 1):
+                                    # if ybin>0:
+                                    #     break
+                                    for xbin in xrange(0, systobj.GetNbinsX() + 2):
+                                        if math.isnan(systobj.GetBinContent(xbin, ybin)):
+                                            systobj.SetBinContent(xbin, ybin, 0)
+                                            systobj.SetBinError(xbin, ybin, 0)
+                                    weighthist = systobj.ProjectionX('_pxsyst' + str(ybin), ybin, ybin)
+                                    weighthist.SetTitle(sp[1] + ' weight ' + str(ybin))
+                                    fixExtremities(weighthist, False, False)
+                                    weighthist.Draw()
+                                    if (weighthist.Integral() > 0): 
+                                        histos.append(weighthist)
+                        if method != "nominal" and isTheorSyst:
+                            objnom = fTTJets.Get(key)
+                            obj_method = fTTJets_method.Get(key)
+                            for binindex in range(1, obj.GetNbinsX() + 1):
+                                obj.SetBinContent(binindex, obj.GetBinContent(binindex) * obj_method.GetBinContent(binindex)/objnom.GetBinContent(binindex))
+                        fixExtremities(obj, False, False)
+                        histos.append(obj)
+                        histos[-1].SetTitle(sp[1])
                         for hist in histos:
                             if not isData and not '(data)' in sp[1]: 
 
@@ -301,15 +322,21 @@ def main():
                                     lumi = lumiSpecs[tag]
                                     break
                                 hist.Scale(xsec * lumi * puNormSF * sfVal)                    
-                            #rebin if needed
+                            #rebin if n!eeded
                             if opt.rebin > 1:
                                 hist.Rebin(opt.rebin)
 
                             #create new plot if needed
-                            if not key in plots: 
-                                plots[key] = Plot(key, signalTitle = signalTitle, com = opt.com)
+                            if not key in plots:
+                                isLogY = False
+                                if "chi" in key or "_selection" in key:
+                                    isLogY = True
+                                plots[key] = Plot(key, signalTitle = signalTitle, com = opt.com, isLogY = isLogY)
                             #add process to plot
                             title = hist.GetTitle()
+                            keyIsSyst = False
+                            if ROOT.TString(hist.GetName()).Contains('_pxsyst'):
+                                keyIsSyst = True
                             isSystN = isSyst or keyIsSyst
                             plots[key].add(h = hist, title = hist.GetTitle(), color = sp[2], isData = sample[1], spImpose = isSignal, isSyst = (isSyst or keyIsSyst), isOverlay = isOverlay)
                     

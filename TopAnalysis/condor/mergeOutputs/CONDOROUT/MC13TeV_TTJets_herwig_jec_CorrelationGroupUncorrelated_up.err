@@ -1,19 +1,17 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_20503/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_7194/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
 Valid starting     Expires            Service principal
-09/07/18 08:48:48  09/08/18 09:48:48  krbtgt/CERN.CH@CERN.CH
-	renew until 09/12/18 08:47:41
-09/07/18 08:54:05  09/08/18 09:48:48  afs/cern.ch@CERN.CH
-	renew until 09/12/18 08:47:41
+12/31/18 15:18:29  01/01/19 16:18:29  krbtgt/CERN.CH@CERN.CH
+	renew until 01/05/19 15:10:18
+12/31/18 15:33:35  01/01/19 16:18:29  afs/cern.ch@CERN.CH
+	renew until 01/05/19 15:10:18
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJetsfix
 analysis_MC13TeV_TTJets_herwig
-analysis_MC13TeV_TTJetsswap
 bins
 cernbox
 Chunks
@@ -25,23 +23,29 @@ flipped_old
 LSF
 merged_plots
 migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
 processing
 reserve
 rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
+save.root
 SWAN_projects
 test
-unfolding_cflip_old
-unfolding_-m
+testdir
+unfolding_cflip
 unfolding_nominal
-unfolding_nominal_old
 end ls EOS
 EXIT_CODE_SCRAM 0
+[16MB/62.25MB][ 25%][============>                                     ][910.2kB/s]  [32MB/62.25MB][ 51%][=========================>                        ][885.6kB/s]  [48MB/62.25MB][ 77%][======================================>           ][1.021MB/s]  [62.25MB/62.25MB][100%][==================================================][1.324MB/s]  [62.25MB/62.25MB][100%][==================================================][1.297MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks: Is a directory
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks/MC13TeV_TTJets_herwig_jec_CorrelationGroupUncorrelated_up.root
 file is good
 Sanity test done
+[16MB/647.2MB][  2%][=>                                                ][4MB/s]  [32MB/647.2MB][  4%][==>                                               ][2.667MB/s]  [48MB/647.2MB][  7%][===>                                              ][3.429MB/s]  [64MB/647.2MB][  9%][====>                                             ][3.556MB/s]  [80MB/647.2MB][ 12%][======>                                           ][3.81MB/s]  [96MB/647.2MB][ 14%][=======>                                          ][3.692MB/s]  [112MB/647.2MB][ 17%][========>                                         ][3.5MB/s]  [144MB/647.2MB][ 22%][===========>                                      ][4.235MB/s]  [160MB/647.2MB][ 24%][============>                                     ][4.571MB/s]  [176MB/647.2MB][ 27%][=============>                                    ][3.667MB/s]  [192MB/647.2MB][ 29%][==============>                                   ][3.623MB/s]  [208MB/647.2MB][ 32%][================>                                 ][3.586MB/s]  [224MB/647.2MB][ 34%][=================>                                ][3.797MB/s]  [240MB/647.2MB][ 37%][==================>                               ][3.871MB/s]  [256MB/647.2MB][ 39%][===================>                              ][3.821MB/s]  [272MB/647.2MB][ 42%][=====================>                            ][3.487MB/s]  [288MB/647.2MB][ 44%][======================>                           ][3.512MB/s]  [304MB/647.2MB][ 46%][=======================>                          ][3.535MB/s]  [320MB/647.2MB][ 49%][========================>                         ][3.404MB/s]  [352MB/647.2MB][ 54%][===========================>                      ][3.352MB/s]  [368MB/647.2MB][ 56%][============================>                     ][3.472MB/s]  [384MB/647.2MB][ 59%][=============================>                    ][3.491MB/s]  [400MB/647.2MB][ 61%][==============================>                   ][3.571MB/s]  [416MB/647.2MB][ 64%][================================>                 ][3.586MB/s]  [432MB/647.2MB][ 66%][=================================>                ][3.6MB/s]  [448MB/647.2MB][ 69%][==================================>               ][3.528MB/s]  [464MB/647.2MB][ 71%][===================================>              ][3.515MB/s]  [480MB/647.2MB][ 74%][=====================================>            ][3.504MB/s]  [544MB/647.2MB][ 84%][==========================================>       ][3.942MB/s]  [576MB/647.2MB][ 88%][============================================>     ][4.144MB/s]  [647.2MB/647.2MB][100%][==================================================][4.656MB/s]  [647.2MB/647.2MB][100%][==================================================][4.623MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration: Is a directory
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration/migration_MC13TeV_TTJets_herwig_jec_CorrelationGroupUncorrelated_up.root
 file is good
 Sanity test done

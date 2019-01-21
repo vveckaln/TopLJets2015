@@ -1,6 +1,7 @@
 import ROOT
 import math
 import os,sys
+import pdb
 from collections import OrderedDict
 
 from TopLJets2015.TopAnalysis.rounding import *
@@ -32,31 +33,37 @@ A wrapper to store data and MC histograms for comparison
 """
 class Plot(object):
 
-    def __init__(self,name,com='13 TeV'):
-        self.name = name
-        self.cmsLabel='#bf{CMS} #it{preliminary}'
-        self.com=com
-        self.wideCanvas = True if 'ratevsrun' in self.name else False
-        self.doPoissonErrorBars=True
-        self.mc = OrderedDict()
-        self.mcsyst = {}
-        self.totalMCUnc = None
-        self.spimpose={}
-        self.dataH = None
-        self.data = None
-        self._garbageList = []
-        self.plotformats = ['pdf','png']
-        self.savelog = False
-        self.doChi2 = False
-        self.ratiorange = (0.4,1.6)
-        self.frameMin=0.01
-        self.frameMax=1.45
-        self.mcUnc=0
+    def __init__(self, name, signalTitle, com = '13 TeV', isLogY = False):
+        self.name                = name
+#        self.cmsLabel            = '#bf{CMS} #it{preliminary}'
+        self.cmsLabel            = 'private work'
+        self.com                 = com
+        self.wideCanvas          = True if 'ratevsrun' in self.name else False
+        self.doPoissonErrorBars  = True
+        self.mc                  = OrderedDict()
+        self.mcsyst              = {}
+        self.overlay             = None
+        self.totalBackground     = None
+        self.signalTitle         = signalTitle
+        self.totalMCUnc          = None
+        self.spimpose            = {}
+        self.dataH               = None
+        self.data                = None
+        self._garbageList        = []
+        self.plotformats         = ['pdf', 'png']
+        self.savelog             = False
+        self.doChi2              = False
+        self.ratiorange          = (0.4, 1.6)
+        self.frameMin            = 0.01
+        self.frameMax            = 1.45 
+        if isLogY:
+            self.frameMax        = 1.0
+        self.mcUnc               = 0
+        self.isLogY              = isLogY
 
-    def add(self, h, title, color, isData, spImpose, isSyst):
-
+    def add(self, h, title, color, isData, spImpose, isSyst, isOverlay):
         if 'ratevsrun' in self.name and not isData: return
-
+    #    print "adding %s %s %r %r" % (h.GetName(), title, isSyst, isOverlay)
         h.SetTitle(title)
 
         #check if color is given in hexadec format
@@ -64,7 +71,6 @@ class Plot(object):
             if '#' in color : color=ROOT.TColor.GetColor(color)
         except:
             pass
-
         if isData:
             try:
                 self.dataH.Add(h)
@@ -79,7 +85,15 @@ class Plot(object):
                 self.dataH.SetFillColor(0)
                 self.dataH.SetFillStyle(0)
                 self._garbageList.append(h)
-        elif isSyst:
+        if not isSyst and not isData and h.GetTitle() != self.signalTitle and not isOverlay:
+            try:
+                self.totalBackground.Add(h)
+            except:
+                self.totalBackground = h.Clone("totalBckg_" + self.name)
+                self.totalBackground.SetDirectory(0)
+                self.totalBackground.SetTitle("totalbackground")
+                self._garbageList.append(self.totalBackground)
+        if isSyst:
             try:
                 self.mcsyst[title].Add(h)
                     
@@ -94,10 +108,22 @@ class Plot(object):
                 self.mcsyst[title].SetFillColor(color)
                 self.mcsyst[title].SetFillStyle(1001)
                 self._garbageList.append(h)
-        else:
+        if isOverlay:
+            try:
+                self.overlay.Add(h)
+                    
+            except:
+                self.overlay = h
+                self.overlay.SetName('%s_%s' % (h.GetName(), title ) )
+                self.overlay.SetDirectory(0)
+                self.overlay.SetLineColor(ROOT.kRed)
+                self.overlay.SetLineWidth(1)
+                self._garbageList.append(h)
+        if not isSyst and not isData and not isOverlay:
             try:
                 if spImpose : self.spimpose[title].Add(h)
-                else        : self.mc[title].Add(h)
+                else        : 
+                    self.mc[title].Add(h)
             except:
                 h.SetName('%s_%s' % (h.GetName(), title ) )
                 h.SetDirectory(0)
@@ -120,14 +146,17 @@ class Plot(object):
                 self._garbageList.append(h)
 
     def finalize(self):
+#        for ind in range(0, self.dataH.GetNbinsX() + 1):
+#            print "ind %u data %f" % (ind, self.dataH.GetBinContent(ind))
+
         if self.doPoissonErrorBars:
             self.data = convertToPoissonErrorGr(self.dataH)
         else:
             self.data=ROOT.TGraphErrors(self.dataH)
 
-    def appendTo(self,outUrl):
-        outF = ROOT.TFile.Open(outUrl,'UPDATE')
-        if not outF.cd(self.name):
+    def appendTo(self, outUrl):
+        outF = ROOT.TFile.Open(outUrl, 'UPDATE')
+        if not outF.GetDirectory(self.name):
             outDir = outF.mkdir(self.name)
             outDir.cd()
         for m in self.mc :
@@ -150,7 +179,7 @@ class Plot(object):
                 pass
 
     def show(self, outDir,lumi,noStack=False,saveTeX=False,extraText=None,noRatio=False):
-
+        print >> sys.stderr, "processing %s ***********************" % self.name
         if len(self.mc)<1 and self.dataH is None:
             print '%s has 0 or 1 MC!' % self.name
             return
@@ -160,11 +189,19 @@ class Plot(object):
             return
 
         cwid=1000 if self.wideCanvas else 500
-        c = ROOT.TCanvas('c','c',cwid,500)
+        seqcol = ROOT.gROOT.GetListOfCanvases()
+        next = ROOT.TIter(seqcol)
+        canvas = next()
+        while canvas and not canvas.GetName() == 'c':
+            canvas = next()
+        if canvas and canvas.GetName() == 'c':
+            canvas.Close()
+    
+        c = ROOT.TCanvas('c', 'c', cwid, 500)
         c.SetBottomMargin(0.0)
         c.SetLeftMargin(0.0)
-        c.SetTopMargin(0)
-        c.SetRightMargin(0.00)
+        c.SetTopMargin(0.0)
+        c.SetRightMargin(0.0)
 
         #holds the main plot
         c.cd()
@@ -188,11 +225,10 @@ class Plot(object):
 
         p1.SetGridx(False)
         p1.SetGridy(False) #True)
-        #if self.name == "JetConst_M_allconst_gen_leading_jet":
-        p1.SetLogy()
         self._garbageList.append(p1)
         p1.cd()
-
+        if self.isLogY:
+            p1.SetLogy()
         # legend
         iniy=0.9 if self.wideCanvas else 0.85
         dy=0.05
@@ -230,6 +266,10 @@ class Plot(object):
 
             leg.AddEntry(self.mc[h], self.mc[h].GetTitle(), 'f')
             nlegCols += 1
+        if self.overlay is not None:
+            leg.AddEntry( self.overlay, self.overlay.GetTitle(),'f')
+            nlegCols += 1
+
         if nlegCols ==0 :
             print '%s is empty'%self.name
             return
@@ -238,17 +278,19 @@ class Plot(object):
         #    leg.SetNColumns(ROOT.TMath.Min(nlegCols/2,3))
 
         # Build the stack to plot from all backgrounds
-        totalMC = None
-        stack = ROOT.THStack('mc','mc')
-        nominalTTbar=None
- 
-        for h in reversed(self.mc):
-
+        totalMC      = None
+        stack        = ROOT.THStack('mc','mc')
+        nominalTTbar = None
+        mcorder = ["Single top", "W", "DY", "Multiboson", "t#bar{t}+V", "QCD", self.signalTitle]
+        for h in mcorder:
+#            pdb.set_trace()
+            if not h in self.mc:
+                continue
             if noStack:
                 self.mc[h].SetFillStyle(0)
                 self.mc[h].SetLineColor(self.mc[h].GetFillColor())
 
-            stack.Add(self.mc[h],'hist')
+            stack.Add(self.mc[h], 'hist')
 
             try:
                 totalMC.Add(self.mc[h])
@@ -257,18 +299,23 @@ class Plot(object):
                 self._garbageList.append(totalMC)
                 totalMC.SetDirectory(0)
 #            nominalTTbar=None
-            if h=='t#bar{t}':
+            if h == self.signalTitle:
                 nominalTTbar = self.mc[h].Clone('nomttbar')
                 self._garbageList.append(nominalTTbar)
                 nominalTTbar.SetDirectory(0)
+ #       for ind in range(0, totalMC.GetNbinsX() + 1):
+ #           print "ind %u totalMC %f" % (ind, totalMC.GetBinContent(ind))
 
         #systematics
- #       print "totalMC %s nominalTTbar %s len(self.mcsyst) %u" % (totalMC, nominalTTbar, len(self.mcsyst))
-        if (totalMC and nominalTTbar and len(self.mcsyst)>0):
+        totalMCUnc= None
+        totalMCUncShape = None
+#        pdb.set_trace()
+        print "%s %u" % ( nominalTTbar, len(self.mcsyst) > 0)
+        if (totalMC and nominalTTbar and len(self.mcsyst) > 0):
             # complete
             systUp=[0.]
             systDown=[0.]
-            for xbin in xrange(1,nominalTTbar.GetNbinsX()+1):
+            for xbin in xrange(1, nominalTTbar.GetNbinsX() + 1):
                 systUp.append(0.)
                 systDown.append(0.)
                 for hname in self.mcsyst:
@@ -277,8 +324,10 @@ class Plot(object):
                         systUp[xbin] = math.sqrt(systUp[xbin]**2 + diff**2)
                     else:
                         systDown[xbin] = math.sqrt(systDown[xbin]**2 + diff**2)
+                    if (xbin == 30):
+                        print "xbin %u hname %s self.mcsyst[hname].GetBinContent(xbin) %f nominalTTbar.GetBinContent(xbin) %f, diff %f, systUp[xbin] %f, systDown[xbin] %f"%  (xbin, hname, self.mcsyst[hname].GetBinContent(xbin), nominalTTbar.GetBinContent(xbin), diff, systUp[xbin], systDown[xbin])
+#                        print "integrals %f %f" %(self.mcsyst[hname].Integral(), nominalTTbar.Integral())
 
-#                    print "xbin %u hname %s self.mcsyst[hname].GetBinContent(xbin) %f nominalTTbar.GetBinContent(xbin) %f, diff %f, systUp[xbin] %f, systDown[xbin] %f"%  (xbin, hname, self.mcsyst[hname].GetBinContent(xbin), nominalTTbar.GetBinContent(xbin), diff, systUp[xbin], systDown[xbin])
             totalMCUnc = totalMC.Clone('totalmcunc')
             
             self._garbageList.append(totalMCUnc)
@@ -286,19 +335,20 @@ class Plot(object):
             totalMCUnc.SetFillColor(ROOT.TColor.GetColor('#99d8c9'))
             ROOT.gStyle.SetHatchesLineWidth(1)
             totalMCUnc.SetFillStyle(3254)
-            for xbin in xrange(1,nominalTTbar.GetNbinsX()+1):
+            for xbin in xrange(1, nominalTTbar.GetNbinsX() + 1):
                 content_before = totalMCUnc.GetBinContent(xbin)
                 error_before = totalMCUnc.GetBinError(xbin)
                 totalMCUnc.SetBinContent(xbin, totalMCUnc.GetBinContent(xbin) + (systUp[xbin]-systDown[xbin])/2.)
                 totalMCUnc.SetBinError(xbin, math.sqrt(totalMCUnc.GetBinError(xbin)**2 + ((systUp[xbin]+systDown[xbin])/2.)**2))
- #               print "xbin %u content_before %f totalMCUnc.GetBinContent(xbin) %f error_before %f totalMCUnc.GetBinError(xbin) %f systUp[xbin] %f systDown[xbin] %f"% (xbin, content_before, totalMCUnc.GetBinContent(xbin), error_before, totalMCUnc.GetBinError(xbin), systUp[xbin], systDown[xbin])
+#                if (xbin == 10):
+#                    print "xbin %u content_before %f totalMCUnc.GetBinContent(xbin) %f error_before %f totalMCUnc.GetBinError(xbin) %f systUp[xbin] %f systDown[xbin] %f"% (xbin, content_before, totalMCUnc.GetBinContent(xbin), error_before, totalMCUnc.GetBinError(xbin), systUp[xbin], systDown[xbin])
             # shape
             nominalIntegral = nominalTTbar.Integral()
             for hname,h in self.mcsyst.iteritems():
                 if (h.Integral()>0.): h.Scale(nominalIntegral/h.Integral())
-            systUpShape=[0.]
-            systDownShape=[0.]
-            for xbin in xrange(1,nominalTTbar.GetNbinsX()+1):
+            systUpShape = [0.0]
+            systDownShape = [0.0]
+            for xbin in xrange(1, nominalTTbar.GetNbinsX() + 1):
                 systUpShape.append(0.)
                 systDownShape.append(0.)
                 for hname in self.mcsyst:
@@ -312,18 +362,28 @@ class Plot(object):
             totalMCUncShape.SetDirectory(0)
             totalMCUncShape.SetFillColor(ROOT.TColor.GetColor('#d73027'))
             totalMCUncShape.SetFillStyle(3254)
-            for xbin in xrange(1,nominalTTbar.GetNbinsX()+1):
+            for xbin in xrange(1, nominalTTbar.GetNbinsX() + 1):
                 totalMCUncShape.SetBinContent(xbin, totalMCUncShape.GetBinContent(xbin) + (systUpShape[xbin]-systDownShape[xbin])/2.)
                 totalMCUncShape.SetBinError(xbin, math.sqrt(totalMCUncShape.GetBinError(xbin)**2 + ((systUpShape[xbin]+systDownShape[xbin])/2.)**2))
+          #      print totalMC.GetBinContent %f
             self.totalMCUnc = totalMCUnc
 
         #test for null plots
         if totalMC :
-            if totalMC.Integral()==0:
-                if self.dataH is None : return
-                if self.dataH.Integral()==0: return
-        elif self.dataH is None : return
-        elif self.dataH.Integral()==0 : return
+            if totalMC.Integral() == 0.0:
+                print >> sys.stderr, "totalMC.Integral() == 0.0 is True"
+                if self.dataH is None: 
+                    print >> sys.stderr, "self.dataH is None is True"
+                    return
+                if self.dataH.Integral() == 0.0: 
+                    print >> sys.stderr, "self.dataH.Integral() == 0.0 is True"
+                    return
+        elif self.dataH is None:
+            print >> sys.stderr, "self.dataH is None is True"
+            return
+        elif self.dataH.Integral() == 0: 
+            print >> sys.stderr, "self.dataH.Integral() == 0 is True"
+            return
 
 
         frame = totalMC.Clone('frame') if totalMC is not None else self.dataH.Clone('frame')
@@ -338,10 +398,14 @@ class Plot(object):
             if self.dataH:
                 if maxY<self.dataH.GetMaximum():
                     maxY=self.dataH.GetMaximum()
+            if self.isLogY:
+                decades = math.log(maxY, 10)
+                maxY=maxY*10**(decades/1.8)
+                
         else:
             maxY=self.dataH.GetMaximum()
 
-        frame.GetYaxis().SetRangeUser(self.frameMin,self.frameMax*maxY)
+        frame.GetYaxis().SetRangeUser(self.frameMin, self.frameMax*maxY)
 
         frame.SetDirectory(0)
         frame.Reset('ICE')
@@ -366,7 +430,7 @@ class Plot(object):
             frame.GetXaxis().SetTitleSize(0.035)
         frame.Draw()
         frame.SetMinimum(2.0)
-        if totalMC is not None   :
+        if totalMC is not None:
             if noStack: stack.Draw('nostack same')
             else:
                 #stack.SetMinimum(2.0)
@@ -381,7 +445,9 @@ class Plot(object):
             self.spimpose[m].Draw('histsame')
             leg.AddEntry(self.spimpose[m],self.spimpose[m].GetTitle(),'l')
         if self.data is not None : self.data.Draw('p')
-
+        if self.overlay is not None: 
+            self.overlay.Add(self.totalBackground)
+            self.overlay.Draw("SAMEHISTO")
 
         if (totalMC is not None and totalMC.GetMaximumBin() > totalMC.GetNbinsX()/2.):
             inix = 0.15
@@ -514,6 +580,10 @@ class Plot(object):
 
         #save
         for ext in self.plotformats : c.SaveAs(os.path.join(outDir, self.name+'.'+ext))
+        # if self.isLogY:
+        #     print self.name
+        #     raw_input("setting log")
+        #     p1.SetLogy()
         if self.savelog:
             p1.cd()
             frame.GetYaxis().SetRangeUser(1,maxY*50)

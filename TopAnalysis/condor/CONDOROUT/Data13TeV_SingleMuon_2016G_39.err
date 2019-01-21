@@ -1,0 +1,140 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_32438/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting     Expires            Service principal
+12/27/18 05:11:24  12/28/18 06:11:24  krbtgt/CERN.CH@CERN.CH
+	renew until 12/30/18 12:19:54
+12/27/18 05:11:24  12/28/18 06:11:24  afs/cern.ch@CERN.CH
+	renew until 12/30/18 12:19:54
+end klist
+ls EOS
+analysis_MC13TeV_TTJets
+analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_herwig
+anothercomparison.cc
+bins
+cernbox
+Chunks
+Chunks_test
+copy_test
+data
+flipped
+flipped_old
+LSF
+merged_plots
+migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+processing
+reserve
+rivet
+rivet_results_23_March
+rivet_test
+rivet_test_21_March
+save.root
+SWAN_projects
+test
+testdir
+unfolding_cflip
+unfolding_nominal
+end ls EOS
+EXIT_CODE_SCRAM 0
+
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+
+Thread 6 (Thread 0x2b534c580700 (LWP 123)):
+#0  0x00002b533fabc243 in epoll_wait () from /lib64/libc.so.6
+#1  0x00002b534c004a87 in XrdSys::IOEvents::PollE::Begin (this=0x5b8cab0, syncsem=<optimized out>, retcode=<optimized out>, eTxt=<optimized out>) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/./XrdSys/XrdSysIOEventsPollE.icc:213
+#2  0x00002b534c001095 in XrdSys::IOEvents::BootStrap::Start (parg=0x7ffc4472d9d0) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdSys/XrdSysIOEvents.cc:131
+#3  0x00002b534bfffb48 in XrdSysThread_Xeq (myargs=0x3307a70) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdSys/XrdSysPthread.cc:86
+#4  0x00002b533f7bdaa1 in start_thread () from /lib64/libpthread.so.0
+#5  0x00002b533fabbc4d in clone () from /lib64/libc.so.6
+
+Thread 5 (Thread 0x2b534c781700 (LWP 124)):
+#0  0x00002b533f7c500d in nanosleep () from /lib64/libpthread.so.0
+#1  0x00002b534c000323 in XrdSysTimer::Wait (mills=<optimized out>) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdSys/XrdSysTimer.cc:239
+#2  0x00002b534c167e72 in XrdCl::TaskManager::RunTasks (this=0x5b74f90) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClTaskManager.cc:244
+#3  0x00002b534c168009 in RunRunnerThread (arg=<optimized out>) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClTaskManager.cc:37
+#4  0x00002b533f7bdaa1 in start_thread () from /lib64/libpthread.so.0
+#5  0x00002b533fabbc4d in clone () from /lib64/libc.so.6
+
+Thread 4 (Thread 0x2b534c982700 (LWP 125)):
+#0  0x00002b533fab8499 in syscall () from /lib64/libc.so.6
+#1  0x00002b534c1c442f in XrdSys::LinuxSemaphore::Wait (this=0x5adde00) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/./XrdSys/XrdSysLinuxSemaphore.hh:161
+#2  XrdCl::SyncQueue<XrdCl::JobManager::JobHelper>::Get (this=0x5b74e28) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/./XrdCl/XrdClSyncQueue.hh:67
+#3  XrdCl::JobManager::RunJobs (this=0x5b74e10) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClJobManager.cc:146
+#4  0x00002b534c1c45b9 in RunRunnerThread (arg=<optimized out>) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClJobManager.cc:33
+#5  0x00002b533f7bdaa1 in start_thread () from /lib64/libpthread.so.0
+#6  0x00002b533fabbc4d in clone () from /lib64/libc.so.6
+
+Thread 3 (Thread 0x2b534cb83700 (LWP 126)):
+#0  0x00002b533fab8499 in syscall () from /lib64/libc.so.6
+#1  0x00002b534c1c442f in XrdSys::LinuxSemaphore::Wait (this=0x5adde00) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/./XrdSys/XrdSysLinuxSemaphore.hh:161
+#2  XrdCl::SyncQueue<XrdCl::JobManager::JobHelper>::Get (this=0x5b74e28) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/./XrdCl/XrdClSyncQueue.hh:67
+#3  XrdCl::JobManager::RunJobs (this=0x5b74e10) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClJobManager.cc:146
+#4  0x00002b534c1c45b9 in RunRunnerThread (arg=<optimized out>) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClJobManager.cc:33
+#5  0x00002b533f7bdaa1 in start_thread () from /lib64/libpthread.so.0
+#6  0x00002b533fabbc4d in clone () from /lib64/libc.so.6
+
+Thread 2 (Thread 0x2b534cd84700 (LWP 127)):
+#0  0x00002b533fab8499 in syscall () from /lib64/libc.so.6
+#1  0x00002b534c1c442f in XrdSys::LinuxSemaphore::Wait (this=0x5adde00) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/./XrdSys/XrdSysLinuxSemaphore.hh:161
+#2  XrdCl::SyncQueue<XrdCl::JobManager::JobHelper>::Get (this=0x5b74e28) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/./XrdCl/XrdClSyncQueue.hh:67
+#3  XrdCl::JobManager::RunJobs (this=0x5b74e10) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClJobManager.cc:146
+#4  0x00002b534c1c45b9 in RunRunnerThread (arg=<optimized out>) at /build/cmsbuild/auto-builds/CMSSW_8_0_25-slc6_amd64_gcc530/build/CMSSW_8_0_25-build/BUILD/slc6_amd64_gcc530/external/xrootd/4.5.0-ikhhed/xrootd-4.5.0/src/XrdCl/XrdClJobManager.cc:33
+#5  0x00002b533f7bdaa1 in start_thread () from /lib64/libpthread.so.0
+#6  0x00002b533fabbc4d in clone () from /lib64/libc.so.6
+
+Thread 1 (Thread 0x2b534165ab80 (LWP 102)):
+#0  0x00002b533fa7f8dd in waitpid () from /lib64/libc.so.6
+#1  0x00002b533fa114e9 in do_system () from /lib64/libc.so.6
+#2  0x00002b533fa11820 in system () from /lib64/libc.so.6
+#3  0x00002b533d69ea89 in TUnixSystem::StackTrace() () from /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw-patch/CMSSW_8_0_26_patch1/external/slc6_amd64_gcc530/lib/libCore.so
+#4  0x00002b533d6a098c in TUnixSystem::DispatchSignals(ESignals) () from /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw-patch/CMSSW_8_0_26_patch1/external/slc6_amd64_gcc530/lib/libCore.so
+#5  <signal handler called>
+#6  TTree::SetBranchAddress<bool> (ptr=0x0, add=0x7ffc44736420, bname=0x2b53381f9661 "isData", this=0x0) at /cvmfs/cms.cern.ch/slc6_amd64_gcc530/lcg/root/6.06.00-ikhhed6/include/TTree.h:520
+#7  attachToMiniEventTree (t=t
+entry=0x0, ev=..., full=full
+entry=true) at /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/src/MiniEvent.cc:133
+#8  0x00002b53381a207f in RunTopJetPull (filename=<incomplete type>, outname=<incomplete type>, channelSelection=channelSelection
+entry=13, chargeSelection=chargeSelection
+entry=1, flavourSplitting=flavourSplitting
+entry=SelectionTool::NOFLAVOURSPLITTING, normH=normH
+entry=0x5824aa0, runSysts=true, systVar=..., era=<incomplete type>, debug=false) at /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/src/TOPJetPull.cc:102
+#9  0x0000000000403719 in main (argc=<optimized out>, argv=<optimized out>) at /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/bin/analysisWrapper.cc:97
+===========================================================
+
+
+The lines below might hint at the cause of the crash.
+If they do not help you then please submit a bug report at
+http://root.cern.ch/bugs. Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#6  TTree::SetBranchAddress<bool> (ptr=0x0, add=0x7ffc44736420, bname=0x2b53381f9661 "isData", this=0x0) at /cvmfs/cms.cern.ch/slc6_amd64_gcc530/lcg/root/6.06.00-ikhhed6/include/TTree.h:520
+#7  attachToMiniEventTree (t=t
+entry=0x0, ev=..., full=full
+entry=true) at /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/src/MiniEvent.cc:133
+#8  0x00002b53381a207f in RunTopJetPull (filename=<incomplete type>, outname=<incomplete type>, channelSelection=channelSelection
+entry=13, chargeSelection=chargeSelection
+entry=1, flavourSplitting=flavourSplitting
+entry=SelectionTool::NOFLAVOURSPLITTING, normH=normH
+entry=0x5824aa0, runSysts=true, systVar=..., era=<incomplete type>, debug=false) at /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/src/TOPJetPull.cc:102
+#9  0x0000000000403719 in main (argc=<optimized out>, argv=<optimized out>) at /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/bin/analysisWrapper.cc:97
+===========================================================
+
+
+exit code in RunMethodPacked 35584
+caught error code 35584
+checking sanity of file /pool/condor/dir_32438/Data13TeV_SingleMuon_2016G_39.root
+checking sanity of file /pool/condor/dir_32438/migration_Data13TeV_SingleMuon_2016G_39.root
+EXIT_CODE_PYTHON  154
+ls: cannot access /pool/condor/dir_32438/Data13TeV_SingleMuon_2016G_39.root: No such file or directory
+ls: cannot access /pool/condor/dir_32438/migration_Data13TeV_SingleMuon_2016G_39.root: No such file or directory

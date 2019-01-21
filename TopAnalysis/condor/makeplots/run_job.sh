@@ -18,11 +18,24 @@ echo "EXIT_CODE_SCRAM" $EXIT_CODE_SCRAM >&2
 eval $scram_result
 cd ${WORKDIR}
 total_lumi=35874.8
-python $PROJECT/condor/makeplots/plotter.py -i $INPUTDIR -O $OUTPUTDIR -j $PROJECT/data/era2016/samples.json,$PROJECT/data/era2016/qcd_samples.json  --systTheorJson=$PROJECT/data/era2016/syst_samples.json --systExpJson=$PROJECT/data/era2016/expsyst_samples.json -l $total_lumi -m $METHOD --end=$ENDNAME --begin=$BEGINNAME --outName="plotter_$BEGINNAME.root" --lfile=$LISTFILE
+if [ -d batchnodeplots ];
+then
+    rm -r batchnodeplots
+fi
+
+mkdir batchnodeplots
+mkdir -p ${OUTPUTDIR}
+
+python $PROJECT/condor/makeplots/plotter.py -i $INPUTDIR -O batchnodeplots -j $PROJECT/data/era2016/samples.json,$PROJECT/data/era2016/qcd_samples.json  --systTheorJson=$PROJECT/data/era2016/syst_samples.json --systExpJson=$PROJECT/data/era2016/expsyst_samples.json -l $total_lumi -m $METHOD --end=$ENDNAME --begin=$BEGINNAME --outName="plotter_$BEGINNAME.root" --lfile=$LISTFILE
 EXIT_CODE_PYTHON=$?
-# if [ ! $EXIT_CODE_PYTHON ]; 
-# then
-#     sh ${PROJECT}/scripts/EOS_file_copy.sh ${WORKDIR}/${OUTPUT_FILE}.root ${OUTPUTDIR}/Chunks/${OUTPUT_FILE}.root
-#     sh ${PROJECT}/scripts/EOS_file_copy.sh ${WORKDIR}/migration_${OUTPUT_FILE}.root ${OUTPUTDIR}/migration/migration_${OUTPUT_FILE}.root
-# fi
-#exit $EXIT_CODE_PYTHON || $EXIT_CODE_SCRAM
+echo "exit code " $EXIT_CODE_PYTHON 
+if [ $EXIT_CODE_PYTHON -eq 0 ]; 
+then
+    for file in batchnodeplots/*;
+    do
+	sh ${PROJECT}/scripts/EOS_file_copy.sh $file ${OUTPUTDIR}
+    done
+else
+    echo "probe"
+fi
+exit $EXIT_CODE_PYTHON || $EXIT_CODE_SCRAM

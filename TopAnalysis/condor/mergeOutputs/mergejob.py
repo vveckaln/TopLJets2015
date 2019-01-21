@@ -5,7 +5,7 @@ from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-i", dest = "inputdir",   help = "input directory")
-parser.add_option("-o", dest = "outputdir",     help = "output directory")
+parser.add_option("-o", dest = "outputdir",  default = "",   help = "output directory")
 parser.add_option("-s", dest = "samplename", help = "sample name")
 parser.add_option("-T", dest = "notrees",    help = "supply if no trees", action = "store_true", default = False)
 (options, args) = parser.parse_args()

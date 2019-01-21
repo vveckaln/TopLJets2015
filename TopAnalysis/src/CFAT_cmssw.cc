@@ -4,7 +4,7 @@
 
 #include "TTree.h"
 #include "TFile.h"
-
+#include <iostream>
 CFAT_cmssw::CFAT_cmssw():ColourFlowAnalysisTool()
 {
   for (ChannelCode_t channel_code = 1; channel_code < N_channels_types_; channel_code ++)
@@ -28,7 +28,7 @@ CFAT_cmssw::CFAT_cmssw():ColourFlowAnalysisTool()
 		Branch("pvmag_reco",      &pvmag_[0][charge_code][jet1_iter],        "pvmag_reco/F");
 	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> 
 		Branch("pvmag_gen",       &pvmag_[1][charge_code][jet1_iter],         "pvmag_gen/F");
-	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> Branch("weight",     &weight_,     "weight/F");
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> Branch("weight",     &weights_);
 	    }
 	}
     }
@@ -57,7 +57,8 @@ void CFAT_cmssw::ResetMigrationValues()
 
 void CFAT_cmssw::StoreMigrationValues(ChargeCode_t chargecode, VectorCode_t jetcode, double pa, double mag)
 {
-  weight_ = GetEvent() -> weight_;
+  weights_ = GetEvent() -> weights_;
+  printf("storing %lu\n", GetEvent() -> weights_.size());
   fill_[chargecode][jetcode] = true;
   pull_angle_[work_mode_][chargecode][jetcode] = pa;
   pvmag_[work_mode_][chargecode][jetcode] = mag;
@@ -86,7 +87,39 @@ void CFAT_cmssw::PlotMigrationValues()
 
 void CFAT_cmssw::Fill1D(const TString & key, double value, double weight) const                                                                                                                        
 {                                                                                                                                                                                                       
-  ((map<TString, TH1*>*)plots_ptr_) -> operator[](TString(tag_channels_types_[channel_code_]) + "_" + key) -> Fill(value, GetEvent() -> weight_*weight);                                                             ((map<TString, TH1*>*)plots_ptr_) -> operator[](TString(tag_channels_types_[L]) + "_" + key) -> Fill(value, GetEvent() -> weight_*weight);                                                 
+  {
+    pair<TH1*, TH2*> * p = ((map<TString, pair<TH1*, TH2*> *>*)plots_ptr_) -> operator[](TString(tag_channels_types_[channel_code_]) + "_" + key);
+    if (TString(tag_channels_types_[channel_code_]) + "_" + key = "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal")
+      {
+	printf("plotting %lu \n", weights_.size()); 
+      }
+    p -> first -> Fill(value, GetEvent() -> weights_[0] * weight);
+    //printf("%u\n", Definitions::nsyst_);
+    if (Definitions::nsyst_ > 0) 
+      {
+	if (GetEvent() -> weights_.size() > nsyst_)
+	  cout << "WARNING: Size of uncertainty weight vector larger than uncertainty histogram size." << endl;
+	p -> second ->Fill(value, 0.0, GetEvent() -> weights_[0] * weight);
+	for (unsigned int i = 1; i < GetEvent () -> weights_.size(); ++i) 
+	  {
+	    p -> second -> Fill(value, i, GetEvent() -> weights_[0] * GetEvent() -> weights_[i] * weight);
+	  }
+      }
+  }
+  {
+    pair<TH1*, TH2*> * p = ((map<TString, pair<TH1*, TH2*>* >*)plots_ptr_) -> operator[](TString(tag_channels_types_[L]) + "_" + key);
+    p -> first -> Fill(value, GetEvent() -> weights_[0] * weight);
+    if (Definitions::nsyst_ > 0) 
+      {
+	if (GetEvent() -> weights_.size() > nsyst_)
+	  cout << "WARNING: Size of uncertainty weight vector larger than uncertainty histogram size." << endl;
+	p -> second ->Fill(value, 0.0, GetEvent() -> weights_[0] * weight);
+	for (unsigned int i = 1; i < GetEvent() -> weights_.size(); ++i) 
+	  {
+	    p -> second -> Fill(value, i, GetEvent() -> weights_[0] * GetEvent() -> weights_[i] * weight);
+	  }
+      }
+  }
 }
 
 void CFAT_cmssw::Fill2D(const TString & key, double value_x, double value_y, double weight) const

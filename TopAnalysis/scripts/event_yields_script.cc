@@ -10,16 +10,17 @@ const char * MC_histo_table_labels[N_MC_histo_names] = {"\\ttbar", "Single top",
 
 void insert_header(FILE *);
 void insert_channel_header(FILE *, const char *);
-void insert_MC(FILE *, double (*)[N_bins]);
+void insert_MC(FILE *, double (*)[N_bins], double *);
 void insert_MC_sum(FILE *, double *);
 void insert_MC_unc(FILE *, TH1 *);
 void insert_data(FILE *, TH1 *);
 void insert_footer(FILE *);
 int main()
 {
-  FILE * file = fopen("event_yields_table.txt", "w");
+  FILE * file = fopen("event_yields_tables/event_yields_table.txt", "w");
   insert_header(file);
-  TFile * plotter = TFile::Open("$EOS/analysis/plots_QCD/plotter.root");
+  TFile * plotter = TFile::Open("$EOS/analysis_MC13TeV_TTJets/plots/plotter.root");
+  TFile * plotter_cflip = TFile::Open("$EOS/analysis_MC13TeV_TTJets_cflip/plots/plotter.root");
   const unsigned short N_levels = 2;
   const char * level_names[N_levels] = {"reco", "gen"};
   const unsigned short N_ch = 3;
@@ -35,10 +36,11 @@ int main()
 	  insert_channel_header(file, ch_names[ch_ind]);
 	  double MC_sum[N_bins];
 	  double MC_results[N_MC_histo_names][N_bins];
-	
+	  double MC_results_cflip[N_bins];
 	  for (unsigned short bin_ind = 0; bin_ind < N_bins; bin_ind ++)
 	    {
 	      MC_sum[bin_ind] = 0.0;
+	      MC_results_cflip[bin_ind] = 0.0;
 	      for (unsigned short h_ind = 0; h_ind < N_MC_histo_names; h_ind ++)
 		{
 	      
@@ -101,11 +103,16 @@ int main()
 		    }
 
 		  printf("\nhisto listed \n");
-
 		}
 	      it = list -> After(it);
 	    } while (it != list -> After(list -> Last()));
-	  insert_MC(file, MC_results);
+	  TH1F * h_cflip = (TH1F*) plotter_cflip -> GetDirectory(dir) -> Get(dir + "_t#bar{t} cflip");
+	  for (unsigned short bin_ind = 1; bin_ind < h_cflip -> GetNbinsX() + 1; bin_ind ++)
+	    {
+	      MC_results_cflip[bin_ind - 1] = h_cflip -> GetBinContent(bin_ind);
+	    }
+
+	  insert_MC(file, MC_results, MC_results_cflip);
 	  insert_MC_sum(file, MC_sum);
 	  insert_MC_unc(file, h_MC_Unc);
 	  insert_data(file, h_data);
@@ -116,6 +123,7 @@ int main()
   app.Run(kTRUE);
   app.Terminate();*/
   plotter -> Close();
+  plotter_cflip -> Close();
   insert_footer(file);
   fclose(file);
 }
@@ -138,7 +146,7 @@ void insert_channel_header(FILE * file, const char * channel)
   fprintf(file, "\\hline\n");
 }
 
-void insert_MC(FILE * file, double MC_results[][N_bins])
+void insert_MC(FILE * file, double MC_results[][N_bins], double * MC_results_cflip)
 {
   for (unsigned short MC_samples_ind = 0; MC_samples_ind < N_MC_histo_names; MC_samples_ind ++)
     {
@@ -147,7 +155,16 @@ void insert_MC(FILE * file, double MC_results[][N_bins])
 	 {
 	   fprintf(file, "& %20.1f\t\t", MC_results[MC_samples_ind][bin_ind]);
 	 }
-       fprintf(file, "\\\\\n");
+       fprintf(file, "\\\\\n");			
+       /*       if (MC_samples_ind == 0)
+	 {
+	   fprintf(file, "\\small %*s\t", 25, "t\\overline{t} cflip");
+	   for (unsigned short bin_ind = 0; bin_ind < N_bins; bin_ind ++)
+	     {
+	       fprintf(file, "& \\small %20.1f\t\t", MC_results_cflip[bin_ind]);
+	     }
+	   fprintf(file, "\\\\\n");	
+	   }*/
     }
   fprintf(file, "\\hline\n");
 }

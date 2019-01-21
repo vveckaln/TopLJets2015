@@ -1,19 +1,17 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_23066/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_20983/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
 Valid starting     Expires            Service principal
-09/07/18 03:46:52  09/08/18 04:46:52  krbtgt/CERN.CH@CERN.CH
-	renew until 09/10/18 09:42:32
-09/07/18 03:46:52  09/08/18 04:46:52  afs/cern.ch@CERN.CH
-	renew until 09/10/18 09:42:32
+12/30/18 20:02:22  12/31/18 21:02:22  krbtgt/CERN.CH@CERN.CH
+	renew until 01/01/19 12:01:07
+12/30/18 20:02:22  12/31/18 21:02:22  afs/cern.ch@CERN.CH
+	renew until 01/01/19 12:01:07
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJetsfix
 analysis_MC13TeV_TTJets_herwig
-analysis_MC13TeV_TTJetsswap
 bins
 cernbox
 Chunks
@@ -25,23 +23,29 @@ flipped_old
 LSF
 merged_plots
 migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
 processing
 reserve
 rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
+save.root
 SWAN_projects
 test
-unfolding_cflip_old
-unfolding_-m
+testdir
+unfolding_cflip
 unfolding_nominal
-unfolding_nominal_old
 end ls EOS
 EXIT_CODE_SCRAM 0
+[16MB/62.24MB][ 25%][============>                                     ][16MB/s]  [48MB/62.24MB][ 77%][======================================>           ][48MB/s]  [62.24MB/62.24MB][100%][==================================================][31.12MB/s]  [62.24MB/62.24MB][100%][==================================================][31.12MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks: Is a directory
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks/MC13TeV_TTJets_herwig_tracking_up.root
 file is good
 Sanity test done
+[16MB/643.8MB][  2%][=>                                                ][16MB/s]  [64MB/643.8MB][  9%][====>                                             ][32MB/s]  [112MB/643.8MB][ 17%][========>                                         ][37.33MB/s]  [224MB/643.8MB][ 34%][=================>                                ][56MB/s]  [320MB/643.8MB][ 49%][========================>                         ][64MB/s]  [416MB/643.8MB][ 64%][================================>                 ][69.33MB/s]  [512MB/643.8MB][ 79%][=======================================>          ][73.14MB/s]  [576MB/643.8MB][ 89%][============================================>     ][72MB/s]  [640MB/643.8MB][ 99%][=================================================>][71.11MB/s]  [643.8MB/643.8MB][100%][==================================================][71.53MB/s]  [643.8MB/643.8MB][100%][==================================================][64.38MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration: Is a directory
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration/migration_MC13TeV_TTJets_herwig_tracking_up.root
 file is good
 Sanity test done

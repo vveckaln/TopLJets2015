@@ -1,18 +1,16 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_7451/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_22624/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
 Valid starting     Expires            Service principal
-09/05/18 01:00:10  09/06/18 02:00:10  krbtgt/CERN.CH@CERN.CH
-	renew until 09/09/18 20:55:15
-09/05/18 01:26:36  09/06/18 02:00:10  afs/cern.ch@CERN.CH
-	renew until 09/09/18 20:55:15
+12/28/18 08:00:42  12/29/18 09:00:42  krbtgt/CERN.CH@CERN.CH
+	renew until 01/01/19 12:00:17
+12/28/18 08:00:42  12/29/18 09:00:42  afs/cern.ch@CERN.CH
+	renew until 01/01/19 12:00:17
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets2l2nu_amcatnlo
 analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJetsfix
 analysis_MC13TeV_TTJets_herwig
 bins
 cernbox
@@ -25,24 +23,31 @@ flipped_old
 LSF
 merged_plots
 migration
+migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+moved.cc
 processing
 reserve
 rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
+save.root
 SWAN_projects
 test
-unfolding_cflip_old
-unfolding_-m
+testdir
+unfolding_cflip
 unfolding_nominal
-unfolding_nominal_old
 end ls EOS
 EXIT_CODE_SCRAM 0
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDChunks/MC13TeV_QCDMuEnriched300to470.root
+[15.55MB/15.55MB][100%][==================================================][15.55MB/s]  [15.55MB/15.55MB][100%][==================================================][7.774MB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_QCDMuEnriched300to470.root
 file is good
 Sanity test done
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJetsfix//HADDmigration/migration_MC13TeV_QCDMuEnriched300to470.root
+[113.4kB/113.4kB][100%][==================================================][113.4kB/s]  [113.4kB/113.4kB][100%][==================================================][113.4kB/s]  
+md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+ls: cannot access /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/.sys.a#.v#Data13TeV_SingleElectron_2016G.root.e50b1902-0aa9-11e9-8b46-a4bf0112dcc4: No such file or directory
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_QCDMuEnriched300to470.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0
