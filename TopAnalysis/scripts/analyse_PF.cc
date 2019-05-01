@@ -8,6 +8,10 @@
 //#include <stdlib.h>
 #include "TString.h"
 #include <assert.h>
+using namespace std;
+using namespace Definitions;
+TString insertnumber(float, const char *);
+
 TFile * plotter_file = nullptr;
 static const unsigned short N_MC_histo_names = 7;
 static const char * MC_histo_names[N_MC_histo_names] = {"t#bar{t}", "Single top", "W", "DY", "Multiboson", "t#bar{t}+V", "QCD"};
@@ -16,15 +20,15 @@ enum model_t {SM, FLIP};
 enum flow_t {N, E, PT};
 const unsigned char nflows = 3;
 const char* tag_flow[nflows] = {"N", "E", "Pt"};
-const char * title_flow[nflows] = {"particle", "energy", "$P_{T}$"};
+const char * title_flow[nflows] = {"particle", "energy", "$p_{\\rm T}$"};
 const char * model_tag[] = {"SM", "cflip"};
-const char * model_title[] = {"SM", " colour octet $W$"};
+const char * model_title[] = {"SM", "colour octet \\PW"};
 const unsigned char npairs = 4;
 const char * jetpairs[npairs] = {"blb2l", "qfhb", "hbqc", "qlq2l"};
-const char * jetpairstitle[npairs] = {"$j_{1}^{b}$,$j_{2}^{b}$", 
-				      "$j_{f}^{W}$,$j_{h}^{b}$", 
-				      "$j_{h}^{b}$,$j_{c}^{W}$", 
-				      "$j_{1}^{W}$,$j_{2}^{W}$"};
+const char * jetpairstitle[npairs] = {"$j_{1}^{b}$,\\ $j_{2}^{b}$", 
+				      "$j_{\\text{f}}^{W}$,\\ $j_{\\text{h}}^{b}$", 
+				      "$j_{\\text{h}}^{b}$,\\ $j_{\\text{c}}^{W}$", 
+				      "$j_{1}^{W}$,\\ $j_{2}^{W}$"};
 const unsigned char nsources = 2;
 const char * tag_source_type[nsources] = {"MC", "data"};
 double R(TH1F *);
@@ -52,17 +56,17 @@ struct Result
     return 0.5 * TMath::Abs(error[1][0] + error[1][1]);
   };
   void normalise(float);
-};
-void prepare_header(FILE *, const char *, const char *);
+};                                                      
+void prepare_header(FILE *, const char *, const char *, SourceCode_t);
 void prepare_footer(FILE *);
 void add_entry(FILE *, Result, Result);
 Result CalculateResult(TH1F *, TH1F *, double (*)(TH1F*));
-using namespace std;
-using namespace Definitions;
+const char * env = nullptr;
 int main(int argc, char *argv[])
 {
-  assert (argc == 2);
+  assert (argc == 3);
   const unsigned char model = stoi(argv[1]);
+  env = argv[2];
   const TString dir(TString("Rvalues_") + model_tag[model]);
   plotter_file = model == SM ? TFile::Open("$EOS/analysis_MC13TeV_TTJets/plots/plotter.root") : 
     TFile::Open("$EOS/analysis_MC13TeV_TTJets_cflip/plots/plotter.root");
@@ -84,11 +88,11 @@ int main(int argc, char *argv[])
 		    tag_flow[flow_ind] + "_" + 
 		    model_tag[model] + ".txt";
 		  file_map[file_name] = fopen(file_name.Data(), "w");
-		  char caption[128];
-		  sprintf(caption, "Value of $R^{-1}$ for the %s channel at %s level for %s, %s flow for the %s model.", channel_titles_[ch_ind], level_titles_[level_ind], tag_source_type[type_ind], title_flow[flow_ind], model_title[model]); 
+		  char caption[256];
+		  sprintf(caption, "Integral from 0.2 to 0.8 and the value of $R^{-1}$ for the %s channel at %s level for %s flow in %s for the %s model.", channel_titles_[ch_ind], level_titles_[level_ind], title_flow[flow_ind], tag_source_type[type_ind], model_title[model]); 
 		  char label[128];
 		  sprintf(label, "R_%s_%s_%s_%s_%s", tag_channels_types_[ch_ind], tag_levels_types_[level_ind], tag_flow[flow_ind], tag_source_type[type_ind], model_tag[model]); 
-		  prepare_header(file_map[file_name], caption, label);
+		  prepare_header(file_map[file_name], caption, label, type_ind);
 		}
 	    }
 	}
@@ -161,7 +165,7 @@ int main(int argc, char *argv[])
 		    }
 		  for (unsigned short pair_ind = 0; pair_ind < npairs; pair_ind ++)
 		    {
-		      fprintf(table_file, "\t\t\\multicolumn{3}{|c|}{%s}\\\\\n", jetpairstitle[pair_ind]);
+		      fprintf(table_file, "\t\t\\multicolumn{3}{c}{\\boldmath\\bf %s}\\\\\n", jetpairstitle[pair_ind]);
 		      fprintf(table_file, "\t\t\\hline\n");
 		      for (unsigned short charge_ind = 0; charge_ind < N_charge_types_; charge_ind ++)
 			{
@@ -289,16 +293,32 @@ Result CalculateResult(TH1F *h, TH1F * h_syst, double ( *funcptr )(TH1F*))
       error[j][k] /= norm;
  }
 
-void prepare_header(FILE * file, const char * caption, const char * label)
+void prepare_header(FILE * file, const char * caption, const char * label, SourceCode_t source)
 {
-  fprintf(file, "\\begin{table}[htp]\n");
-  fprintf(file, "\t\\begin{center}\n");
+  fprintf(file, "\\begin{table}[h!btp]\n");
+  fprintf(file, "\t\\centering\n");
   fprintf(file, "\t\\caption{%s}\n", caption);
   fprintf(file, "\t\\label{tab:%s}\n", label);
-  fprintf(file, "\t\t\\begin{tabular}{|l|cc|}\n");
-  fprintf(file, "\t\t\\hline\n");
-  fprintf(file, "\t\t\\makecell[c]{Jet constituents} & $I$ & $R^{-1}$ \\\\\n");
-  fprintf(file, "\t\t\\hline\n");
+  fprintf(file, "\t\t\\begin{tabular}{l|cc}\n");
+  fprintf(file, "\t\t\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline\\noalign{\\global\\arrayrulewidth=0.4pt}\n");
+  char err[128];
+  if (source == MC)
+    {
+      sprintf(err, "%s", "$\\pm$(stat)$\\pm$(syst)");
+    }
+  else
+    {
+      sprintf(err, "%s", "$\\pm$(stat)");
+    }
+  if (string(env).compare("lx") == 0)
+    {
+      fprintf(file, "\t\tJet constituents & $I$%s [rad] & $R^{-1}$%s \\\\\n", err, err);
+    }
+  else
+    {
+      fprintf(file, "\t\t\\makecell[c]{\\bf Jet constituents} & {\\boldmath\\makecell{\\bf$I$%s [rad] }} & {\\boldmath\\makecell{\\bf$R^{-1}$%s}}\\\\\n", err, err);
+    }
+    fprintf(file, "\t\t\\hline\n");
   
 
 }
@@ -307,23 +327,27 @@ void add_entry(FILE * table_file, Result Int, Result Rval)
 {
   if (Rval.error_set[1][0] and Rval.error_set[1][1])
     {
-      fprintf(table_file, "\t& %.3f \t$\\pm$ %.3f \t$\\pm$ %.3f \t& %.3f \t$\\pm$ %.3f \t$\\pm$ %.3f \\\\\n", 
-	      Int.value, Int.GetAverageStats(), Int.GetAverageSyst(),
-	      Rval.value, Rval.GetAverageStats(), Rval.GetAverageSyst()
+      fprintf(table_file, "\t& %s \t$\\pm$ %s \t$\\pm$ %s \t& %s \t$\\pm$ %s \t$\\pm$ %s \\\\\n", 
+	      insertnumber(Int.value, ".3").Data(), insertnumber(Int.GetAverageStats(), ".3").Data(), insertnumber(Int.GetAverageSyst(), ".3").Data(),
+	      insertnumber(Rval.value, ".3").Data(), insertnumber(Rval.GetAverageStats(), ".3").Data(), insertnumber(Rval.GetAverageSyst(), ".3").Data()
 	      );
     }
   else
     {
-      fprintf(table_file, "\t& %.3f \t$\\pm$ %.3f \t& %.3f \t$\\pm$ %.3f \\\\\n", Int.value, Int.GetAverageStats(),
-	      Rval.value, Rval.GetAverageStats());
+      fprintf(table_file, "\t& %s \t$\\pm$ %s \t& %s \t$\\pm$ %s \\\\\n", insertnumber(Int.value, ".3").Data(), insertnumber(Int.GetAverageStats(), ".3").Data(),
+	      insertnumber(Rval.value, ".3").Data(), insertnumber(Rval.GetAverageStats(), ".3").Data());
 
     }
 }
 
 void prepare_footer(FILE *file)
 {
+  fprintf(file, "\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline");
   fprintf(file, "\t\t\\end{tabular}\n");
-  fprintf(file, "\t\\end{center}\n");
   fprintf(file, "\\end{table}\n");
 
+}
+TString insertnumber(float n, const char * format)
+{
+  return TString("\\num{") + Form((string("%") + format + "f}").c_str(), n); 
 }

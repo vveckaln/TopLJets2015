@@ -28,6 +28,7 @@ class CFAT_Core_cmssw: public CFAT_Core
 
   const TLorentzVector           * second_leading_light_jet_ptr_;
   unsigned short                   second_leading_light_jet_index_;
+  
   const TLorentzVector           * had_b_ptr_;
   unsigned short                   had_b_index_;
   
@@ -95,7 +96,7 @@ public:
   CFAT_Core_cmssw();
   void                             AddLightJets(const vector<TLorentzVector> &, const vector<unsigned short> &);
   void                             AddBJets(const vector<TLorentzVector> &, const vector<unsigned short> &);
-  void                             AddVector(VectorCode_t, const TLorentzVector &);
+  void                             AddVector(VectorCode_t, const TLorentzVector *);
 
   virtual void check(const char * = "") const;                                   
 

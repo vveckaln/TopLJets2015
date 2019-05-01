@@ -4,8 +4,9 @@
 #include "TH1F.h"
 #include "TH2F.h"
 #include <map>
+#include <utility>
 using namespace std;
-typedef map<TString, TH1*> map_hist_1D;
+typedef map<TString, pair<TH1*, TH2*>* > map_hist_1D;
 void AssignHistograms(map_hist_1D &);
 void AssignSpecificHistograms2D(map<TString, TH2*> &);
 void CreateHistogram1D(map_hist_1D &, const char * title, const char * axes, unsigned int nbins, double min , double max);

@@ -3,10 +3,11 @@
 #include "TH1F.h"
 #include "TCanvas.h"
 #include "TMath.h"
+//#include <string>
 const unsigned short N_bins = 4;
 const unsigned short N_MC_histo_names = 7;
-const char * MC_histo_table_labels[N_MC_histo_names] = {"\\ttbar", "Single top", "W", "DY", "Multiboson", "\\ttbar+V", "QCD"};
-
+const char * MC_histo_table_labels[N_MC_histo_names] = {"\\ttbar", "Single top", "\\PW", "DY", "Multiboson", "\\ttbar+V", "QCD"};
+TString insertnumber(float, const char *);
 
 void insert_header(FILE *);
 void insert_channel_header(FILE *, const char *);
@@ -15,8 +16,11 @@ void insert_MC_sum(FILE *, double *);
 void insert_MC_unc(FILE *, TH1 *);
 void insert_data(FILE *, TH1 *);
 void insert_footer(FILE *);
+const char *pm = nullptr;
+using namespace std;
 int main()
 {
+  pm = "+-";
   FILE * file = fopen("event_yields_tables/event_yields_table.txt", "w");
   insert_header(file);
   TFile * plotter = TFile::Open("$EOS/analysis_MC13TeV_TTJets/plots/plotter.root");
@@ -25,6 +29,7 @@ int main()
   const char * level_names[N_levels] = {"reco", "gen"};
   const unsigned short N_ch = 3;
   const char * ch_names[N_ch] = {"E", "M", "L"};
+  const char * ch_titles[N_ch] = {"$e$", "$\\mu$", "Combined $\\ell$"};
   const unsigned short N_histo_names = 8;
   const char * histo_names[N_histo_names] = {"", "t#bar{t}", "Single top", "W", "DY", "Multiboson", "t#bar{t}+V", "QCD"};
   const char * MC_histo_names[N_MC_histo_names] = {"t#bar{t}", "Single top", "W", "DY", "Multiboson", "t#bar{t}+V", "QCD"};
@@ -33,7 +38,7 @@ int main()
     {
       for (unsigned short ch_ind = 0; ch_ind < N_ch; ch_ind ++)
 	{
-	  insert_channel_header(file, ch_names[ch_ind]);
+	  insert_channel_header(file, ch_titles[ch_ind]);
 	  double MC_sum[N_bins];
 	  double MC_results[N_MC_histo_names][N_bins];
 	  double MC_results_cflip[N_bins];
@@ -130,19 +135,18 @@ int main()
 
 void insert_header(FILE * file)
 {
-  fprintf(file, "\\begin{table}[htp]\n");
-  fprintf(file, "\\centering\n");
-  fprintf(file, "\\caption{Event yields}\n");
-  fprintf(file, "\\label{tab:yields}\n");
-  fprintf(file, "\\begin{longtable}{lrrrr}\n");
-  fprintf(file, "Process & $1 \\ell$ & $1 \\ell + \\geq 4 j$ & $1 \\ell + \\geq 4 j (2 b)$ & $1 \\ell + 4 j (2 b, 2 lj)$ \\\\\n");
-  fprintf(file, "\\hline\n");
+  fprintf(file, "\\begin{longtable}{lS[table-format=9.1]S[table-format=9.1]S[table-format=9.1]S[table-format=9.1]}\n");
+  fprintf(file, "\\caption{Event yields.}\n");
+  fprintf(file, "\\label{tab:yields}\\\\\n");
+  fprintf(file, "\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline");
+  fprintf(file, "\\makecell{\\textbf{Process}} & {\\boldmath$1 \\ell$} & {\\boldmath$1 \\ell + \\geq 4 j $} & {\\boldmath$1 \\ell + \\geq 4 j (2 b)$} & {\\boldmath$1 \\ell + 4 j (2 b, 2 lj)$}\n");
 
 }
 
 void insert_channel_header(FILE * file, const char * channel)
 {
-  fprintf(file, "%s + jets channel\\\\\n", channel);
+  fprintf(file, "\\\\\\noalign{\\global\\arrayrulewidth=0.4pt}\\hline\n");
+  fprintf(file, "\\multicolumn{5}{c}{\\textbf{{\\boldmath %s} + jets channel}}\\\\\n", channel);
   fprintf(file, "\\hline\n");
 }
 
@@ -153,7 +157,7 @@ void insert_MC(FILE * file, double MC_results[][N_bins], double * MC_results_cfl
       fprintf(file, "%*s\t", 25, MC_histo_table_labels[MC_samples_ind]);
        for (unsigned short bin_ind = 0; bin_ind < N_bins; bin_ind ++)
 	 {
-	   fprintf(file, "& %20.1f\t\t", MC_results[MC_samples_ind][bin_ind]);
+	   fprintf(file, "& %s\t\t", insertnumber(MC_results[MC_samples_ind][bin_ind], "20.1").Data());
 	 }
        fprintf(file, "\\\\\n");			
        /*       if (MC_samples_ind == 0)
@@ -166,27 +170,29 @@ void insert_MC(FILE * file, double MC_results[][N_bins], double * MC_results_cfl
 	   fprintf(file, "\\\\\n");	
 	   }*/
     }
-  fprintf(file, "\\hline\n");
+  //  fprintf(file, "\\hline\n");
 }
 
 
 void insert_MC_sum(FILE * file, double * MC_sum)
 {
+  fprintf(file, "\\hline\n");
+
   fprintf(file, "%*s", 25, "Total MC\t");
   for (unsigned short bin_ind  = 0; bin_ind < N_bins; bin_ind ++)
     {
-      fprintf(file, "& %20.1f\t\t", MC_sum[bin_ind]);
+      fprintf(file, "& %s\t\t", insertnumber(MC_sum[bin_ind], "20.1").Data());
 
     }
-  fprintf(file, "\\\\\n");
+  //  fprintf(file, "\\\\\n");
 }
 
 void insert_MC_unc(FILE * file, TH1 * h_MC_Unc)
 {
-  fprintf(file, "%*s", 25, "(\\ttbar\\ uncertainty)\t");
+  fprintf(file, "%*s", 25, "(\\\\\\ttbar uncertainty)\t");
   for (unsigned short bin_ind = 0; bin_ind < N_bins; bin_ind ++)
     {
-      fprintf(file, "& $\\pm$ %16.1f\t", h_MC_Unc -> GetBinError(bin_ind + 1));
+      fprintf(file, "& %s %s\t", pm, insertnumber(h_MC_Unc -> GetBinError(bin_ind + 1), "16.1").Data());
     }
   fprintf(file, "\\\\\n");
 }
@@ -196,14 +202,20 @@ void insert_data(FILE * file, TH1 * h_data)
   fprintf(file, "%*s", 25, "Data\t");
   for (unsigned short bin_ind = 0; bin_ind < N_bins; bin_ind ++)
     {
-      fprintf(file, "& %20.1f\t\t", h_data -> GetBinContent(bin_ind + 1));
+      fprintf(file, "& %s\t\t", insertnumber(h_data -> GetBinContent(bin_ind + 1), "20.1").Data());
     }
-  fprintf(file, "\\\\\n\\hline\n");
+  //  fprintf(file, "\\\\\n\\hline\n");
   
 }
 
 void insert_footer(FILE * file)
 {
+  fprintf(file, "\\\\\n\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline\n");
   fprintf(file, "\\end{longtable}\n");
-  fprintf(file, "\\end{table}\n");
+}
+
+TString insertnumber(float n, const char * format)
+{
+  return Form((string("%") + format + "f").c_str(), n); 
+  return TString("\\num{") + Form((string("%") + format + "f}").c_str(), n); 
 }

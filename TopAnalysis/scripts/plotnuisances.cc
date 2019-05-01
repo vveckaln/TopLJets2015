@@ -7,22 +7,24 @@
 #include "TH2.h"
 TH1F * desymetrise(TH1 *);
 static const unsigned char Nnondedicated = 21;
+
 static const char * nondedicated_titles[Nnondedicated] = {"pileup up", "pileup down",
 							  "trig efficiency correction up", "trig efficiency correction down",
 							  "sel efficiency correction up", "sel efficiency correction down",
 							  "b fragmentation up", "b fragmentation down",
 							  "Peterson Frag",
 							  "semilep BR up", "semilep BR down",
-							  "QCD scale 1", "QCD scale 2", "QCD scale 3", "QCD scale 4", "QCD scale 5", "QCD scale 6", "QCD scale 7", "QCD scale 8", "QCD scale 9", "QCD scale 10"};
+							  "id1002muR1muF2hdampmt272.7225", "id1003muR1muF0.5hdampmt272.7225", "id1004muR2muF1hdampmt272.7225", "id1005muR2muF2hdampmt272.7225", "id1007muR0.5muF1hdampmt272.7225", "id1009muR0.5muF0.5hdampmt272.7225", "id1010", "", "", ""};
 static const char * nondedicated_names[Nnondedicated] = {"pileup_up", "pileup_down",
 							 "trig_efficiency_correction_up", "trig_efficiency_correction_down",
 							 "sel_efficiency_correction_up", "sel_efficiency_correction_down",
 							 "b_fragmentation_up", "b_fragmentation_down",
 							 "Peterson_frag",
 							 "semilep_BR_up", "semilep_BR_down",
-							 "QCD_scale_1", "QCD_scale_2", "QCD_scale_3", "QCD_scale_4", "QCD_scale_5", "QCD_scale_6", "QCD_scale_7", "QCD_scale_8", "QCD_scale_9", "QCD_scale_10"};
+							 "id1002muR1muF2hdampmt272.7225", "id1003muR1muF0.5hdampmt272.7225", "id1004muR2muF1hdampmt272.7225", "id1005muR2muF2hdampmt272.7225", "id1007muR0.5muF1hdampmt272.7225", "id1009muR0.5muF0.5hdampmt272.7225", "id1010", "", "", ""};
 int main()
 {
+	      printf("[%s]\n", nondedicated_names[16]);
   gStyle -> SetOptStat(0);
   gStyle -> SetOptTitle(0);
   static const float xsec = 832.0;
@@ -158,7 +160,7 @@ int main()
   for (unsigned char bin_ind = 1; bin_ind < h2D -> GetNbinsY() + 1; bin_ind ++)
     {
       TCanvas c;
-      const TString title = TString(nondedicated_names[bin_ind - 1]).ReplaceAll("_up", "").ReplaceAll("_1", "");
+      TString title = TString(nondedicated_names[bin_ind - 1]).ReplaceAll("_up", "").ReplaceAll("_1", "");
       TH1F * hup = desymetrise((TH1F*) h2D -> ProjectionX(nondedicated_names[bin_ind - 1], bin_ind, bin_ind));
       hup -> SetLineWidth(0);
       TH1 * hframe = (TH1*) hup -> Clone(TString(nondedicated_names[bin_ind-1]) + "_frame");
@@ -167,7 +169,7 @@ int main()
       THStack stack;
       stack.Add(hup, "P");
       stack.Add(hnominal);
-      TLegend legend(0.6, 0.6, 0.9, 0.9);
+      TLegend legend(0.5, 0.6, 0.9, 0.9);
       legend.SetLineWidth(0);
       legend.SetFillStyle(0);
       legend.AddEntry(hnominal, "t#bar{t}");
@@ -195,18 +197,24 @@ int main()
 	  unsigned char ind = 0;
 	  hup -> SetMarkerStyle(kPlus);
 	  Style_t styles[] = {kStar, kCircle, kMultiply, 27, 28, 34, 30, 43, 48, 49 };
+	  title = "QCD_scale";
 	  while (bin_ind < h2D -> GetNbinsY()  )  
 	    {
 	      bin_ind ++;
 	      printf("bin_ind %u %u\n", bin_ind, h2D -> GetNbinsY());
+	      printf("%s\n", nondedicated_names[bin_ind - 1]);
 	      TH1F * hqs = desymetrise((TH1F*) h2D -> ProjectionX(nondedicated_names[bin_ind - 1], bin_ind, bin_ind));
 	      if (hqs -> Integral() == 0)
-		continue;
+		{
+		  delete hqs;
+		  continue;
+		}
 	      hqs -> SetLineWidth(0);
 	      hqs -> SetMarkerStyle(styles[ind]);
 	      hqs -> SetDirectory(nullptr);
 	      stack.Add(hqs, "P");
 	      legend.AddEntry(hqs, nondedicated_titles[bin_ind - 1]);
+	      printf("addingentry [%s]\n", nondedicated_names[bin_ind - 1]);
 	      ind ++;
 	    } 
 	}

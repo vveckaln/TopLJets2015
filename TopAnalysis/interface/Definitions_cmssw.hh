@@ -3,5 +3,6 @@
 namespace Definitions
 {
   enum WorkEnum_t       {RECO, GEN};
+  extern unsigned char nsyst_;
 };
 #endif

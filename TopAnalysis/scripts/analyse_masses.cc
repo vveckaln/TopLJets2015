@@ -16,11 +16,11 @@ using namespace Definitions;
 static const unsigned short N_MC_histo_names = 7;
 static const char * MC_histo_names[N_MC_histo_names] = {"t#bar{t}", "Single top", "W", "DY", "Multiboson", "t#bar{t}+V", "QCD"};
 TH1F * sum_MC(const char *);
-enum model_t {SM, FLIP};
+enum model_t {SM, CFLIP};
 unsigned char model;
 TFile * plotter_file;// = model == SM ? TFile::Open("$EOS/analysis_24_12_2017/plots/plotter.root") : TFile::Open("$EOS/analysis_24_12_2017/MC13TeV_TTJets_cflip.root");
-const char * model_tag[] = {"", "_flip"};
-const char * model_title[] = {"", " for the colour octet $W$ model"};
+const char * model_tag[] = {"_nominal", "_cflip"};
+const char * model_title[] = {" for the SM model", " for the colour octet $W$ model"};
 const unsigned char N_interesting_jets = 4;
 const unsigned char interesting_jets[N_interesting_jets] = {HAD_W, HAD_T, LEPT_W, LEPT_T};
 double CalculateMass(TH1F *);
@@ -55,19 +55,24 @@ struct Result
     return 0.5 * TMath::Abs(error[1][0] + error[1][1]);
   };
 };
-void prepare_header(FILE *, const char *, const char *);
+void prepare_header(FILE *, const char *, const char *, SourceCode_t);
 void prepare_footer(FILE *);
 void add_entry(FILE *, Result, Result);
 Result CalculateResult(TH1F *, TH1F *, double (*)(TH1F*));
-
+const char * env = nullptr;
 int main(int argc, char* argv[])
 {
   gROOT -> SetBatch(kTRUE);
-  if (argc < 2)
+  if (argc < 3)
     throw "Included must be at least 1 program argument";
   model = stoi(argv[1]);
+  env = argv[2];
   plotter_file = model == SM ? TFile::Open("$EOS/analysis_MC13TeV_TTJets/plots/plotter.root") : TFile::Open("$EOS/analysis_MC13TeV_TTJets_cflip/plots/plotter.root");
-
+  const char * cflip_title = "t#bar{t} cflip";
+  if (model == CFLIP)
+    {
+      MC_histo_names[0] = cflip_title;
+    }
   map<TString, FILE * > file_map;
   for (unsigned short ch_ind = L; ch_ind < N_channels_types_; ch_ind ++)
     {
@@ -82,7 +87,7 @@ int main(int argc, char* argv[])
 	      sprintf(caption, "Observed masses of objects for the %s channel at %s level for %s%s.", channel_titles_[ch_ind], level_titles_[level_ind], title_sources_types_[type_ind], model_title[model]); 
 	      char label[128];
 	      sprintf(label, "mass_%s_%s_%s%s", tag_channels_types_[ch_ind], tag_levels_types_[level_ind], tag_sources_types_[type_ind], model_tag[model]); 
-	      prepare_header(file_map[file_name], caption, label);
+	      prepare_header(file_map[file_name], caption, label, type_ind);
 	    }
 	}
     }
@@ -96,7 +101,7 @@ int main(int argc, char* argv[])
 	      for (unsigned short jet_ind = 0; jet_ind < N_interesting_jets; jet_ind ++)
 		{	      //	      printf("model %u type_ind %u tag_sources_types_ %s model_tag %s, \n", model, type_ind, tag_sources_types_[type_ind], model_tag[model]);
 		  const unsigned char interesting_jet_ind = interesting_jets[jet_ind];
-		  printf("analysing jet %s\n", jet_titles_[interesting_jet_ind]);
+		  printf("analysing channel %s level %s source %s jet %s\n", tag_channels_types_[ch_ind], tag_levels_types_[level_ind], tag_sources_types_[type_ind], jet_titles_[interesting_jet_ind]);
 
 		  const TString file_name = TString("mass_") + tag_channels_types_[ch_ind] + "_" + tag_levels_types_[level_ind] + "_" + tag_sources_types_[type_ind] + model_tag[model] + ".txt";
 		  FILE * table_file = file_map[file_name];
@@ -110,12 +115,13 @@ int main(int argc, char* argv[])
 		  TH1F * h_chi = NULL;
 		  TH1F * h_chi_syst = NULL;
 		  const TString dir = TString(tag_channels_types_[ch_ind]) + "_jet_mass_" + tag_levels_types_[level_ind] + "_" + tag_jet_types_[interesting_jet_ind];
-
+		  printf("dir %s\n", dir.Data());
 		  h_chi = type_ind == 0 ? sum_MC(dir) : (TH1F*) plotter_file -> GetDirectory(dir) -> Get(dir);
 		  h_chi_syst = type_ind == 0 ? (TH1F *) plotter_file -> Get(dir + "/totalmcunc") : NULL;
 		  Result mass = CalculateResult(h_chi, h_chi_syst, CalculateMass);
 		  Result width = CalculateResult(h_chi, h_chi_syst, CalculateWidth);
 		  add_entry(table_file, mass, width);
+		  printf ("** listing \n");
 		  mass.ls();
 		  width.ls();
 		}
@@ -158,6 +164,7 @@ TH1F * sum_MC(const char * dir)
 
 double CalculateMass(TH1F * h)
 {
+  printf("**** Calculating mass \n");
   const double y_max = h -> GetMaximum();
   int bin_max = 0;
   h -> GetBinWithContent(y_max, bin_max);
@@ -178,12 +185,14 @@ double CalculateMass(TH1F * h)
   const double mass = - results[1]/(2.0 * results[0]);
   const double peak = results[2] - results[1] * results[1]/(4 * results[0]);
   canvas.SaveAs(TString("masses/plots/") + h -> GetName() + ".png");
+  printf("***** mass calculated\n");
   return mass; 
 }
 
 
 double CalculateWidth(TH1F * h)
 {
+  printf("!!! calculating width\n");
   enum side {LEFT, RIGHT};
   double x_FWHM[2];
 
@@ -224,13 +233,13 @@ double CalculateWidth(TH1F * h)
 
   TF1 polynomial("polynomial", "[0]*x*x + [1]*x + [2]");
   polynomial.SetParameters(a, b, c);
-  //  TCanvas canvas("canvas_width", "canvas_width");
-  //h -> Draw();
+  TCanvas canvas("canvas_width", "canvas_width");
+  h -> Draw();
   polynomial.SetLineColor(kBlue);
   h -> Fit(& polynomial, "", "", x_max - 8.0, x_max + 8.0);
 
-  /*  canvas.Update();
-      canvas.Modified();*/
+  canvas.Update();
+  canvas.Modified();
   double results[3];
   polynomial.GetParameters(results);
   
@@ -331,7 +340,8 @@ double CalculateWidth(TH1F * h)
     }
   const double width = x_FWHM[RIGHT] - x_FWHM[LEFT];
   //printf("width %f\n", width);
-  //getchar();
+  printf("!!!!! width calculated\n");
+  //  getchar();
   return width; 
 }
 
@@ -346,7 +356,7 @@ Result CalculateResult(TH1F *h, TH1F * h_syst, double ( *funcptr )(TH1F*))
     {
       for (unsigned short direction_ind = 0; direction_ind < 2; direction_ind ++)
 	{
-
+	  printf("type %u, direction %u\n", type_ind, direction_ind);
 	  TH1F * h_clone = (TH1F*) h -> Clone(TString("clone") + h -> GetName());
 	  for (unsigned short bin_ind = 0; bin_ind < h -> GetNbinsX(); bin_ind ++)
 	    {
@@ -375,15 +385,30 @@ Result CalculateResult(TH1F *h, TH1F * h_syst, double ( *funcptr )(TH1F*))
   return result;
 }
 
-void prepare_header(FILE * file, const char * caption, const char * label)
+void prepare_header(FILE * file, const char * caption, const char * label, SourceCode_t source)
 {
-  fprintf(file, "\\begin{table}[htp]\n");
-  fprintf(file, "\t\\begin{center}\n");
+  fprintf(file, "\\begin{table}[h!tbp]\n");
+  fprintf(file, "\t\\centering\n");
   fprintf(file, "\t\\caption{%s}\n", caption);
   fprintf(file, "\t\\label{tab:%s}\n", label);
   fprintf(file, "\t\t\\begin{tabular}{l|rr}\n");
-  fprintf(file, "\t\t\\hline\n");
-  fprintf(file, "\t\t\\makecell[c]{Object}&\\makecell[c]{Mass}&\\makecell[c]{FWHM}\\\\\n");
+  fprintf(file, "\t\t\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline\\noalign{\\global\\arrayrulewidth=0.4pt}\n");
+  char err[128];
+  if (source == MC)
+    {
+      sprintf(err, "%s", "$\\pm$(stat)$\\pm$(syst)");
+    }
+  else
+    {
+      sprintf(err, "%s", "$\\pm$(stat)");
+    }
+  if (string(env).compare("lx") == 0)
+    {
+      fprintf(file, "\t\t\\makecell{\bf Object} & \\makecell{\\bf Mass%s [GeV]} & \\makecell{\bf FWHM%s [GeV]}\\\\\n", err, err);
+    } else
+    {
+      fprintf(file, "\t\t\\makecell[c]{\\bf Object}&\\makecell[c]{\\bf Mass%s [GeV]}&\\makecell[c]{\\bf FWHM%s [GeV]}\\\\\n", err, err);
+    }
   fprintf(file, "\t\t\\hline\n");
 }
 
@@ -402,9 +427,8 @@ void add_entry(FILE * table_file, Result mass_result, Result width_result)
 
 void prepare_footer(FILE *file)
 {
-  fprintf(file, "\t\t\\hline\n");
+  fprintf(file, "\t\t\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline\n");
   fprintf(file, "\t\t\\end{tabular}\n");
-  fprintf(file, "\t\\end{center}\n");
   fprintf(file, "\\end{table}\n");
 
 }
