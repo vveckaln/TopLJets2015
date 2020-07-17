@@ -69,6 +69,7 @@ void RunTopJetPull(TString filename,
   /////////////////////
   // INITIALIZATION //
   ///////////////////
+  printf("normH %p\n", normH);
   TRandom*  random = new TRandom(0); // random seed for period selection
   std::vector<RunPeriod_t> runPeriods = getRunPeriods(era);
 
@@ -118,7 +119,7 @@ void RunTopJetPull(TString filename,
   
   //PILEUP WEIGHTING
   std::map<TString, std::vector<TGraph *> > puWgtGr;
-  if( !isData ) puWgtGr=getPileupWeightsMap(era,genPU);
+  if( !isData ) puWgtGr=getPileupWeightsMap(era, genPU);
   
   
   //LEPTON EFFICIENCIES
@@ -216,9 +217,13 @@ void RunTopJetPull(TString filename,
       ht.addHist(tag+"njets", new TH1F(tag+"njets",";Jet multiplicity;Events",15,-0.5,14.5));
       ht.addHist(tag+"nbjets", new TH1F(tag+"nbjets",";b jet multiplicity;Events",5,-0.5,4.5));
       ht.addHist(tag+"nwjets", new TH1F(tag+"nwjets",";W jet multiplicity;Events",10,-0.5,9.5));
-      ht.addHist(tag+"wcandm", new TH1F(tag+"wcandm",";W candidate mass;W candidates",60,0,300));
+      ht.addHist(tag+"wcandm", new TH1F(tag+"wcandm",";W candidate mass;W candidates", 60, 0.0, 300.0));
       ht.addHist(tag+"tcandm", new TH1F(tag+"tcandm",";top candidate mass;top candidates",70,50,400));
       ht.addHist(tag+"tcandwcutm", new TH1F(tag+"tcandwcutm",";top candidate mass;top candidates (W cut)",70,50,400));
+      
+      ht.addHist(tag + "invmleadingjets", new TH1F(tag + "invmleadingjets","; w candidate mass; w candidates (W cut)", 60, 0.0, 300.0));
+      ht.addHist(tag + "invmwjets", new TH1F(tag + "invmwjets","; w candidate mass; w candidates (W cut)", 60, 0.0, 300.0));
+
       for(int i=0; i<2; i++) {
         TString pf(Form("l%d",i));          
         ht.addHist(tag+pf+"pt", new TH1F(tag+pf+"pt",";Lepton p_{t} [GeV];Events",50,0,250));
@@ -271,7 +276,8 @@ void RunTopJetPull(TString filename,
       t->GetEntry(iev);
       resetTopJetShapeEvent(tjsev);
       if(iev%1000==0) printf ("\r [%3.0f%%] done", 100.*(float)iev/(float)nentries);
-      //printf("iev %u\n", iev);
+      // printf("iev %u\n", iev);
+      // getchar();
       //assign randomly a run period
       //////////////////
       // CORRECTIONS //
@@ -296,7 +302,8 @@ void RunTopJetPull(TString filename,
       else addBTagDecisions(ev, csvm, csvm);
       TString period;
       period = assignRunPeriod(runPeriods, random);
-      
+      colour_flow_analysis_tool.SetPeriod(period);
+
       if(!ev.isData) {
         //jec
         if (vSystVar[0] == "jec") {
@@ -346,13 +353,13 @@ void RunTopJetPull(TString filename,
 	  //  printf("no tag\n");
 	}
       std::vector<Particle> &leptons     = selector.getSelLeptons(); 
-      std::vector<Jet>      &jets        = selector.getJets();  
-      std::vector<unsigned int> jet_indices = selector.getJetIndices();
+      std::vector<Jet>      & jets        = selector.getJets();  
+      std::vector<unsigned int> & jet_indices = selector.getJetIndices();
       //count b and W candidates
       int sel_nbjets = 0;
       int sel_nwjets = 0;
 
-      vector<TLorentzVector> bJets, lightJets;
+      vector<TLorentzVector> bJets, lightJets, nonbJets;
  
       //     vector<TLorentzVector> bJets_gen,lightJets_gen;
 
@@ -362,6 +369,7 @@ void RunTopJetPull(TString filename,
       
       for (auto& jet : jets) 
 	{
+	  //	  printf("%f\n", jet.pt());
 	  TLorentzVector jp4 = jet.p4();
 	  if (jet.flavor() == 5) 
 	    {
@@ -369,25 +377,37 @@ void RunTopJetPull(TString filename,
 	      bJets_index.push_back(jet_indices[jet_index]);
 	      ++sel_nbjets;
 	    }
+	  else 
+	    {
+	      
+	      nonbJets.push_back(jp4);
+	    }
 	  if (jet.flavor() == 1) 
 	    {
 	      lightJets.push_back(jp4);
 	      lightJets_index.push_back(jet_indices[jet_index]);
 	      //      exp_light_jets.push_back(jet);
 	      ++sel_nwjets;
+	      
 	    }
 	  jet_index ++;
 	}
-
+      // printf("----\n");
+      // getchar();
       //printf("bJets.size() %lu, lightJets.size() %lu, jets.size() %lu\n", bJets.size(), lightJets.size(), jets.size());
       //event selected on reco level?
       bool preselected          (true);
       bool singleLepton         ((chTag=="E" or chTag=="M") and
                                  (selector.getVetoLeptons().size() == 0));
+      
       bool singleLepton4Jets    (singleLepton and jets.size()>=4);
       bool singleLepton4Jets2b  (singleLepton4Jets and sel_nbjets==2);
       singleLepton4Jets2b2W = (singleLepton4Jets2b and sel_nwjets==2);
-      
+      static unsigned long nsel = 0;
+      if (singleLepton4Jets2b2W)
+	{
+	  nsel ++;
+	}
       std::vector<bool> recoPass; recoPass.push_back(preselected); recoPass.push_back(singleLepton); recoPass.push_back(singleLepton4Jets); recoPass.push_back(singleLepton4Jets2b); recoPass.push_back(singleLepton4Jets2b2W); 
       
       if (singleLepton4Jets2b2W) tjsev.reco_sel = 1;
@@ -412,7 +432,10 @@ void RunTopJetPull(TString filename,
 	// pu weight
         double puWgt(puWgtGr[period][0]->Eval(ev.g_pu));
         allPlots["puwgtctr"]->Fill(1,puWgt);
-        wgt *= puWgt;
+	if (not filename.Contains("dire2002") and not filename.Contains("sherpa") and not filename.Contains("herwig7") and not filename.Contains("asfsr0.1365_meoff_crdefault")) 
+	  {
+	    wgt *= puWgt;
+	  }
         varweights.push_back(std::make_pair(puWgtGr[period][1]->Eval(ev.g_pu), true));
         varweights.push_back(std::make_pair(puWgtGr[period][2]->Eval(ev.g_pu), true));
         
@@ -425,9 +448,10 @@ void RunTopJetPull(TString filename,
           varweights.push_back(std::make_pair(1.+selSF.second, true));
           varweights.push_back(std::make_pair(1.-selSF.second, true));
           wgt *= trigSF.first*selSF.first;
-        }
+	}
+
         else varweights.insert(varweights.end(), 4, std::make_pair(1., true));
-        
+	
         // bfrag weights
         varweights.push_back(std::make_pair(computeBFragmentationWeight(ev, bfrag["upFrag"]), true));
         varweights.push_back(std::make_pair(computeBFragmentationWeight(ev, bfrag["downFrag"]), true));
@@ -440,7 +464,8 @@ void RunTopJetPull(TString filename,
         
         // lhe weights
         wgt *= (ev.g_nw>0 ? ev.g_w[0] : 1.0);
-        std::set<std::string> scalesForPlotter = {
+	//	printf("wgt %.9f %.9f\n", wgt, ev.g_w[0]);
+	std::set<std::string> scalesForPlotter = {
           "id1002muR1muF2hdampmt272.7225",
           "id1003muR1muF0.5hdampmt272.7225",
           "id1004muR2muF1hdampmt272.7225",
@@ -499,11 +524,22 @@ void RunTopJetPull(TString filename,
         }
       }
       //control histograms
-      for(size_t istage=0; istage<stageVec.size(); istage++) { 
-        for(auto& channel : chTags) { 
-          if (not recoPass[istage]) continue;
-          if (channel == "E" and chTag != "E") continue;
-          if (channel == "M" and chTag != "M") continue;
+      for(size_t istage=0; istage<stageVec.size(); istage++) 
+	{ 
+        for(auto& channel : chTags) 
+	  { 
+          if (not recoPass[istage]) 
+	    {
+	      continue;
+	    }
+          if (channel == "E" and chTag != "E") 
+	    {
+	      continue;
+	    }
+          if (channel == "M" and chTag != "M") 
+	    {
+	      continue;
+	    }
           TString tag(channel+stageVec[istage]+"_");
           
           std::map<Int_t,Float_t>::iterator rIt=lumiMap.find(ev.run);
@@ -523,6 +559,17 @@ void RunTopJetPull(TString filename,
             ht.fill(tag+pf+"pt", leptons[i].pt(), plotwgts);
             ht.fill(tag+pf+"eta", leptons[i].eta(), plotwgts);
           }
+	  if (nonbJets.size() > 1)
+	    {
+	      //	      printf("filling %s\n", (tag + "invmleadingjets").Data());
+	      const float mw =  (nonbJets[0] + nonbJets[1]).M();
+	      ht.fill(tag + "invmleadingjets", mw, plotwgts);  
+	    }
+	  if (lightJets.size() == 2)
+	    {
+	      const float mw =  (lightJets[0] + lightJets[1]).M();
+	      ht.fill(tag + "invmwjets", mw, plotwgts);  
+	    }	    
           for(unsigned int i=0; i<jets.size(); i++) {
             if (i>5) break;
             TString pf(Form("j%d",i));
@@ -530,12 +577,14 @@ void RunTopJetPull(TString filename,
             ht.fill(tag+pf+"eta", jets[i].eta(), plotwgts);
           }
           ht.fill(tag+"met", ev.met_pt[0], plotwgts);
-	  if (istage > 0)
+
+	  if (istage > 0 and channel != "L")
 	    {
-	      fill_selection_histo(allPlots, chTag, tag_levels_types_[RECO], title_selection_stages_[istage - 1], plotwgts[0]);
+	      fill_selection_histo(allPlots, chTag, tag_levels_types_[RECO], title_selection_stages_[istage - 1], plotwgts[0]); //CommonTools
 	    }
 
         }
+
       }
       tjsev.nl=leptons.size();
       int il = 0;
@@ -575,9 +624,10 @@ void RunTopJetPull(TString filename,
       /////////////////////
       colour_flow_analysis_tool.ResetMigrationValues();
       //printf("check C %p %p\n", allPlotsCFAT["M_jet_mass_gen_leading_jet"], allPlotsCFAT["M_jet_mass_gen_leading_jet"] -> first);
-  // getchar();
+      //  getchar();
       if (isTTbar) 
 	{
+	  //printf("probe A\n");
 	  //////////////////////////
 	  // GEN LEVEL SELECTION //
 	  ////////////////////////
@@ -591,8 +641,8 @@ void RunTopJetPull(TString filename,
 	  //	const TLorentzVector gen_lp4 = genLeptons[0].p4();
 
         TString genChTag = selector.flagGenFinalState(ev, genLeptons);
-	std::vector<Jet> genJets = selector.getGenJets();
-	std::vector<unsigned int> & genJets_indices = selector.getGenJetIndices();
+	vector<Jet> & genJets = selector.getGenJets();
+	vector<unsigned int> & genJets_indices = selector.getGenJetIndices();
         //count b and W candidates
         int sel_ngbjets = 0;
         int sel_ngwcand = 0;
@@ -658,7 +708,8 @@ void RunTopJetPull(TString filename,
 	  }
 	if (gen_singleLepton4Jets2b2W)
 	  {
-	    
+	    //getchar();
+	    //  colour_flow_analysis_tool.Reset();
 	    const TLorentzVector gen_lp4(genVetoLeptons[0].p4()); 
 	    GEN_selected = true;
 	    //printf("Running GEN\n");
@@ -681,6 +732,7 @@ void RunTopJetPull(TString filename,
 	  
 	    colour_flow_analysis_tool.SetChannel(genChTag == "E" ? E : M);
 	    //	    printf("check D %p %p\n", allPlotsCFAT["M_jet_mass_gen_leading_jet"], allPlotsCFAT["M_jet_mass_gen_leading_jet"] -> first);
+	    core_gen.RecomputeJetsFromParticles();
 	    colour_flow_analysis_tool.Work();
 	  }
       //event selected on gen level?
@@ -721,8 +773,10 @@ void RunTopJetPull(TString filename,
       
       //proceed only if event is selected on gen or reco level
       if (tjsev.gen_sel + tjsev.reco_sel == -2) continue;
+      //printf("probe X\n");
       if(singleLepton4Jets2b2W)
 	{
+	  //	  printf("running RECO\n");
 	  TLorentzVector lp4(leptons[0].p4());
 	  //fill MET
 	  const float mt(computeMT(lp4, met));
@@ -737,6 +791,7 @@ void RunTopJetPull(TString filename,
 	  
 	  CFAT_Core_cmssw core_reco;
 	  CFAT_Event event_reco;
+	  
 	  core_reco.SetEvent(ev);
 	  event_reco.SetCore(core_reco);
 	  core_reco.AddLightJets(lightJets, lightJets_index);
@@ -757,6 +812,7 @@ void RunTopJetPull(TString filename,
 
 	  //core_reco.ls_particles(Definitions::SCND_LEADING_JET);
 	  //      printf("*** event %u ***** \n", iev);
+	  core_reco.RecomputeJetsFromParticles();
 	  try
 	    {
 	      if (chTag == "E")
@@ -765,12 +821,14 @@ void RunTopJetPull(TString filename,
 		colour_flow_analysis_tool.SetChannel(M);
 	      else
 		throw "No RECO channel";
+	      
 	      colour_flow_analysis_tool.Work();
 	    }
 	  catch (const char *e)
 	    {
 	      printf("Exception %s\n", e);
 	    }
+	  //getchar();
 	}
       colour_flow_analysis_tool.PlotMigrationValues();
       //printf("******************* !!! **********************\n");

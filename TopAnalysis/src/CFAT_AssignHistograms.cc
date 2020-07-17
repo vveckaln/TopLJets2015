@@ -15,6 +15,7 @@ void CreateHistogram1D(map_hist_1D & target, const char * title, const char * ax
 {
   for (unsigned short channel_ind = 0; channel_ind < N_channels_types_; channel_ind ++)
     {
+      
       TH1F *h1 = new TH1F(TString(tag_channels_types_[channel_ind]) + "_" + title, TString(title) + axes, nbins, min, max);
       TH2F *h2 = nullptr;
       /*printf("nsyst_ %u %s \n", nsyst_, h1->GetName());
@@ -25,11 +26,12 @@ void CreateHistogram1D(map_hist_1D & target, const char * title, const char * ax
 	}
       target[TString(tag_channels_types_[channel_ind]) + "_" + title] =  new pair<TH1*, TH2*>;
       target.at(TString(tag_channels_types_[channel_ind]) + "_" + title) -> first  = h1;
-      if ((TString(tag_channels_types_[channel_ind]) + "_" + title) == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal")
-	{
-	  printf("creating %u\n", h2 -> GetNbinsY());
-	  getchar();
-	}
+      // if ((TString(tag_channels_types_[channel_ind]) + "_" + title) == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal")
+      // 	{
+      // 	  if (h2)
+      // 	    printf("creating %u\n", h2 -> GetNbinsY());
+      // 	  getchar();
+      // 	}
       target.at(TString(tag_channels_types_[channel_ind]) + "_" + title) -> second = h2;
     }
 }

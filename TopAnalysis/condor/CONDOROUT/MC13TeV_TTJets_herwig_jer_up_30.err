@@ -1,52 +1,0 @@
-klist
-Ticket cache: FILE:/pool/condor/dir_31107/vveckaln.cc
-Default principal: vveckaln@CERN.CH
-
-Valid starting     Expires            Service principal
-12/30/18 20:47:21  12/31/18 21:47:21  krbtgt/CERN.CH@CERN.CH
-	renew until 01/03/19 04:46:11
-12/30/18 20:47:22  12/31/18 21:47:21  afs/cern.ch@CERN.CH
-	renew until 01/03/19 04:46:11
-end klist
-ls EOS
-analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJets_herwig
-bins
-cernbox
-Chunks
-Chunks_test
-copy_test
-data
-flipped
-flipped_old
-LSF
-merged_plots
-migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
-moved.cc
-processing
-reserve
-rivet
-rivet_results_23_March
-rivet_test
-rivet_test_21_March
-save.root
-SWAN_projects
-test
-testdir
-unfolding_cflip
-unfolding_nominal
-end ls EOS
-EXIT_CODE_SCRAM 0
-exit code in RunMethodPacked 0
-caught error code 0
-checking sanity of file /pool/condor/dir_31107/MC13TeV_TTJets_herwig_jer_up_30.root
-file is good
-Sanity test done
-checking sanity of file /pool/condor/dir_31107/migration_MC13TeV_TTJets_herwig_jer_up_30.root
-file is good
-Sanity test done
-EXIT_CODE_PYTHON  0
-[16MB/58.35MB][ 27%][=============>                                    ][16MB/s]  [58.35MB/58.35MB][100%][==================================================][58.35MB/s]  [58.35MB/58.35MB][100%][==================================================][58.35MB/s]  
-[12.38MB/12.38MB][100%][==================================================][12.38MB/s]  [12.38MB/12.38MB][100%][==================================================][12.38MB/s]  

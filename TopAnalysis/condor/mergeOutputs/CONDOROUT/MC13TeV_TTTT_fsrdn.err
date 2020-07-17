@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_21467/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_9149/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/28/18 05:09:40  12/29/18 01:07:36  krbtgt/CERN.CH@CERN.CH
-	renew until 12/29/18 01:07:36
-12/28/18 05:09:40  12/29/18 01:07:36  afs/cern.ch@CERN.CH
-	renew until 12/29/18 01:07:36
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:21:23  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,21 +32,21 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/36.17MB][ 44%][======================>                           ][16MB/s]  [36.17MB/36.17MB][100%][==================================================][36.17MB/s]  [36.17MB/36.17MB][100%][==================================================][36.17MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+[16MB/36.12MB][ 44%][======================>                           ][16MB/s]  [36.12MB/36.12MB][100%][==================================================][36.12MB/s]  [36.12MB/36.12MB][100%][==================================================][36.12MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTTT_fsrdn.root
 file is good
 Sanity test done
-[7.565MB/7.565MB][100%][==================================================][7.565MB/s]  [7.565MB/7.565MB][100%][==================================================][7.565MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+[7.62MB/7.62MB][100%][==================================================][7.62MB/s]  [7.62MB/7.62MB][100%][==================================================][7.62MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTTT_fsrdn.root
 file is good
 Sanity test done

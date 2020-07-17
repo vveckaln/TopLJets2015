@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_27027/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_22891/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/28/18 05:09:40  12/29/18 01:07:36  krbtgt/CERN.CH@CERN.CH
-	renew until 12/29/18 01:07:36
-12/28/18 05:09:40  12/29/18 01:07:36  afs/cern.ch@CERN.CH
-	renew until 12/29/18 01:07:36
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:23:01  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,21 +32,21 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/86.66MB][ 18%][=========>                                        ][16MB/s]  [80MB/86.66MB][ 92%][==============================================>   ][80MB/s]  [86.66MB/86.66MB][100%][==================================================][86.66MB/s]  [86.66MB/86.66MB][100%][==================================================][86.66MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+[16MB/86.64MB][ 18%][=========>                                        ][16MB/s]  [86.64MB/86.64MB][100%][==================================================][86.64MB/s]  [86.64MB/86.64MB][100%][==================================================][86.64MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets_gluonMove.root
 file is good
 Sanity test done
-[16MB/1.304GB][  1%][>                                                 ][16MB/s]  [112MB/1.304GB][  8%][====>                                             ][112MB/s]  [160MB/1.304GB][ 11%][=====>                                            ][80MB/s]  [368MB/1.304GB][ 27%][=============>                                    ][122.7MB/s]  [560MB/1.304GB][ 41%][====================>                             ][140MB/s]  [736MB/1.304GB][ 55%][===========================>                      ][147.2MB/s]  [944MB/1.304GB][ 70%][===================================>              ][157.3MB/s]  [1.125GB/1.304GB][ 86%][===========================================>      ][164.6MB/s]  [1.304GB/1.304GB][100%][==================================================][166.9MB/s]  [1.304GB/1.304GB][100%][==================================================][166.9MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+[16MB/1.304GB][  1%][>                                                 ][16MB/s]  [96MB/1.304GB][  7%][===>                                              ][96MB/s]  [144MB/1.304GB][ 10%][=====>                                            ][72MB/s]  [176MB/1.304GB][ 13%][======>                                           ][58.67MB/s]  [208MB/1.304GB][ 15%][=======>                                          ][52MB/s]  [256MB/1.304GB][ 19%][=========>                                        ][51.2MB/s]  [288MB/1.304GB][ 21%][==========>                                       ][48MB/s]  [320MB/1.304GB][ 23%][===========>                                      ][45.71MB/s]  [352MB/1.304GB][ 26%][=============>                                    ][44MB/s]  [400MB/1.304GB][ 29%][==============>                                   ][44.44MB/s]  [432MB/1.304GB][ 32%][================>                                 ][43.2MB/s]  [480MB/1.304GB][ 35%][=================>                                ][43.64MB/s]  [512MB/1.304GB][ 38%][===================>                              ][42.67MB/s]  [560MB/1.304GB][ 41%][====================>                             ][43.08MB/s]  [592MB/1.304GB][ 44%][======================>                           ][42.29MB/s]  [640MB/1.304GB][ 47%][=======================>                          ][42.67MB/s]  [688MB/1.304GB][ 51%][=========================>                        ][43MB/s]  [720MB/1.304GB][ 53%][==========================>                       ][42.35MB/s]  [768MB/1.304GB][ 57%][============================>                     ][42.67MB/s]  [816MB/1.304GB][ 61%][==============================>                   ][42.95MB/s]  [864MB/1.304GB][ 64%][================================>                 ][43.2MB/s]  [896MB/1.304GB][ 67%][=================================>                ][42.67MB/s]  [944MB/1.304GB][ 70%][===================================>              ][42.91MB/s]  [976MB/1.304GB][ 73%][====================================>             ][42.43MB/s]  [1024MB/1.304GB][ 76%][======================================>           ][42.67MB/s]  [1.047GB/1.304GB][ 80%][========================================>         ][42.88MB/s]  [1.078GB/1.304GB][ 82%][=========================================>        ][42.46MB/s]  [1.125GB/1.304GB][ 86%][===========================================>      ][42.67MB/s]  [1.156GB/1.304GB][ 88%][============================================>     ][42.29MB/s]  [1.203GB/1.304GB][ 92%][==============================================>   ][42.48MB/s]  [1.234GB/1.304GB][ 94%][===============================================>  ][42.13MB/s]  [1.266GB/1.304GB][ 97%][================================================> ][41.81MB/s]  [1.304GB/1.304GB][100%][==================================================][41.72MB/s]  [1.304GB/1.304GB][100%][==================================================][39.26MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets_gluonMove.root
 file is good
 Sanity test done

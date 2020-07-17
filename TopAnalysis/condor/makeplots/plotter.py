@@ -12,12 +12,12 @@ def main():
     #configuration
     usage = 'usage: %prog [options]'
     parser = optparse.OptionParser(usage)
-    parser.add_option(      '--mcUnc',            dest='mcUnc'  ,      help='common MC related uncertainty (e.g. lumi)',        default=0,              type=float)
-    parser.add_option(      '--com',              dest='com'  ,        help='center of mass energy',                            default='13 TeV',       type='string')
-    parser.add_option('-j', '--json',             dest='json'  ,      help='json with list of files',        default=None,              type='string')
-    parser.add_option(      '--systTheorJson',    dest = 'systTheorJson',     help = 'json with list of theoretical systematics',       default = None, type='string')
-    parser.add_option(      '--systExpJson',      dest = 'systExpJson',         help='json with list of experimental systematics',                    default = None, type='string')
-    parser.add_option(      '--signalJson',       dest='signalJson',  help='signal json list',               default=None,              type='string')
+    parser.add_option(      '--mcUnc',            dest='mcUnc'  ,          help='common MC related uncertainty (e.g. lumi)',        default=0,              type=float)
+    parser.add_option(      '--com',              dest='com'  ,            help='center of mass energy',                            default='13 TeV',       type='string')
+    parser.add_option('-j', '--json',             dest='json'  ,           help='json with list of files',        default=None,              type='string')
+    parser.add_option(      '--systTheorJson',    dest = 'systTheorJson',  help = 'json with list of theoretical systematics',       default = None, type='string')
+    parser.add_option(      '--systExpJson',      dest = 'systExpJson',    help='json with list of experimental systematics',                    default = None, type='string')
+    parser.add_option(      '--signalJson',       dest='signalJson',       help='signal json list',               default=None,              type='string')
     parser.add_option(      '--overlayJson',      dest='overlayJson',  help='overlay json list',               default=None,              type='string')
     parser.add_option('-i', '--inDir',            dest='inDir' ,      help='input directory',                default=None,              type='string')
     parser.add_option('-O', '--outDir',           dest='outDir' ,     help='output directory',                default=None,              type='string')
@@ -41,61 +41,66 @@ def main():
     
     (opt, args) = parser.parse_args()
     print "opt.lumi ",  opt.lumi
-    method = opt.method
-    samplesList=[]
+    method     = opt.method
+    signal     = "MC13TeV_TTJets"
+    samplesList= {}
     jsonList = opt.json.split(',')
     for jsonPath in jsonList:
-        jsonFile = open(jsonPath,'r')
-        samplesList += json.load(jsonFile, encoding='utf-8', object_pairs_hook=OrderedDict).items()
+        jsonFile = open(jsonPath, 'r')
+        samplesList.update(json.load(jsonFile))#, encoding='utf-8', object_pairs_hook=OrderedDict).items()
         jsonFile.close()
     
     #read lists of syst samples
-    systTheorSamplesList = []
+    systTheorSamplesList = {}
     if opt.systTheorJson:
         systTheorJsonList = opt.systTheorJson.split(',')
         for jsonPath in systTheorJsonList:
             jsonFile = open(jsonPath, 'r')
-            systTheorSamplesList += json.load(jsonFile, encoding = 'utf-8').items()
+            systTheorSamplesList.update(json.load(jsonFile))#, encoding = 'utf-8').items())
             jsonFile.close()
 
-    systExpSamplesList = []
+    systExpSamplesList = {}
     if opt.systExpJson:
         systExpJsonList = opt.systExpJson.split(',')
         for jsonPath in systExpJsonList:
             jsonFile = open(jsonPath, 'r')
-            systExpSamplesList += json.load(jsonFile, encoding = 'utf-8').items()
+            systExpSamplesList.update(json.load(jsonFile))#, encoding = 'utf-8').items()
             jsonFile.close()
 
     #read list of signal samples
-    signalSamplesList=None
+    signalSamplesList = {}
     try:
-        jsonFile = open(opt.signalJson,'r')
-        signalSamplesList=json.load(jsonFile, encoding='utf-8', object_pairs_hook=OrderedDict).items()
+        jsonFile = open(opt.signalJson, 'r')
+        signalSamplesList.update(json.load(jsonFile))#, encoding='utf-8', object_pairs_hook=OrderedDict).items()
         jsonFile.close()
     except:
         pass
-    overlaySamplesList = []
-    ind = 0
-    while ind < len(systTheorSamplesList):
-        tag = systTheorSamplesList[ind][0]
+    overlaySamplesList = {}
+
+    
+
+    # ind = 0
+    # print signal
+    # print systTheorSamplesList[signal]
+    # print "---------"
+    # print systTheorSamplesList[signal]
+
+    for key in list(systTheorSamplesList[signal]):
+        tag = systTheorSamplesList[signal][key]
         dellist = ["MC13TeV_TTJets2l2nu_noSC", "MC13TeV_TTJets_m166v5", "MC13TeV_TTJets_m169v5", "MC13TeV_TTJets_m175v5", "MC13TeV_TTJets_m178v5", "MC13TeV_TTJets_widthx0p2", "MC13TeV_TTJets_widthx0p5", "MC13TeV_TTJets_widthx4", "MC13TeV_TTJets_widthx8", "MC13TeV_TTTT"]
         if method != "amcatnlo":
             dellist.append("MC13TeV_TTJets2l2nu_amcatnlo")
         if tag in dellist:
-            del systTheorSamplesList[ind]
-        elif "ext" in systTheorSamplesList[ind][0]:
-            del systTheorSamplesList[ind]
-        elif not "t#bar{t}" in systTheorSamplesList[ind][1][3]:
-            del systTheorSamplesList[ind]
-        else:
-            ind += 1
-    samplesind = 0
-    while samplesind < len(samplesList):
-        tag = samplesList[samplesind][0]
-        if "ext" in tag:
-            del samplesList[samplesind]
-        else:
-            samplesind += 1
+            del systTheorSamplesList[signal][key]
+        elif "ext" in systTheorSamplesList[signal][key]:
+            del systTheorSamplesList[signal][key]
+        # elif not "t#bar{t}" in systTheorSamplesList[signal][ind][1][3]:
+        #     del systTheorSamplesList[signal][ind]
+        # else:
+        #     ind += 1
+    for key in list(samplesList):
+        if "ext" in key:
+            del samplesList[key]
     signalTitle = 0
     methodtag = 0
     if method != 'nominal':
@@ -108,64 +113,40 @@ def main():
         if method == "herwig":
             signalTitle   = "t#bar{t} Herwig++"
             methodtag     = "_herwig"
-        ind_TTJets = 0
-        found = False
-        while ind_TTJets < len(samplesList) and not found:
-            tag, sample = samplesList[ind_TTJets]
-            if tag == "MC13TeV_TTJets":
-                found = True
-            if not found:
-                ind_TTJets += 1
-        TTJets = samplesList[ind_TTJets]
-        del samplesList[ind_TTJets]
-        overlaySamplesList.append((TTJets[0], TTJets[1]))
-        ind_TTJets_method = 0
-        found = False
-        while ind_TTJets_method < len(systTheorSamplesList) and not found:
-            tag, sample = systTheorSamplesList[ind_TTJets_method]
-            if tag == "MC13TeV_TTJets" + methodtag:
-                found = True
-            if not found:
-                ind_TTJets_method += 1
-        TTJets_method = systTheorSamplesList[ind_TTJets_method]
-        del systTheorSamplesList[ind_TTJets_method]
-        samplesList.append((TTJets_method[0], TTJets_method[1]))
-        for ind in range(0, len(systExpSamplesList)):
-            systExpSamplesList[ind] = (systExpSamplesList[ind][0].replace("TTJets", "TTJets" + methodtag), systExpSamplesList[ind][1])
+        TTJets = samplesList["MC13TeV_TTJets"]
+        overlaySamplesList.update({"MC13TeV_TTJets": samplesList["MC13TeV_TTJets"]})
+        del samplesList["MC13TeV_TTJets"]
+        deltag = "MC13TeV_TTJets" + methodtag
+        TTJets_method = systTheorSamplesList[signal][deltag]
+        samplesList.update({deltag: systTheorSamplesList[signal][deltag]})
+        del systTheorSamplesList[signal][deltag]
+        for key in list(systExpSamplesList[signal]):
+            newkey = key + "methodtag"
+            systExpSamplesList[newkey] = systExpSamplesList[key]
+            del systExpSamplesList[key]
     else:
         signalTitle   = "t#bar{t}"
         methodtag     = "nominal"
-        deltags = ["MC13TeV_TTJets_cflip"]
-        ind = 0
-        ind_TTJets_cflip = 0
-        found = False
-        while ind_TTJets_cflip < len(systTheorSamplesList) and not found:
-            tag, sample = systTheorSamplesList[ind_TTJets_cflip]
-            if tag == "MC13TeV_TTJets_cflip":
-                found = True
-            if not found:
-                ind_TTJets_cflip += 1
-        TTJets_cflip = systTheorSamplesList[ind_TTJets_cflip]
+        deltag        = "MC13TeV_TTJets_cflip"
+        TTJets_cflip  = systTheorSamplesList[signal][deltag]
         print TTJets_cflip
-        overlaySamplesList.append((TTJets_cflip[0], TTJets_cflip[1]))
-        for tag, sample in systTheorSamplesList:
-            if tag in deltags:
-                del systTheorSamplesList[ind]
-            elif "width" in tag or "ext" in tag:
-                 del systTheorSamplesList[ind]
-            else:
-              ind += 1
-    skipList=opt.skip.split(',')
+        overlaySamplesList.update({deltag: systTheorSamplesList[signal][deltag]})
+        for key in list(systTheorSamplesList[signal]):
+            if key == deltag:
+                del systTheorSamplesList[signal][key]
+            elif "width" in key or "ext" in key:
+                del systTheorSamplesList[signal][key]
+    skipList = opt.skip.split(',')
 
     #lumi specifications per tag
-    lumiSpecs={}
+    lumiSpecs = {}
     if opt.lumiSpecs:
         for spec in opt.lumiSpecs.split(','):
-            tag,lumi=spec.split(':')
-            lumiSpecs[tag]=float(lumi)
+            tag, lumi = spec.split(':')
+            lumiSpecs[tag] = float(lumi)
 
     #proc SF
-    procSF={}
+    procSF = {}
     if opt.procSF:
         procList=opt.procSF.split(',')
         for newProc in procList:
@@ -182,7 +163,7 @@ def main():
     plots = OrderedDict()
 
     report = ''
-    listfile = ROOT.TFile.Open(opt.listfile)
+    listfile = ROOT.TFile.Open("root://eosuser.cern.ch//" + opt.listfile)
     if not listfile:
         print >> sys.stderr, "failed to open listfile %s" % opt.listfile
         raise Exception('no listfile')
@@ -195,37 +176,52 @@ def main():
     #     raw_input("penter")
     # except (EOFError):
     #     pass
-    for slist, isSignal, isTheorSyst, isExpSyst, isOverlay in [ (samplesList, False, False, False, False), (signalSamplesList, True, False, False, False), (systTheorSamplesList, False, True, False, False), (systExpSamplesList, False, False, True, False), (overlaySamplesList, False, False, False, True) ]:
-        if slist is None: continue
+    greatlist = [(samplesList, False, False, False, False, ""), (signalSamplesList, True, False, False, False, "")]
+    for key in systTheorSamplesList:
+        greatlist += [(systTheorSamplesList[key], False, True, False, False, key)]
+    for key in systExpSamplesList:
+        greatlist += [(systExpSamplesList[key], False, True, False, False, key)]
+    # for key in overlaySamplesList:
+    #     greatlist += ((overlaySamplesList[key], False, False, False, True, ""))    
+    greatlist += [(overlaySamplesList, False, False, False, True, "")]
+    for slist, isSignal, isTheorSyst, isExpSyst, isOverlay, sampleref in greatlist:
+        if len(slist) == 0: 
+            continue
+        TESTPLOT = Plot("a", "b", "c", True)
+        TESTPLOT.Dot()
+
         isSyst = isTheorSyst or isExpSyst
-        for tag, sample in slist:
-            if isSyst and not 't#bar{t}' in sample[3] : continue
+        for tag in slist:
+            #print "tag ", tag
+                # if isSyst and not 't#bar{t}' in sample[3] : continue
             if tag in skipList:
-              print("SKIPPED "+tag)
-              continue
+                print("SKIPPED " + tag)
+                continue
+            sample              = slist[tag]
             xsec                = sample[0]
             isData              = sample[1]
-            doFlavourSplitting  = sample[6]
-            subProcs            = [(tag, sample[3], sample[4])]
+            doFlavourSplitting  = sample[7]
+            subProcs            = [(tag, sample[4], sample[5])]
             if doFlavourSplitting:
                 subProcs = []
-                for flav in [(1, sample[3] + '+l'), (4,sample[3]+'+c'),(5,sample[3]+'+b',sample[4])]:
-                    subProcs.append(('%d_%s'%(flav[0],tag),flav[1],sample[4]+3*len(subProcs)))
+                for flav in [(1, sample[4] + '+l'), (4, sample[4] + '+c'), (5, sample[4] + '+b', sample[5])]:
+                    subProcs.append(('%d_%s' % (flav[0], tag), flav[1], sample[5] + 3*len(subProcs)))
+            # print "subProces", subProcs 
             for sp in subProcs:
-#                raw_input("penter")
+               # raw_input("penter")
                 file_name = '%s/%s.root' % ( opt.inDir, sp[0])
-                
+
                 if method != "nominal" and not isExpSyst:
                     file_name = '%s/%s.root' % ( opt.inDir.replace("MC13TeV_TTJets" + methodtag, "MC13TeV_TTJets"), sp[0])
-  #                  print "file name %s" % file_name
- #                   raw_input("penter")
+                   # print "file name %s" % file_name
+                   # raw_input("penter")
                 if method == "nominal" and isOverlay:
                     file_name = '%s/%s.root' % ( opt.inDir.replace("MC13TeV_TTJets" + methodtag, "MC13TeV_TTJets_cflip"), sp[0])
-                    
+
                 fIn = None
                 if os.path.abspath(file_name) != os.path.abspath(opt.listfile):
-                    fIn = ROOT.TFile.Open(file_name )
-#                    print "reading %s " % file_name
+                    fIn = ROOT.TFile.Open("root://eosuser.cern.ch/" + file_name )
+                    # print "reading %s " % file_name
                     inputfiles.append(fIn)
                 else:
                     fIn = listfile
@@ -236,25 +232,25 @@ def main():
                 #fix pileup weighting normalization
                 puNormSF=1
                 if opt.puNormSF and not isData:
-                    puCorrH=fIn.Get(opt.puNormSF)
-                    nonWgt=puCorrH.GetBinContent(1)
-                    wgt=puCorrH.GetBinContent(2)
-                    if wgt>0 :
+                    puCorrH = fIn.Get(opt.puNormSF)
+                    nonWgt  = puCorrH.GetBinContent(1)
+                    wgt     = puCorrH.GetBinContent(2)
+                    if wgt > 0 :
                         puNormSF = nonWgt/wgt
                         if puNormSF > 1.3 or puNormSF < 0.7 : 
                             puNormSF = 1
                             report += '%s wasn\'t be scaled as too large SF was found (probably low stats)\n' % sp[0]
                         else :
-                            report += '%s was scaled by %3.3f for pileup normalization\n' % (sp[0],puNormSF)
+                            report += '%s was scaled by %3.3f for pileup normalization\n' % (sp[0], puNormSF)
                 kStart = False
-                kEnd = False
-                find = 0
-                kind = 0
+                kEnd   = False
+                find   = 0
+                kind   = 0
                 for tkey in keylist:
                     #keyIsSyst = False
                     try:
                         key = tkey.GetName()
-#                        if key == "L_pull_angle_PFNgt20_reco_leading_jet_had_w_DeltaRle1p0":
+                        # if key == "L_pull_angle_PFNgt20_reco_leading_jet_had_w_DeltaRle1p0":
                         if key == opt.begin:
                             kStart = True
                         if not kStart:
@@ -263,20 +259,20 @@ def main():
                             break
                         if key == opt.end:
                             kEnd = True
-#                        print "kind %u key %s" % (kind, key)
+                        # print "kind %u key %s" % (kind, key)
                         obj = fIn.Get(key)
                         if obj.InheritsFrom("TH2"):
                             #                            print "inherits from th2"
                             continue
                         kind += 1
-                        #print key
                         if not (key == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal"):
                             continue
-                        
-#                        print tag
+                        print key
+
+                        # print tag 
                         #filter plots using a selection list
                         histos = []
-                        if sample[3] == 't#bar{t}':
+                        if sample[4] == signalTitle:
                             systobj = fIn.Get(key + '_syst')
                             if systobj:
                                 #keyIsSyst = True
@@ -302,7 +298,9 @@ def main():
                         fixExtremities(obj, False, False)
                         histos.append(obj)
                         histos[-1].SetTitle(sp[1])
+                        print len(histos)
                         for hist in histos:
+                            print hist
                             if not isData and not '(data)' in sp[1]: 
 
                                 #check if a special scale factor needs to be applied
@@ -327,19 +325,37 @@ def main():
                                 hist.Rebin(opt.rebin)
 
                             #create new plot if needed
+                            print "key in plots", (key in plots)
                             if not key in plots:
+                                print "probe"
                                 isLogY = False
                                 if "chi" in key or "_selection" in key:
                                     isLogY = True
+                                #print plots[key], " creating plots[key] ", key
                                 plots[key] = Plot(key, signalTitle = signalTitle, com = opt.com, isLogY = isLogY)
+                                TEST = Plot(key, signalTitle = signalTitle, com = opt.com, isLogY = isLogY)
+                                TEST.Do()
+                                print plots[key]
+                                plots[key].Do()
+                                print "added key"
                             #add process to plot
                             title = hist.GetTitle()
                             keyIsSyst = False
                             if ROOT.TString(hist.GetName()).Contains('_pxsyst'):
                                 keyIsSyst = True
                             isSystN = isSyst or keyIsSyst
-                            plots[key].add(h = hist, title = hist.GetTitle(), color = sp[2], isData = sample[1], spImpose = isSignal, isSyst = (isSyst or keyIsSyst), isOverlay = isOverlay)
-                    
+                            samplesubtitle = ""
+                            if not isData and not isSyst:
+                                sampelsubtitle = tag
+                            if isSyst:
+                                samplesubtitle = sampleref
+                            print "samplesubtitle [", samplesubtitle, "]"
+                            print "adding", key, "  ", title#, " ", plots[key]
+                            plots[key].Do()
+                            plots[key].addtestt(title = hist.GetTitle())
+                            # plots[key].add(h = hist, title = hist.GetTitle(), color = sp[2], isData = sample[1], spImpose = isSignal, isSyst = (isSyst or keyIsSyst), isOverlay = isOverlay, samplesubtititle = samplesubtitle)
+                            raw_input("penter")
+                            print "probe"
                     except:
                         pass
     #show plots
@@ -347,8 +363,8 @@ def main():
     ROOT.gStyle.SetOptStat(0)
     ROOT.gROOT.SetBatch(True)
     outDir = opt.outDir
-    os.system('mkdir -p %s' % outDir)
-    os.system('rm %s/%s' % (outDir, opt.outName))
+    #os.system('mkdir -p %s' % outDir)
+    #os.system('rm %s/%s' % (outDir, opt.outName))
     for p in plots :
         plots[p].mcUnc = opt.mcUnc
         if opt.saveLog: 

@@ -8,7 +8,7 @@ echo "klist" >&2
 klist >&2
 echo "end klist" >&2
 echo "ls EOS" >&2
-ls /eos/user/v/vveckaln >&2
+eos root://eosuser.cern.ch/ ls /eos/user/v/vveckaln >&2
 echo "end ls EOS" >&2
 
 source @PROJECT/condor/makeplots/run_job.sh @INPUTDIR @OUTPUTDIR @BEGINNAME @ENDNAME @METHOD @LISTFILE $CLUSTERID 

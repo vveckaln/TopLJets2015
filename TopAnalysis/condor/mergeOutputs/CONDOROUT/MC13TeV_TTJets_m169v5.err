@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_13039/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_25546/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/28/18 14:46:30  12/29/18 15:46:30  krbtgt/CERN.CH@CERN.CH
-	renew until 01/02/19 13:48:55
-12/28/18 15:03:46  12/29/18 15:46:30  afs/cern.ch@CERN.CH
-	renew until 01/02/19 13:48:55
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:26:30  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,21 +32,21 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/86.28MB][ 18%][=========>                                        ][16MB/s]  [32MB/86.28MB][ 37%][==================>                               ][32MB/s]  [64MB/86.28MB][ 74%][=====================================>            ][32MB/s]  [86.28MB/86.28MB][100%][==================================================][43.14MB/s]  [86.28MB/86.28MB][100%][==================================================][28.76MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+[16MB/86.24MB][ 18%][=========>                                        ][16MB/s]  [86.24MB/86.24MB][100%][==================================================][86.24MB/s]  [86.24MB/86.24MB][100%][==================================================][86.24MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets_m169v5.root
 file is good
 Sanity test done
-[16MB/787.9MB][  2%][=>                                                ][16MB/s]  [80MB/787.9MB][ 10%][=====>                                            ][40MB/s]  [128MB/787.9MB][ 16%][========>                                         ][42.67MB/s]  [144MB/787.9MB][ 18%][=========>                                        ][28.8MB/s]  [176MB/787.9MB][ 22%][===========>                                      ][29.33MB/s]  [288MB/787.9MB][ 36%][==================>                               ][41.14MB/s]  [368MB/787.9MB][ 46%][=======================>                          ][46MB/s]  [464MB/787.9MB][ 58%][=============================>                    ][51.56MB/s]  [544MB/787.9MB][ 69%][==================================>               ][54.4MB/s]  [640MB/787.9MB][ 81%][========================================>         ][58.18MB/s]  [736MB/787.9MB][ 93%][==============================================>   ][61.33MB/s]  [787.9MB/787.9MB][100%][==================================================][65.66MB/s]  [787.9MB/787.9MB][100%][==================================================][60.61MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+[16MB/788.1MB][  2%][=>                                                ][16MB/s]  [160MB/788.1MB][ 20%][==========>                                       ][80MB/s]  [256MB/788.1MB][ 32%][================>                                 ][85.33MB/s]  [352MB/788.1MB][ 44%][======================>                           ][88MB/s]  [448MB/788.1MB][ 56%][============================>                     ][89.6MB/s]  [544MB/788.1MB][ 69%][==================================>               ][90.67MB/s]  [640MB/788.1MB][ 81%][========================================>         ][91.43MB/s]  [736MB/788.1MB][ 93%][==============================================>   ][92MB/s]  [788.1MB/788.1MB][100%][==================================================][98.51MB/s]  [788.1MB/788.1MB][100%][==================================================][87.57MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets_m169v5.root
 file is good
 Sanity test done

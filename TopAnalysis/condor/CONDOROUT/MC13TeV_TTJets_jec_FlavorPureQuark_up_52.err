@@ -1,52 +1,0 @@
-klist
-Ticket cache: FILE:/pool/condor/dir_18655/vveckaln.cc
-Default principal: vveckaln@CERN.CH
-
-Valid starting     Expires            Service principal
-12/26/18 09:10:58  12/27/18 10:10:58  krbtgt/CERN.CH@CERN.CH
-	renew until 12/30/18 12:19:54
-12/26/18 09:10:59  12/27/18 10:10:58  afs/cern.ch@CERN.CH
-	renew until 12/30/18 12:19:54
-end klist
-ls EOS
-analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJets_herwig
-anothercomparison.cc
-bins
-cernbox
-Chunks
-Chunks_test
-copy_test
-data
-flipped
-flipped_old
-LSF
-merged_plots
-migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
-processing
-reserve
-rivet
-rivet_results_23_March
-rivet_test
-rivet_test_21_March
-save.root
-SWAN_projects
-test
-testdir
-unfolding_cflip
-unfolding_nominal
-end ls EOS
-EXIT_CODE_SCRAM 0
-exit code in RunMethodPacked 0
-caught error code 0
-checking sanity of file /pool/condor/dir_18655/MC13TeV_TTJets_jec_FlavorPureQuark_up_52.root
-file is good
-Sanity test done
-checking sanity of file /pool/condor/dir_18655/migration_MC13TeV_TTJets_jec_FlavorPureQuark_up_52.root
-file is good
-Sanity test done
-EXIT_CODE_PYTHON  0
-[16MB/81.4MB][ 19%][=========>                                        ][2.667MB/s]  [32MB/81.4MB][ 39%][===================>                              ][4MB/s]  [48MB/81.4MB][ 58%][=============================>                    ][5.333MB/s]  [64MB/81.4MB][ 78%][=======================================>          ][5.818MB/s]  [80MB/81.4MB][ 98%][=================================================>][6.667MB/s]  [81.4MB/81.4MB][100%][==================================================][6.783MB/s]  [81.4MB/81.4MB][100%][==================================================][5.814MB/s]  
-[16MB/24.79MB][ 64%][================================>                 ][2MB/s]  [24.79MB/24.79MB][100%][==================================================][3.099MB/s]  [24.79MB/24.79MB][100%][==================================================][906.7kB/s]  

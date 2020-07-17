@@ -69,6 +69,7 @@ def main():
     parser.add_option(      '--exactonly',   dest='exactonly',   help='match only exact sample tags to process  [%default]',    default=False,      action='store_true')
     parser.add_option(      '--outputonly',        dest='outputonly',        help='filter job submission for a csv list of output files  [%default]',             default=None,       type='string')
     parser.add_option(      '--farmappendix',        dest='farmappendix',        help='Appendix to condor FARM directory [%default]',             default=None,       type='string')
+    parser.add_option('-r'  ,                   action = 'store_true',      dest = 'resubmission',    default = False,     help = 'resubmit jobs looking out for bad files')
     (opt, args) = parser.parse_args()
     PROJECT = os.getenv('PROJECT')
 
@@ -129,7 +130,7 @@ def main():
     task_list = []
     processedTags=[]
     if '.root' in opt.input:
-        inF=opt.input
+        inF = opt.input
         if '/store/' in inF and not 'root:' in inF : 
             inF = 'root://eoscms//eos/cms' + opt.input        
         for systVar in varList:
@@ -178,7 +179,7 @@ def main():
 #                    raw_input("press Enter")
                     sanity_outF = testfilesanity.testsanity(outF)
                     sanity_migration_outF = testfilesanity.testsanity(migration_outF)
-                    if sanity_outF != 0 or sanity_migration_outF != 0:
+                    if opt.resubmission and (sanity_outF != 0 or sanity_migration_outF != 0):
                         raw_input("penter")
                         pass
                     if opt.skipexisting and os.path.isfile(outF) and os.path.isfile(migration_outF) and sanity_outF == 0 and sanity_migration_outF == 0:
@@ -218,12 +219,13 @@ def main():
 
         with open ('%s/condor.sub' % FarmCfgDirectory, 'w') as condor:
 
-            condor.write('executable  = {0}/$(cfgFile).sh\n'.format(FarmCfgDirectory))
-            condor.write('output      = {0}/condor/CONDOROUT/$(cfgFile).out\n'.format(PROJECT))
-            condor.write('error       = {0}/condor/CONDOROUT/$(cfgFile).err\n'.format(PROJECT))
-            condor.write('log         = {0}/*.$(ClusterId).log\n'.format(FarmCfgDirectory))
-            condor.write('arguments   = $(ClusterId) $(ProcId)\n')
-            condor.write('+JobFlavour = "{0}"\n'.format(opt.queue))
+            condor.write('executable   = {0}/$(cfgFile).sh\n'.format(FarmCfgDirectory))
+            condor.write('requirements = (Datacentre =!= "wigner")\n')
+            condor.write('output       = {0}/condor/CONDOROUT/$(cfgFile).out\n'.format(PROJECT))
+            condor.write('error        = {0}/condor/CONDOROUT/$(cfgFile).err\n'.format(PROJECT))
+            condor.write('log          = {0}/*.$(ClusterId).log\n'.format(FarmCfgDirectory))
+            condor.write('arguments    = $(ClusterId) $(ProcId)\n')
+            condor.write('+JobFlavour  = "{0}"\n'.format(opt.queue))
 
             jobNb = 0
             for method, inF, outF, channel, charge, flav, runSysts, systVar, era, tag, debug in task_list:
@@ -232,7 +234,6 @@ def main():
 #                jobNb += 1
 #                if (jobNb <1450):
 #                    continue
-
                 job_tag = os.path.splitext(os.path.basename(outF))[0]
                 outfile_basename_noext = job_tag
                 localOutF = os.path.basename(outF)
@@ -249,6 +250,7 @@ def main():
                 cfgFile = '%s' % job_tag
 
                 condor.write('cfgFile=%s\n' % cfgFile)
+                
                 condor.write('queue 1\n')
                 sedcmd  = 'sed \''
                 sedcmd += 's%@OUTPUTDIR%'            + opt.output             + '%g;'

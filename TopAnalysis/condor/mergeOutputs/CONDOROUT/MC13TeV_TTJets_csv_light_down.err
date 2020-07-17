@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_22050/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_3974/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/28/18 05:09:40  12/29/18 01:07:36  krbtgt/CERN.CH@CERN.CH
-	renew until 12/29/18 01:07:36
-12/28/18 05:09:40  12/29/18 01:07:36  afs/cern.ch@CERN.CH
-	renew until 12/29/18 01:07:36
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:20:59  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,21 +32,21 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/87.07MB][ 18%][=========>                                        ][16MB/s]  [87.07MB/87.07MB][100%][==================================================][87.07MB/s]  [87.07MB/87.07MB][100%][==================================================][87.07MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+[16MB/87.08MB][ 18%][=========>                                        ][16MB/s]  [64MB/87.08MB][ 73%][====================================>             ][64MB/s]  [87.08MB/87.08MB][100%][==================================================][87.08MB/s]  [87.08MB/87.08MB][100%][==================================================][87.08MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets_csv_light_down.root
 file is good
 Sanity test done
-[16MB/3.473GB][  0%][>                                                 ][16MB/s]  [80MB/3.473GB][  2%][=>                                                ][80MB/s]  [336MB/3.473GB][  9%][====>                                             ][168MB/s]  [496MB/3.473GB][ 13%][======>                                           ][165.3MB/s]  [672MB/3.473GB][ 18%][=========>                                        ][168MB/s]  [832MB/3.473GB][ 23%][===========>                                      ][166.4MB/s]  [992MB/3.473GB][ 27%][=============>                                    ][165.3MB/s]  [1.094GB/3.473GB][ 31%][===============>                                  ][160MB/s]  [1.188GB/3.473GB][ 34%][=================>                                ][152MB/s]  [1.312GB/3.473GB][ 37%][==================>                               ][149.3MB/s]  [1.438GB/3.473GB][ 41%][====================>                             ][147.2MB/s]  [1.562GB/3.473GB][ 44%][======================>                           ][145.5MB/s]  [1.688GB/3.473GB][ 48%][========================>                         ][144MB/s]  [1.812GB/3.473GB][ 52%][==========================>                       ][142.8MB/s]  [1.953GB/3.473GB][ 56%][============================>                     ][142.9MB/s]  [2.078GB/3.473GB][ 59%][=============================>                    ][141.9MB/s]  [2.219GB/3.473GB][ 63%][===============================>                  ][142MB/s]  [2.344GB/3.473GB][ 67%][=================================>                ][141.2MB/s]  [2.5GB/3.473GB][ 71%][===================================>              ][142.2MB/s]  [2.641GB/3.473GB][ 76%][======================================>           ][142.3MB/s]  [2.781GB/3.473GB][ 80%][========================================>         ][142.4MB/s]  [2.891GB/3.473GB][ 83%][=========================================>        ][141MB/s]  [3.047GB/3.473GB][ 87%][===========================================>      ][141.8MB/s]  [3.203GB/3.473GB][ 92%][==============================================>   ][142.6MB/s]  [3.344GB/3.473GB][ 96%][================================================> ][142.7MB/s]  [3.469GB/3.473GB][ 99%][=================================================>][142.1MB/s]  [3.473GB/3.473GB][100%][==================================================][142.3MB/s]  [3.473GB/3.473GB][100%][==================================================][136.8MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+[16MB/3.473GB][  0%][>                                                 ][16MB/s]  [80MB/3.473GB][  2%][=>                                                ][80MB/s]  [240MB/3.473GB][  6%][===>                                              ][120MB/s]  [352MB/3.473GB][  9%][====>                                             ][117.3MB/s]  [432MB/3.473GB][ 12%][======>                                           ][108MB/s]  [496MB/3.473GB][ 13%][======>                                           ][99.2MB/s]  [512MB/3.473GB][ 14%][=======>                                          ][73.14MB/s]  [576MB/3.473GB][ 16%][========>                                         ][72MB/s]  [752MB/3.473GB][ 21%][==========>                                       ][83.56MB/s]  [880MB/3.473GB][ 24%][============>                                     ][88MB/s]  [960MB/3.473GB][ 26%][=============>                                    ][87.27MB/s]  [1.141GB/3.473GB][ 32%][================>                                 ][97.33MB/s]  [1.328GB/3.473GB][ 38%][===================>                              ][104.6MB/s]  [1.547GB/3.473GB][ 44%][======================>                           ][113.1MB/s]  [1.75GB/3.473GB][ 50%][=========================>                        ][119.5MB/s]  [1.953GB/3.473GB][ 56%][============================>                     ][125MB/s]  [2.125GB/3.473GB][ 61%][==============================>                   ][128MB/s]  [2.328GB/3.473GB][ 67%][=================================>                ][132.4MB/s]  [2.516GB/3.473GB][ 72%][====================================>             ][135.6MB/s]  [2.688GB/3.473GB][ 77%][======================================>           ][137.6MB/s]  [2.875GB/3.473GB][ 82%][=========================================>        ][140.2MB/s]  [3.031GB/3.473GB][ 87%][===========================================>      ][141.1MB/s]  [3.219GB/3.473GB][ 92%][==============================================>   ][143.3MB/s]  [3.406GB/3.473GB][ 98%][=================================================>][145.3MB/s]  [3.473GB/3.473GB][100%][==================================================][148.2MB/s]  [3.473GB/3.473GB][100%][==================================================][148.2MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets_csv_light_down.root
 file is good
 Sanity test done

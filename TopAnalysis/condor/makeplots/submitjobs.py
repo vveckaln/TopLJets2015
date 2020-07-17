@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+#python condor/makeplots/submitjobs.py -i /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/ -o /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/plots/ --lfile=/eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets.root -m nominal
 import os, sys, ROOT
 sys.path.append('/afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/')
 import testfilesanity
@@ -23,30 +23,40 @@ keylist = listfile.GetListOfKeys()
 
 next = ROOT.TIter(keylist)
 key = next()
-ind = 0
 begin = []
 end = []
+newlist=ROOT.TList()
+
 while key:
-    if listfile.Get(key.GetName()).InheritsFrom('TH2'):
-        #print "not TH1 %s" % key
-        key = next()
-        continue
+    if not listfile.Get(key.GetName()).InheritsFrom('TH2'):
+        newlist.Add(key)
+    key = next()
+
+next=ROOT.TIter(newlist)
+key=next()
+while key:
+#    print "key  %u " % id(key)
     name = ROOT.TString(key.GetName())
-    if ind % 100 == 0:
+    if newlist.IndexOf(key) % 500 == 0:
         begin.append(name)
         print "begin %s" % name
-    if name == "M1_1l_l0pt":
-        print "M1_1l_l0pt found"
-        raw_input("penter")
-    if ind % 100 == 99:
+    # if name == "M1_1l_l0pt":
+    #     print "M1_1l_l0pt found"
+    #     raw_input("penter")
+    if newlist.IndexOf(key) % 500 == 499:
+        if newlist.GetEntries() - newlist.IndexOf(key) < 100:
+            end.append(TString(newlist.Last().GetName()))
+            print "A appending %s" % name.Data()
+            break;
+        else:
+            end.append(name)
+            print "B appending %s" % name.Data()
+    if key == newlist.Last():
+        print "C appending %s" % name.Data()
         end.append(name)
-#        print " appending %s" % name.Data()
     key = next()
-    ind += 1
-
-if ind - 1 % 100 != 99:
-    end.append(name)
-
+print len(begin)
+print len(end)
 print "*"*50
 
 queue = "longlunch"
@@ -69,6 +79,7 @@ with open ('%s/condor.sub' % FarmCfgDirectory, 'w') as condor:
             continue
         else:
             raw_input("penter")
+            pass
         
         print "%u %s %s" % (k, begin[k].Data(), end[k].Data())
         njob += 1    

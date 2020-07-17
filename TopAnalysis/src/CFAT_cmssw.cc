@@ -29,9 +29,16 @@ CFAT_cmssw::CFAT_cmssw():ColourFlowAnalysisTool()
 	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> 
 		Branch("pvmag_gen",       &pvmag_[1][charge_code][jet1_iter],         "pvmag_gen/F");
 	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> Branch("weight",     &weights_);
+	      migration_tree_[channel_code - 1][charge_code][jet1_iter] -> Branch("period",     &_period);
+
 	    }
 	}
     }
+}
+
+void CFAT_cmssw::SetPeriod(TString period)
+{
+  _period = period;
 }
 
 void CFAT_cmssw::SetMigrationOutput(const char * migration_output)
@@ -58,7 +65,7 @@ void CFAT_cmssw::ResetMigrationValues()
 void CFAT_cmssw::StoreMigrationValues(ChargeCode_t chargecode, VectorCode_t jetcode, double pa, double mag)
 {
   weights_ = GetEvent() -> weights_;
-  printf("storing %lu\n", GetEvent() -> weights_.size());
+  //  printf("storing %lu\n", GetEvent() -> weights_.size());
   fill_[chargecode][jetcode] = true;
   pull_angle_[work_mode_][chargecode][jetcode] = pa;
   pvmag_[work_mode_][chargecode][jetcode] = mag;
@@ -89,10 +96,10 @@ void CFAT_cmssw::Fill1D(const TString & key, double value, double weight) const
 {                                                                                                                                                                                                       
   {
     pair<TH1*, TH2*> * p = ((map<TString, pair<TH1*, TH2*> *>*)plots_ptr_) -> operator[](TString(tag_channels_types_[channel_code_]) + "_" + key);
-    if (TString(tag_channels_types_[channel_code_]) + "_" + key = "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal")
-      {
-	printf("plotting %lu \n", weights_.size()); 
-      }
+    // if (TString(tag_channels_types_[channel_code_]) + "_" + key == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal")
+    //   {
+    // 	printf("plotting %lu \n", weights_.size()); 
+    //   }
     p -> first -> Fill(value, GetEvent() -> weights_[0] * weight);
     //printf("%u\n", Definitions::nsyst_);
     if (Definitions::nsyst_ > 0) 
@@ -119,6 +126,17 @@ void CFAT_cmssw::Fill1D(const TString & key, double value, double weight) const
 	    p -> second -> Fill(value, i, GetEvent() -> weights_[0] * GetEvent() -> weights_[i] * weight);
 	  }
       }
+    // if (TString(tag_channels_types_[L]) + "_" + key == "L_pull_angle_allconst_reco_leading_jet_scnd_leading_jet_DeltaRTotal")
+    //   {
+    // 	printf("GetEvent() -> weights_[0] %.9f weight %.9f\n", GetEvent() -> weights_[0], weight);
+    // 	for (unsigned char bind = 1; bind < p -> first -> GetNbinsX(); bind ++)
+    // 	  {
+    // 	    printf("%u value %f %.9f %.9f %.9f\n", bind, value, p -> first -> GetBinContent(bind), TMath::Sqrt(p -> first -> GetBinContent(bind)), p -> first -> GetBinError(bind));
+    // 	  }
+    // 	// getchar();
+    // 	printf ("*******************\n");
+    //   }
+
   }
 }
 

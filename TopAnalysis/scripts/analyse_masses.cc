@@ -1,3 +1,7 @@
+//compile with comp.sh
+//./analyse_masses 0 lx
+#include "ERRORS.h"
+
 #include "TFile.h"
 #include "TH1F.h"
 #include "TApplication.h"
@@ -10,6 +14,7 @@
 #include <string>
 #include "TMarker.h"
 #include "TROOT.h"
+#include "TFitResult.h"
 using namespace std;
 using namespace Definitions;
 
@@ -17,48 +22,20 @@ static const unsigned short N_MC_histo_names = 7;
 static const char * MC_histo_names[N_MC_histo_names] = {"t#bar{t}", "Single top", "W", "DY", "Multiboson", "t#bar{t}+V", "QCD"};
 TH1F * sum_MC(const char *);
 enum model_t {SM, CFLIP};
-unsigned char model;
-TFile * plotter_file;// = model == SM ? TFile::Open("$EOS/analysis_24_12_2017/plots/plotter.root") : TFile::Open("$EOS/analysis_24_12_2017/MC13TeV_TTJets_cflip.root");
+unsigned char model(0);
+TFile * plotter_file(nullptr);// = model == SM ? TFile::Open("$EOS/analysis_24_12_2017/plots/plotter.root") : TFile::Open("$EOS/analysis_24_12_2017/MC13TeV_TTJets_cflip.root");
 const char * model_tag[] = {"_nominal", "_cflip"};
 const char * model_title[] = {" for the SM model", " for the colour octet $W$ model"};
 const unsigned char N_interesting_jets = 4;
 const unsigned char interesting_jets[N_interesting_jets] = {HAD_W, HAD_T, LEPT_W, LEPT_T};
-double CalculateMass(TH1F *);
-double CalculateWidth(TH1F *);
+double CalculateMass(TH1 *, void *params);
+double CalculateWidth(TH1 *, void *params);
 double determinant(unsigned int, void *);
 
-struct Result
-{
-  char title[128];
-  double value;
-  double error[2][2]     = {{0.0, 0.0}, {0.0, 0.0}};
-  bool   error_set[2][2] = {{false, false}, {false, false}};
-  Result(const char * title)
-  {
-    sprintf(this -> title, "%s", title);
-    value           = 0.0;
-  };
-  void ls()
-  {
-    printf("Listing %s\n", title);
-    printf("value %f\n", value);
-    printf("stat high %.3e, low %.3e\n", error[0][0], error[0][1]);
-    printf("syst high %.3e, low %.3e\n", error[1][0], error[1][1]);
-
-  };
-  double GetAverageStats() const
-  {
-    return 0.5 * TMath::Abs(error[0][0] + error[0][1]);
-  };
-  double GetAverageSyst() const
-  {
-    return 0.5 * TMath::Abs(error[1][0] + error[1][1]);
-  };
-};
 void prepare_header(FILE *, const char *, const char *, SourceCode_t);
 void prepare_footer(FILE *);
 void add_entry(FILE *, Result, Result);
-Result CalculateResult(TH1F *, TH1F *, double (*)(TH1F*));
+//Result CalculateResult(TH1 *, TH1 *, double (*)(TH1*, void *));
 const char * env = nullptr;
 int main(int argc, char* argv[])
 {
@@ -81,7 +58,6 @@ int main(int argc, char* argv[])
 	  for (unsigned short type_ind = 0; type_ind < 2; type_ind ++)
 	    {
 	      const TString file_name = TString("mass_") + tag_channels_types_[ch_ind] + "_" + tag_levels_types_[level_ind] + "_" + tag_sources_types_[type_ind] + model_tag[model] + ".txt";
-	      printf("creating %s\n", file_name.Data());
 	      file_map[file_name] = fopen((TString("masses/tables/") + file_name).Data(), "w");
 	      char caption[128];
 	      sprintf(caption, "Observed masses of objects for the %s channel at %s level for %s%s.", channel_titles_[ch_ind], level_titles_[level_ind], title_sources_types_[type_ind], model_title[model]); 
@@ -91,37 +67,44 @@ int main(int argc, char* argv[])
 	    }
 	}
     }
-  TApplication app("myapp", 0, 0);
+  //TApplication app("myapp", 0, 0);
   for (unsigned short ch_ind = L; ch_ind < N_channels_types_; ch_ind ++)
     {
       for (unsigned short level_ind = RECO; level_ind < N_levels_types_; level_ind ++)
 	{
-	  for (unsigned short type_ind = 0; type_ind < (model == SM ? 2 : 1); type_ind ++)
+	  for (unsigned short type_ind = 0; type_ind < (model == SM ? 2 : 1); type_ind ++) //interface/Definitions_cmssw.hh
 	    {
 	      for (unsigned short jet_ind = 0; jet_ind < N_interesting_jets; jet_ind ++)
-		{	      //	      printf("model %u type_ind %u tag_sources_types_ %s model_tag %s, \n", model, type_ind, tag_sources_types_[type_ind], model_tag[model]);
+		{	 
 		  const unsigned char interesting_jet_ind = interesting_jets[jet_ind];
-		  printf("analysing channel %s level %s source %s jet %s\n", tag_channels_types_[ch_ind], tag_levels_types_[level_ind], tag_sources_types_[type_ind], jet_titles_[interesting_jet_ind]);
+		  const TString dir = TString(tag_channels_types_[ch_ind]) + "_jet_mass_" + tag_levels_types_[level_ind] + "_" + tag_jet_types_[interesting_jet_ind];
+		  // printf("dir %s\n", dir.Data());
+		  // printf("ch_ind %u E %u\n", ch_ind, E);
+		  // printf("level_ind %u RECO %u\n", level_ind, RECO);
+		  // printf("jet_ind %u HAD_W %u\n", level_ind, RECO);
+		  // if (ch_ind != L or level_ind != GEN or interesting_jet_ind !=HAD_T )
+		  //   continue;
 
 		  const TString file_name = TString("mass_") + tag_channels_types_[ch_ind] + "_" + tag_levels_types_[level_ind] + "_" + tag_sources_types_[type_ind] + model_tag[model] + ".txt";
 		  FILE * table_file = file_map[file_name];
-		  printf("Opening %s result %p\n", file_name.Data(), table_file);
 		  fprintf(table_file, "\t\t%s ", jet_titles_[interesting_jet_ind]);
 		  if (level_ind == GEN and type_ind == DATA)
 		    {
 		      fprintf(table_file, "\t& x\\\\\n");
 		      continue;
 		    }
-		  TH1F * h_chi = NULL;
-		  TH1F * h_chi_syst = NULL;
-		  const TString dir = TString(tag_channels_types_[ch_ind]) + "_jet_mass_" + tag_levels_types_[level_ind] + "_" + tag_jet_types_[interesting_jet_ind];
-		  printf("dir %s\n", dir.Data());
+		  printf("analysing type %s channel %s level %s source %s jet %s\n", type_ind == 0 ? "MC" : "DATA", tag_channels_types_[ch_ind], tag_levels_types_[level_ind], tag_sources_types_[type_ind], jet_titles_[interesting_jet_ind]);
+		  TH1F * h_chi(nullptr);
+		  TH1F * h_chi_syst(nullptr);
 		  h_chi = type_ind == 0 ? sum_MC(dir) : (TH1F*) plotter_file -> GetDirectory(dir) -> Get(dir);
-		  h_chi_syst = type_ind == 0 ? (TH1F *) plotter_file -> Get(dir + "/totalmcunc") : NULL;
-		  Result mass = CalculateResult(h_chi, h_chi_syst, CalculateMass);
-		  Result width = CalculateResult(h_chi, h_chi_syst, CalculateWidth);
+		  h_chi_syst = type_ind == 0 ? (TH1F *) plotter_file -> Get(dir + "/totalmcunc") : nullptr;
+		  Result mass(calculate_result(h_chi, h_chi_syst, CalculateMass, nullptr, 3.0, 1.0));
+		  mass.SetName("mass");
+		  // printf("calculating width\n"); getchar();
+		  Result width(calculate_result(h_chi, h_chi_syst, CalculateWidth, nullptr, 3.0, 1.0));
+		  width.SetName("width");
 		  add_entry(table_file, mass, width);
-		  printf ("** listing \n");
+
 		  mass.ls();
 		  width.ls();
 		}
@@ -142,8 +125,9 @@ int main(int argc, char* argv[])
 	}
     }
 
-  app.Run(kTRUE);
-  app.Terminate();
+  printf("Done\n");
+  //app.Run(kTRUE);
+  //app.Terminate();
 
   plotter_file -> Close();
 
@@ -162,9 +146,12 @@ TH1F * sum_MC(const char * dir)
 	       
 }
 
-double CalculateMass(TH1F * h)
+double CalculateMass(TH1 * h, void *params)
 {
-  printf("**** Calculating mass \n");
+  for (unsigned char bind = 1; bind <= h-> GetNbinsX(); bind ++)
+    {
+      //h -> SetBinError(bind, h -> GetBinError(bind) * 0.001);
+    }
   const double y_max = h -> GetMaximum();
   int bin_max = 0;
   h -> GetBinWithContent(y_max, bin_max);
@@ -177,51 +164,68 @@ double CalculateMass(TH1F * h)
   TF1 polynomial("polynomial", "[0]*x*x + [1]*x + [2]");
   polynomial.SetParameters(a, b, c);
   polynomial.SetLineColor(kGreen);
-  TCanvas canvas(TString("mass_histo") + h -> GetName(), TString("mass_histo") + h -> GetTitle());
-  h -> Draw();
-  h -> Fit(& polynomial, "", "", x_max - 8.0, x_max + 8.0);
+  // gROOT -> SetBatch(kTRUE);
+  // TCanvas canvas(TString("mass_histo") + h -> GetName(), TString("mass_histo") + h -> GetTitle());
+  // h -> Draw();
+  const double interval = TString(h -> GetName()).Contains("lept_w") ? 1.0: 20.0;
+  TFitResultPtr r =h -> Fit(& polynomial, "QS", "", x_max - interval, x_max + interval);
   double results[3];
   polynomial.GetParameters(results);
   const double mass = - results[1]/(2.0 * results[0]);
   const double peak = results[2] - results[1] * results[1]/(4 * results[0]);
-  canvas.SaveAs(TString("masses/plots/") + h -> GetName() + ".png");
-  printf("***** mass calculated\n");
+  // canvas.SaveAs(TString("masses/plots/") + h -> GetName() + ((Long_t) mass) + ".png");
+//  printf("chi2 %f mass %f\n", r -> Chi2(), mass);
+  //delete r.Get();
   return mass; 
 }
 
 
-double CalculateWidth(TH1F * h)
+double CalculateWidth(TH1 * h, void *params)
 {
-  printf("!!! calculating width\n");
+  //  printf("!!! calculating width\n");
+  // for (unsigned char bind = 1; bind <= h-> GetNbinsX(); bind ++)
+  //   {
+  //     h -> SetBinError(bind, h -> GetBinError(bind) * 0.001);
+  //   }
+  auto avg = [](TH1 * h, unsigned char bind) -> double
+    {
+      return (h -> GetBinContent(bind - 1) + h -> GetBinContent(bind) + h -> GetBinContent(bind + 1))/3.0;
+      return (h -> GetBinContent(bind - 2) + h -> GetBinContent(bind - 1) + h -> GetBinContent(bind) + h -> GetBinContent(bind + 1) + h -> GetBinContent(bind + 2))/5.0;
+    };
   enum side {LEFT, RIGHT};
+  const unsigned int nbins(h -> GetNbinsX());
   double x_FWHM[2];
 
   const double y_max = h -> GetMaximum();
   int bin_max = 0;
   h -> GetBinWithContent(y_max, bin_max);
   const double x_max = h -> GetBinCenter(bin_max);
-  // printf("%s\n", h -> GetName());
+  //printf("%s\n", h -> GetName());
   if (TString(h -> GetName()).Contains(tag_jet_types_[LEPT_W]))
     {
       for (unsigned int side_ind = LEFT; side_ind <= RIGHT; side_ind ++)
 	{
-	  unsigned short bin_ind = side_ind == LEFT ? 0 : h-> GetNbinsX(); 
+	  unsigned short bin_ind = side_ind == LEFT ? 2 : h-> GetNbinsX() - 1; 
 	  do
 	    {
 	      if (side_ind == LEFT)
 		{
 		  bin_ind ++;
+		  if (bin_ind == nbins + 1)
+		    throw "bin_ind = nbins  leptonic\n";
 		}
 	      else
 		{ 
 		  bin_ind --;
+		  if (bin_ind == 0)
+		    throw "bin_ind = 1 leptonic\n";
 		}
 	    }while (h -> GetBinContent(side_ind == LEFT ? bin_ind + 1 : bin_ind -1) < y_max/2.0);
-	  printf("side_ind %u bin_ind %u low edge %f width %f\n", side_ind, bin_ind, h -> GetBinLowEdge(bin_ind), h-> GetBinWidth(bin_ind)); 
+	  //	  printf("side_ind %u bin_ind %u low edge %f width %f\n", side_ind, bin_ind, h -> GetBinLowEdge(bin_ind), h-> GetBinWidth(bin_ind)); 
 	  x_FWHM[side_ind] = side_ind == LEFT ? h -> GetBinLowEdge(bin_ind) + h -> GetBinWidth(bin_ind) : h -> GetBinLowEdge(bin_ind); 
 	}
       const double width = x_FWHM[RIGHT] - x_FWHM[LEFT];
-      printf("leptonic W width %f\n", width);
+      //printf("leptonic W width %f\n", width);
       
       return width;
     }
@@ -233,13 +237,15 @@ double CalculateWidth(TH1F * h)
 
   TF1 polynomial("polynomial", "[0]*x*x + [1]*x + [2]");
   polynomial.SetParameters(a, b, c);
-  TCanvas canvas("canvas_width", "canvas_width");
-  h -> Draw();
+  //TCanvas canvas("canvas_width", "canvas_width");
+  //h -> Draw();
   polynomial.SetLineColor(kBlue);
-  h -> Fit(& polynomial, "", "", x_max - 8.0, x_max + 8.0);
+  // h -> Print("all");
+  //   printf("x_max %f \n", x_max);
+  h -> Fit(& polynomial, "Q", "", x_max - 12.0, x_max + 12.0);
 
-  canvas.Update();
-  canvas.Modified();
+  //canvas.Update();
+  //canvas.Modified();
   double results[3];
   polynomial.GetParameters(results);
   
@@ -258,18 +264,32 @@ double CalculateWidth(TH1F * h)
       double x[3];
       for (unsigned char ind = 0; ind < 3; ind ++)
 	{
-	  unsigned short bin_ind = side_ind == LEFT ? 0 : h -> GetNbinsX();
+	  unsigned short bin_ind = side_ind == LEFT ? 1 : h -> GetNbinsX();
 	  do
 	    {
 	      if (side_ind == LEFT)
 		{
 		  bin_ind ++;
+		  // printf("ind %u bin_ind %u avg %f y[ind] %f\n", ind, bin_ind, avg(h, bin_ind -1), y[ind]);
+		  if (bin_ind == nbins - 1 )
+		    {
+		      //		      h -> Print("all");
+		      throw "bin_ind = nbins -1\n";
+		    }
 		}
 	      else
 		{
 		  bin_ind --;
+		  //printf("ind %u bin_ind %u avg %f y[ind] %f\n", ind, bin_ind, avg(h, bin_ind -1), y[ind]);
+		  if (bin_ind == 2)
+		    {
+		      //h -> Print("all");
+		      
+		      throw "bin_ind = 2\n";
+		    }
 		}
-	    } while(h -> GetBinContent(side_ind == LEFT ? bin_ind + 1 : bin_ind - 1) < y[ind]);
+	     
+	    } while(avg(h, side_ind == LEFT ? bin_ind + 1 : bin_ind - 1) < y[ind]);
 	  //	  h -> GetBinWithContent(y[ind], bin, side_ind == LEFT ? 0 : bin_max);
 	  x[ind] = side_ind == LEFT ?  h -> GetBinLowEdge(bin_ind) + h -> GetBinWidth(bin_ind) : h -> GetBinLowEdge(bin_ind);
 	  if (ind == 2)
@@ -291,7 +311,6 @@ double CalculateWidth(TH1F * h)
 		  M[ind_M_row][ind_M_col] = (ind_M_col == coeff_ind) ? y[ind_M_row] : A[ind_M_row][ind_M_col];
 		}
 	    }
-	  //printf("detM %f detA %f\n", determinant(3, M), determinant(3, A));
 	  coeff[coeff_ind] = determinant(3, M)/determinant(3, A);
 	}
       
@@ -308,7 +327,10 @@ double CalculateWidth(TH1F * h)
       //h -> Draw();
       
       FWHM_polynomial.Draw("SAME");
-      h -> Fit(& FWHM_polynomial, "", "", x_min, x_max);
+      //  printf("x_min %f x_max %f\n", x_min, x_max);
+      TFitResultPtr r(h -> Fit(& FWHM_polynomial, "QS", "", x_min, x_max));
+      if (not r.Get())
+	throw "failed fit\n";
       /* canvas.Update();
 	 canvas.Modified();*/
       double results[3];
@@ -340,50 +362,11 @@ double CalculateWidth(TH1F * h)
     }
   const double width = x_FWHM[RIGHT] - x_FWHM[LEFT];
   //printf("width %f\n", width);
-  printf("!!!!! width calculated\n");
+  //  printf("!!!!! width calculated\n");
   //  getchar();
   return width; 
 }
 
-Result CalculateResult(TH1F *h, TH1F * h_syst, double ( *funcptr )(TH1F*))
-{
-  Result result("");
-  result.value = funcptr(h);
-  //  static const char * error_directions[2] = {"HIGH", "LOW"};
-  static const char   error_signs[2]      = {1, -1};
-  //  static const char * error_type[2]       = {"STAT", "SYST"};
-  for (unsigned short type_ind = 0; type_ind < (h_syst ? 2 : 1); type_ind ++)
-    {
-      for (unsigned short direction_ind = 0; direction_ind < 2; direction_ind ++)
-	{
-	  printf("type %u, direction %u\n", type_ind, direction_ind);
-	  TH1F * h_clone = (TH1F*) h -> Clone(TString("clone") + h -> GetName());
-	  for (unsigned short bin_ind = 0; bin_ind < h -> GetNbinsX(); bin_ind ++)
-	    {
-	      const double bin_error = type_ind == 0 ? TMath::Sqrt(h -> GetBinContent(bin_ind)) : h_syst -> GetBinError(bin_ind);
-	      //	      printf("type_ind %u, GetBinContent(bin_ind) %f, bin_error %f \n", type_ind, h -> GetBinContent(bin_ind), bin_error);
-	      h_clone -> SetBinContent(bin_ind, h_clone -> GetBinContent(bin_ind) + error_signs[direction_ind] * bin_error); 
-	    }
-	  const double error = result.value - funcptr(h_clone);
-	  printf("type_ind %u error %f\n", type_ind, error); 
-	  unsigned short high_low = error > 0 ? 0 : 1; 
-	  if (not result.error_set[type_ind][high_low])
-	    {
-	      result.error_set[type_ind][high_low] = true;
-  	      result.error[type_ind][high_low] = error;
-	    }
-	  else
-	    {
-	      result.error[type_ind][high_low] = TMath::Sqrt(TMath::Power(error, 2) + TMath::Power(result.error[type_ind][high_low], 2));
-	    }
-
-
-	  delete h_clone;
-	}
-			       
-    }
-  return result;
-}
 
 void prepare_header(FILE * file, const char * caption, const char * label, SourceCode_t source)
 {
@@ -391,7 +374,7 @@ void prepare_header(FILE * file, const char * caption, const char * label, Sourc
   fprintf(file, "\t\\centering\n");
   fprintf(file, "\t\\caption{%s}\n", caption);
   fprintf(file, "\t\\label{tab:%s}\n", label);
-  fprintf(file, "\t\t\\begin{tabular}{l|rr}\n");
+  fprintf(file, "\t\\begin{tabular}{l|rr}\n");
   fprintf(file, "\t\t\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline\\noalign{\\global\\arrayrulewidth=0.4pt}\n");
   char err[128];
   if (source == MC)
@@ -404,8 +387,9 @@ void prepare_header(FILE * file, const char * caption, const char * label, Sourc
     }
   if (string(env).compare("lx") == 0)
     {
-      fprintf(file, "\t\t\\makecell{\bf Object} & \\makecell{\\bf Mass%s [GeV]} & \\makecell{\bf FWHM%s [GeV]}\\\\\n", err, err);
-    } else
+      fprintf(file, "\t\t{\\bf Object} & {\\bf Mass%s [GeV]} & {\\bf FWHM%s [GeV]}\\\\\n", err, err);
+    } 
+  else
     {
       fprintf(file, "\t\t\\makecell[c]{\\bf Object}&\\makecell[c]{\\bf Mass%s [GeV]}&\\makecell[c]{\\bf FWHM%s [GeV]}\\\\\n", err, err);
     }
@@ -414,21 +398,13 @@ void prepare_header(FILE * file, const char * caption, const char * label, Sourc
 
 void add_entry(FILE * table_file, Result mass_result, Result width_result)
 {
-  if (mass_result.error_set[1][0] and mass_result.error_set[1][1])
-    {
-      fprintf(table_file, "\t& %.3e \t$\\pm$ %.3e \t$\\pm$ %.3e \t& %.3e \t$\\pm$ %.3e \t$\\pm$ %.3e \\\\\n", mass_result.value, mass_result.GetAverageStats(), mass_result.GetAverageSyst(), width_result.value, width_result.GetAverageStats(), width_result.GetAverageSyst());
-    }
-  else
-    {
-      fprintf(table_file, "\t& %.3e \t$\\pm$ %.3e \t& %.3e \t$\\pm$ %.3e \\\\\n", mass_result.value, mass_result.GetAverageStats(), width_result.value, width_result.GetAverageStats());
-
-    }
+  fprintf(table_file, "\t& %s \t& %s \\\\\n", mass_result.latex(".3e").Data(), width_result.latex(".3e").Data());
 }
 
 void prepare_footer(FILE *file)
-{
+ {
   fprintf(file, "\t\t\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline\n");
-  fprintf(file, "\t\t\\end{tabular}\n");
+  fprintf(file, "\t\\end{tabular}\n");
   fprintf(file, "\\end{table}\n");
 
 }

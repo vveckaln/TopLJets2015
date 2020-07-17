@@ -24,18 +24,28 @@ then
 fi
 
 mkdir batchnodeplots
-mkdir -p ${OUTPUTDIR}
+eos root://eosuser.cern.ch// mkdir -p ${OUTPUTDIR}
+eos root://eosuser.cern.ch// rm ${OUTPUTDIR}/plotter_${BEGINNAME}.root
+# python $PROJECT/condor/makeplots/plotter.py -i $INPUTDIR -O batchnodeplots -j $PROJECT/data/era2016/samples.json,$PROJECT/data/era2016/qcd_samples.json  --systTheorJson=$PROJECT/data/era2016/syst_samples.json --systExpJson=$PROJECT/data/era2016/expsyst_samples.json -l $total_lumi -m $METHOD --end=$ENDNAME --begin=$BEGINNAME --outName="plotter_$BEGINNAME.root" --lfile=$LISTFILE
+python $PROJECT/condor/makeplots/plottertest.py -i $INPUTDIR -O batchnodeplots -j $PROJECT/data/era2016/samples.json,$PROJECT/data/era2016/qcd_samples.json  --systTheorJson=$PROJECT/data/era2016/syst_samples_structured.json --systExpJson=$PROJECT/data/era2016/expsyst_samples_structured.json -l $total_lumi -m $METHOD --end=$ENDNAME --begin=$BEGINNAME --outName="plotter_$BEGINNAME.root" --lfile=$LISTFILE
 
-python $PROJECT/condor/makeplots/plotter.py -i $INPUTDIR -O batchnodeplots -j $PROJECT/data/era2016/samples.json,$PROJECT/data/era2016/qcd_samples.json  --systTheorJson=$PROJECT/data/era2016/syst_samples.json --systExpJson=$PROJECT/data/era2016/expsyst_samples.json -l $total_lumi -m $METHOD --end=$ENDNAME --begin=$BEGINNAME --outName="plotter_$BEGINNAME.root" --lfile=$LISTFILE
 EXIT_CODE_PYTHON=$?
-echo "exit code " $EXIT_CODE_PYTHON 
+echo "exit code from python" $EXIT_CODE_PYTHON 
 if [ $EXIT_CODE_PYTHON -eq 0 ]; 
 then
-    for file in batchnodeplots/*;
-    do
-	sh ${PROJECT}/scripts/EOS_file_copy.sh $file ${OUTPUTDIR}
-    done
+    if [ -d batchnodeplots ];
+	then
+	for file in batchnodeplots/*;
+	do
+	    if [ -f $file ]; 
+		then
+		sh ${PROJECT}/scripts/EOS_file_copy.sh $file ${OUTPUTDIR}
+	    fi
+	done
+    else
+	echo "no directory batchnodeplots"
+    fi
 else
     echo "probe"
 fi
-exit $EXIT_CODE_PYTHON || $EXIT_CODE_SCRAM
+#exit $EXIT_CODE_PYTHON || $EXIT_CODE_SCRAM

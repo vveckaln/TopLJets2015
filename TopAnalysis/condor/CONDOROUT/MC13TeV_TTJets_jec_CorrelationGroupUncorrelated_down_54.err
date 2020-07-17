@@ -1,29 +1,0 @@
-klist
-Ticket cache: FILE:/pool/condor/dir_31010/vveckaln.cc
-Default principal: vveckaln@CERN.CH
-
-Valid starting     Expires            Service principal
-12/26/18 07:06:16  12/27/18 08:06:16  krbtgt/CERN.CH@CERN.CH
-	renew until 12/31/18 07:06:16
-12/26/18 07:06:17  12/27/18 08:06:16  afs/cern.ch@CERN.CH
-	renew until 12/31/18 07:06:16
-end klist
-ls EOS
-ls: cannot open directory /eos/user/v/vveckaln: Input/output error
-end ls EOS
-EXIT_CODE_SCRAM 0
-exit code in RunMethodPacked 0
-caught error code 0
-checking sanity of file /pool/condor/dir_31010/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down_54.root
-file is good
-Sanity test done
-checking sanity of file /pool/condor/dir_31010/migration_MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down_54.root
-file is good
-Sanity test done
-EXIT_CODE_PYTHON  0
-[16MB/81.99MB][ 19%][=========>                                        ][16MB/s]  [80MB/81.99MB][ 97%][================================================> ][26.67MB/s]  [81.99MB/81.99MB][100%][==================================================][27.33MB/s]  [81.99MB/81.99MB][100%][==================================================][5.466MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/Chunks/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down_54.root: Input/output error
-ls: cannot access /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/Chunks/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down_54.root: Input/output error
-[16MB/31.31MB][ 51%][=========================>                        ][4MB/s]  [31.31MB/31.31MB][100%][==================================================][7.828MB/s]  [31.31MB/31.31MB][100%][==================================================][3.479MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down/migration_MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down_54.root: Input/output error
-ls: cannot access /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/migration/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down/migration_MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_down_54.root: Input/output error

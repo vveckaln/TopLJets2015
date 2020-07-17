@@ -1,0 +1,56 @@
+klist
+Ticket cache: FILE:/pool/condor/dir_26319/vveckaln.cc
+Default principal: vveckaln@CERN.CH
+
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:26:35  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
+end klist
+ls EOS
+analysis_MC13TeV_TTJets
+analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
+analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
+bins
+cernbox
+chunksMC13TeV_TTHets
+copy_test
+data
+flipped
+flipped_old
+merged_plots
+migration
+migrationMC13TeV_TTHets
+moved.cc
+processing
+reserve
+rivet
+rivet_results_23_March
+rivet_test
+rivet_test_21_March
+SWAN_projects
+test
+testdir
+unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
+unfolding_nominal
+unfolding_sherpa
+end ls EOS
+EXIT_CODE_SCRAM 0
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_dire2002//Chunks/MC13TeV_TTJets_dire2002/.sys.a does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_dire2002//Chunks/MC13TeV_TTJets_dire2002/.sys.a does not exist
+[15.22MB/15.22MB][100%][==================================================][15.22MB/s]  [15.22MB/15.22MB][100%][==================================================][15.22MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_dire2002//HADDChunks/MC13TeV_TTJets_dire2002.root
+file is good
+Sanity test done
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_dire2002//migration/MC13TeV_TTJets_dire2002/.sys.a does not exist
+[16MB/168MB][  9%][====>                                             ][16MB/s]  [144MB/168MB][ 85%][==========================================>       ][144MB/s]  [168MB/168MB][100%][==================================================][168MB/s]  [168MB/168MB][100%][==================================================][168MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_dire2002//HADDmigration/migration_MC13TeV_TTJets_dire2002.root
+file is good
+Sanity test done
+EXIT_CODE_PYTHON  0

@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_32327/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_6441/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/31/18 15:18:29  01/01/19 16:18:29  krbtgt/CERN.CH@CERN.CH
-	renew until 01/05/19 15:10:18
-12/31/18 15:32:12  01/01/19 16:18:29  afs/cern.ch@CERN.CH
-	renew until 01/05/19 15:10:18
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:26:36  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,22 +32,23 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/62.23MB][ 25%][============>                                     ][16MB/s]  [62.23MB/62.23MB][100%][==================================================][62.23MB/s]  [62.23MB/62.23MB][100%][==================================================][20.74MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks/MC13TeV_TTJets_herwig_jec_CorrelationGroupUncorrelated_down.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/Chunks/MC13TeV_TTJets_herwig_jec_CorrelationGroupUncorrelated_down/.sys.a does not exist
+[16MB/62.22MB][ 25%][============>                                     ][16MB/s]  [62.22MB/62.22MB][100%][==================================================][62.22MB/s]  [62.22MB/62.22MB][100%][==================================================][62.22MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDChunks/MC13TeV_TTJets_herwig_jec_CorrelationGroupUncorrelated_down.root
 file is good
 Sanity test done
-[16MB/640.4MB][  2%][=>                                                ][16MB/s]  [32MB/640.4MB][  4%][==>                                               ][32MB/s]  [64MB/640.4MB][  9%][====>                                             ][32MB/s]  [96MB/640.4MB][ 14%][=======>                                          ][32MB/s]  [144MB/640.4MB][ 22%][===========>                                      ][36MB/s]  [240MB/640.4MB][ 37%][==================>                               ][48MB/s]  [288MB/640.4MB][ 44%][======================>                           ][48MB/s]  [352MB/640.4MB][ 54%][===========================>                      ][50.29MB/s]  [400MB/640.4MB][ 62%][===============================>                  ][50MB/s]  [448MB/640.4MB][ 69%][==================================>               ][49.78MB/s]  [496MB/640.4MB][ 77%][======================================>           ][49.6MB/s]  [544MB/640.4MB][ 84%][==========================================>       ][49.45MB/s]  [592MB/640.4MB][ 92%][==============================================>   ][49.33MB/s]  [640MB/640.4MB][ 99%][=================================================>][49.23MB/s]  [640.4MB/640.4MB][100%][==================================================][49.26MB/s]  [640.4MB/640.4MB][100%][==================================================][45.74MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration/migration_MC13TeV_TTJets_herwig_jec_CorrelationGroupUncorrelated_down.root
+[16MB/651.1MB][  2%][=>                                                ][16MB/s]  [96MB/651.1MB][ 14%][=======>                                          ][96MB/s]  [128MB/651.1MB][ 19%][=========>                                        ][64MB/s]  [160MB/651.1MB][ 24%][============>                                     ][53.33MB/s]  [192MB/651.1MB][ 29%][==============>                                   ][48MB/s]  [224MB/651.1MB][ 34%][=================>                                ][44.8MB/s]  [256MB/651.1MB][ 39%][===================>                              ][42.67MB/s]  [288MB/651.1MB][ 44%][======================>                           ][41.14MB/s]  [320MB/651.1MB][ 49%][========================>                         ][40MB/s]  [336MB/651.1MB][ 51%][=========================>                        ][37.33MB/s]  [400MB/651.1MB][ 61%][==============================>                   ][40MB/s]  [448MB/651.1MB][ 68%][==================================>               ][40.73MB/s]  [464MB/651.1MB][ 71%][===================================>              ][38.67MB/s]  [496MB/651.1MB][ 76%][======================================>           ][38.15MB/s]  [528MB/651.1MB][ 81%][========================================>         ][37.71MB/s]  [544MB/651.1MB][ 83%][=========================================>        ][36.27MB/s]  [576MB/651.1MB][ 88%][============================================>     ][36MB/s]  [608MB/651.1MB][ 93%][==============================================>   ][35.76MB/s]  [640MB/651.1MB][ 98%][=================================================>][35.56MB/s]  [651.1MB/651.1MB][100%][==================================================][36.17MB/s]  [651.1MB/651.1MB][100%][==================================================][32.56MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDmigration/migration_MC13TeV_TTJets_herwig_jec_CorrelationGroupUncorrelated_down.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

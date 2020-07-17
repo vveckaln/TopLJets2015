@@ -4,3 +4,33 @@ error       = /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJ
 log         = /afs/cern.ch/work/v/vveckaln/private/CMSSW_8_0_26_patch1/src/TopLJets2015/TopAnalysis/condor/makeplots/FARM/*.$(ClusterId).log
 arguments   = $(ClusterId) $(ProcId)
 +JobFlavour = "longlunch"
+cfgFile=E0_pre_j0eta_cflip
+queue 1
+cfgFile=E_chiblb2l_E_chconst_reco_jetprt_cflip
+queue 1
+cfgFile=E_mag_PV_chconst_reco_had_b_cflip
+queue 1
+cfgFile=E_pull_angle_PFNle20_reco_scnd_leading_jet_lept_t_DeltaRle1p0_cflip
+queue 1
+cfgFile=E_pull_angle_PVMagle0p005_gen_scnd_leading_jet_lept_b_DeltaRgt1p0_cflip
+queue 1
+cfgFile=E_pull_angle_hadWPtgt50p0GeV_reco_scnd_leading_jet_leading_jet_DeltaRTotal_cflip
+queue 1
+cfgFile=L_eta_PV_bckg_chconst_gen_lept_b_cflip
+queue 1
+cfgFile=L_phi_PV_hadWPtle50p0GeV_gen_leading_jet_cflip
+queue 1
+cfgFile=L_pull_angle_PFPtle0p5GeV_gen_scnd_leading_jet_lept_b_DeltaRgt1p0_cflip
+queue 1
+cfgFile=L_pull_angle_allconst_reco_scnd_leading_jet_leading_jet_DeltaRTotal_cflip
+queue 1
+cfgFile=M_JetConst_M_chconst_reco_leading_jet_cflip
+queue 1
+cfgFile=M_mag_PV_bckg_PFPtgt0p5GeV_gen_leading_jet_cflip
+queue 1
+cfgFile=M_pull_angle_PFNle20_gen_scnd_leading_jet_lept_b_DeltaRgt1p0_cflip
+queue 1
+cfgFile=M_pull_angle_PVMaggt0p005_reco_scnd_leading_jet_leading_jet_DeltaRTotal_cflip
+queue 1
+cfgFile=M_pull_angle_hadWPtgt50p0GeV_gen_scnd_leading_jet_had_t_DeltaRle1p0_cflip
+queue 1

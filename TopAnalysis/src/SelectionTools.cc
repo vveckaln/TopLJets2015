@@ -64,7 +64,10 @@ std::vector<Particle> SelectionTool::getTopFlaggedLeptons(MiniEvent_t &ev){
 }
 
 //
-std::vector<Particle> SelectionTool::getLeptons(std::vector<Particle> &leptons,int qualBit,double minPt, double maxEta,std::vector<Particle> *vetoParticles){
+std::vector<Particle> SelectionTool::getLeptons(std::vector<Particle> &leptons,int qualBit,double minPt, double maxEta,std::vector<Particle> *vetoParticles)
+{
+  // printf("%f %f\n", minPt, maxEta);
+  // getchar();
   std::vector<Particle> selLeptons;
 
   for(size_t i =0; i<leptons.size(); i++)
@@ -156,6 +159,7 @@ std::vector<Jet> SelectionTool::getGoodJets(MiniEvent_t &ev, double minPt, doubl
 		    << " pt=" << jp4.Pt() << " eta=" << jp4.Eta() << " csv=" << ev.j_csv[k] << endl;
 
     
+    
     jets.push_back(jet);
     jet_indices_.push_back(k);
   }
@@ -182,7 +186,47 @@ std::vector<Jet> SelectionTool::getGoodJets(MiniEvent_t &ev, double minPt, doubl
 }
 
 //
-std::vector<Jet> SelectionTool::getGenJets(MiniEvent_t &ev, double minPt, double maxEta, std::vector<Particle> *leptons) {
+vector<Jet> & SelectionTool::getJetsSelect()
+{ 
+  vector<Jet> jets;
+  vector<unsigned int> jet_indices;
+  unsigned int ind = 0;
+  for (vector<Jet>::iterator it = jets_.begin(); it != jets_.end(); it ++)
+    {
+      if (abs(it -> eta()) < 2.0)
+	{
+	  jets.push_back(*it);
+	  jet_indices.push_back(jet_indices_[ind]);
+	}    
+      ind ++;
+    }
+  jet_indices_ = jet_indices;
+  jets_ = jets;
+  return jets_; 
+}
+
+vector<Jet> & SelectionTool::getGenJetsSelect()
+{ 
+  vector<Jet> jets;
+  vector<unsigned int > jet_indices;
+  unsigned int ind = 0;
+  for (vector<Jet>::iterator it = genJets_.begin(); it != genJets_.end(); it ++)
+    {
+      if (abs(it -> eta()) < 2.0)
+	{
+	  jets.push_back(*it);
+	  jet_indices.push_back(gen_jet_indices_[ind]);
+	}    
+      ind ++;
+    }
+  genJets_ = jets;
+  gen_jet_indices_ = jet_indices;
+  return jets_; 
+}
+
+
+std::vector<Jet> SelectionTool::getGenJets(MiniEvent_t &ev, double minPt, double maxEta, std::vector<Particle> *leptons) 
+{
   std::vector<Jet> jets;
   
   for (int i = 0; i < ev.ng; i++) {
@@ -278,7 +322,7 @@ TString SelectionTool::flagFinalState(MiniEvent_t &ev, std::vector<Particle> pre
   }
 
   //select jets based on the leptons
-  jets_=getGoodJets(ev,30.,2.4,leptons_);
+  jets_=getGoodJets(ev, 30.0, 2.4, leptons_);
 
   //build the met
   met_.SetPtEtaPhiM( ev.met_pt[0], 0, ev.met_phi[0], 0. );

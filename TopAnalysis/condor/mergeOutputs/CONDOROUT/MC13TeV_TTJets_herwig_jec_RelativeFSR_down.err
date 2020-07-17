@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_3336/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_19480/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/31/18 01:28:24  01/01/19 02:28:24  krbtgt/CERN.CH@CERN.CH
-	renew until 01/04/19 05:28:17
-12/31/18 01:28:25  01/01/19 02:28:24  afs/cern.ch@CERN.CH
-	renew until 01/04/19 05:28:17
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:26:30  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,22 +32,24 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/62.24MB][ 25%][============>                                     ][3.2MB/s]  [32MB/62.24MB][ 51%][=========================>                        ][4.571MB/s]  [62.24MB/62.24MB][100%][==================================================][8.891MB/s]  [62.24MB/62.24MB][100%][==================================================][7.78MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks/MC13TeV_TTJets_herwig_jec_RelativeFSR_down.root
+[16MB/62.22MB][ 25%][============>                                     ][16MB/s]  [62.22MB/62.22MB][100%][==================================================][62.22MB/s]  [62.22MB/62.22MB][100%][==================================================][62.22MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDChunks/MC13TeV_TTJets_herwig_jec_RelativeFSR_down.root
 file is good
 Sanity test done
-[16MB/644.1MB][  2%][=>                                                ][5.333MB/s]  [32MB/644.1MB][  4%][==>                                               ][6.4MB/s]  [48MB/644.1MB][  7%][===>                                              ][8MB/s]  [64MB/644.1MB][  9%][====>                                             ][9.143MB/s]  [80MB/644.1MB][ 12%][======>                                           ][8MB/s]  [96MB/644.1MB][ 14%][=======>                                          ][8.727MB/s]  [112MB/644.1MB][ 17%][========>                                         ][8MB/s]  [128MB/644.1MB][ 19%][=========>                                        ][8.533MB/s]  [144MB/644.1MB][ 22%][===========>                                      ][9MB/s]  [160MB/644.1MB][ 24%][============>                                     ][9.412MB/s]  [208MB/644.1MB][ 32%][================>                                 ][11.56MB/s]  [224MB/644.1MB][ 34%][=================>                                ][11.79MB/s]  [320MB/644.1MB][ 49%][========================>                         ][16MB/s]  [416MB/644.1MB][ 64%][================================>                 ][19.81MB/s]  [512MB/644.1MB][ 79%][=======================================>          ][23.27MB/s]  [608MB/644.1MB][ 94%][===============================================>  ][26.43MB/s]  [644.1MB/644.1MB][100%][==================================================][28MB/s]  [644.1MB/644.1MB][100%][==================================================][26.84MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration/migration_MC13TeV_TTJets_herwig_jec_RelativeFSR_down.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/migration/MC13TeV_TTJets_herwig_jec_RelativeFSR_down/.sys.a does not exist
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/migration/MC13TeV_TTJets_herwig_jec_RelativeFSR_down/.sys.a does not exist
+[16MB/654.8MB][  2%][=>                                                ][16MB/s]  [144MB/654.8MB][ 21%][==========>                                       ][144MB/s]  [256MB/654.8MB][ 39%][===================>                              ][128MB/s]  [368MB/654.8MB][ 56%][============================>                     ][122.7MB/s]  [448MB/654.8MB][ 68%][==================================>               ][112MB/s]  [576MB/654.8MB][ 87%][===========================================>      ][115.2MB/s]  [654.8MB/654.8MB][100%][==================================================][131MB/s]  [654.8MB/654.8MB][100%][==================================================][109.1MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDmigration/migration_MC13TeV_TTJets_herwig_jec_RelativeFSR_down.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

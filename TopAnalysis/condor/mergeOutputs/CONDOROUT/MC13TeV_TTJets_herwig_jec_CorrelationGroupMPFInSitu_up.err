@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_25617/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_15181/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/30/18 20:16:49  12/31/18 21:16:49  krbtgt/CERN.CH@CERN.CH
-	renew until 01/02/19 07:31:16
-12/30/18 20:16:50  12/31/18 21:16:49  afs/cern.ch@CERN.CH
-	renew until 01/02/19 07:31:16
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:26:31  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,22 +32,24 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/62.25MB][ 25%][============>                                     ][16MB/s]  [62.25MB/62.25MB][100%][==================================================][62.25MB/s]  [62.25MB/62.25MB][100%][==================================================][20.75MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks/MC13TeV_TTJets_herwig_jec_CorrelationGroupMPFInSitu_up.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/Chunks/MC13TeV_TTJets_herwig_jec_CorrelationGroupMPFInSitu_up/.sys.a does not exist
+[16MB/62.23MB][ 25%][============>                                     ][16MB/s]  [62.23MB/62.23MB][100%][==================================================][62.23MB/s]  [62.23MB/62.23MB][100%][==================================================][62.23MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDChunks/MC13TeV_TTJets_herwig_jec_CorrelationGroupMPFInSitu_up.root
 file is good
 Sanity test done
-[16MB/644.3MB][  2%][=>                                                ][16MB/s]  [48MB/644.3MB][  7%][===>                                              ][48MB/s]  [64MB/644.3MB][  9%][====>                                             ][32MB/s]  [112MB/644.3MB][ 17%][========>                                         ][37.33MB/s]  [176MB/644.3MB][ 27%][=============>                                    ][44MB/s]  [256MB/644.3MB][ 39%][===================>                              ][51.2MB/s]  [336MB/644.3MB][ 52%][==========================>                       ][56MB/s]  [400MB/644.3MB][ 62%][===============================>                  ][57.14MB/s]  [480MB/644.3MB][ 74%][=====================================>            ][60MB/s]  [544MB/644.3MB][ 84%][==========================================>       ][60.44MB/s]  [608MB/644.3MB][ 94%][===============================================>  ][60.8MB/s]  [644.3MB/644.3MB][100%][==================================================][64.43MB/s]  [644.3MB/644.3MB][100%][==================================================][58.57MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration/migration_MC13TeV_TTJets_herwig_jec_CorrelationGroupMPFInSitu_up.root
+Error in <TFile::TFile>: file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/migration/MC13TeV_TTJets_herwig_jec_CorrelationGroupMPFInSitu_up/.sys.a does not exist
+[16MB/655MB][  2%][=>                                                ][16MB/s]  [128MB/655MB][ 19%][=========>                                        ][128MB/s]  [288MB/655MB][ 43%][=====================>                            ][144MB/s]  [464MB/655MB][ 70%][===================================>              ][154.7MB/s]  [640MB/655MB][ 97%][================================================> ][160MB/s]  [655MB/655MB][100%][==================================================][163.7MB/s]  [655MB/655MB][100%][==================================================][163.7MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDmigration/migration_MC13TeV_TTJets_herwig_jec_CorrelationGroupMPFInSitu_up.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

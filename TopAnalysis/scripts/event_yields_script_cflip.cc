@@ -3,8 +3,9 @@
 #include "TH1F.h"
 #include "TCanvas.h"
 #include "TMath.h"
+#include <assert.h>
 const unsigned short N_bins = 4;
-const unsigned short N_MC_histo_names = 6;
+//const unsigned short N_MC_histo_names = 8;
 const char * MC_histo_table_label = "\\ttbar cflip";
 TString insertnumber(float, const char *);
 
@@ -15,10 +16,15 @@ void insert_MC(FILE *, double[N_bins]);
 void insert_MC_unc(FILE *, TH1 *);
 void insert_footer(FILE *);
 const char *pm = 0;
+const char *pmlx = "$\\pm$";
 using namespace std;
-int main()
+string environment;
+int main(int argc, char * argv[])
 {
-  pm = "+-";
+  assert(argc == 2);
+  environment = string(argv[1]);
+  if (environment.compare("lx") == 0)
+    pm = pmlx;
   FILE * file = fopen("event_yields_tables/event_yields_table_cflip.txt", "w");
   insert_header(file);
   TFile * plotter = TFile::Open("$EOS/analysis_MC13TeV_TTJets_cflip/plots/plotter.root");
@@ -27,8 +33,8 @@ int main()
   const unsigned short N_ch = 3;
   const char * ch_names[N_ch] = {"E", "M", "L"};
   const char * ch_titles[N_ch] = {"$e$", "$\\mu$", "Combined $\\ell$"};
-  const unsigned short N_histo_names = 7;
-  const char * histo_names[N_histo_names] = {"", "t#bar{t}", "Single top", "\\PW", "DY", "Multiboson", "t#bar{t}+V"};
+  const unsigned short N_histo_names = 8;
+  const char * histo_names[N_histo_names] = {"", "t#bar{t}", "Single top", "\\PW", "DY", "Multiboson", "t#bar{t}+V", "QCD"};
   const char * MC_histo_name = "t#bar{t} cflip";
   
   for (unsigned short level_ind  = 0; level_ind < N_levels - 1; level_ind ++)
@@ -59,7 +65,7 @@ int main()
 	      if (obj -> InheritsFrom("TH1"))
 		{
 		  TH1 * h = (TH1 *) obj;
-		   if (h -> GetName() == TString("totalmcunc"))
+		   if (h -> GetName() == dir + TString("_totalMCUnc"))
 		     {
 		       printf("MC unc histo found\n");
 		       h_MC_Unc = h;
@@ -95,12 +101,19 @@ int main()
 
 void insert_header(FILE * file)
 {
-  fprintf(file, "\\begin{longtable}{lS[table-format=9.1]S[table-format=9.1]S[table-format=9.1]S[table-format=9.1]}\n");
+  if (environment.compare("lx") != 0)
+    fprintf(file, "\\begin{longtable}{lS[table-format=9.1]S[table-format=9.1]S[table-format=9.1]S[table-format=9.1]}\n");
+  else
+    fprintf(file, "\\begin{longtable}{lrrrr}\n");
   //  fprintf(file, "\\begin{longtable}{lrrrr}\n");
   fprintf(file, "\\caption{Event yields for the colour octet \\PW sample.}\n");
   fprintf(file, "\\label{tab:yields_cflip}\\\\\n");
   fprintf(file, "\\noalign{\\global\\arrayrulewidth=0.5mm}\\hline");
-  fprintf(file, "\\makecell{\\textbf{Process}} & {\\boldmath$1 \\ell$} & {\\boldmath$1 \\ell + \\geq 4 j $} & {\\boldmath$1 \\ell + \\geq 4 j (2 b)$} & {\\boldmath$1 \\ell + 4 j (2 b, 2 lj)$} \n");
+  if (environment.compare("lx") != 0)
+    fprintf(file, "\\makecell{\\textbf{Process}} & {\\boldmath$1 \\ell$} & {\\boldmath$1 \\ell + \\geq 4 j $} & {\\boldmath$1 \\ell + \\geq 4 j (2 b)$} & {\\boldmath$1 \\ell + 4 j (2 b, 2 lj)$} \n");
+  else
+    fprintf(file, "\\textbf{Process} & {\\boldmath$1 \\ell$} & {\\boldmath$1 \\ell + \\geq 4 j $} & {\\boldmath$1 \\ell + \\geq 4 j (2 b)$} & {\\boldmath$1 \\ell + 4 j (2 b, 2 lj)$} \n");
+
 
   // fprintf(file, "Process & $1 \\ell$ & $1 \\ell + \\geq 4 j$ & $1 \\ell + \\geq 4 j (2 b)$ & $1 \\ell + 4 j (2 b, 2 lj)$ \\\\\n");
   // fprintf(file, "\\hline\n");

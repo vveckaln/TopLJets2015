@@ -1,5 +1,5 @@
 #! /bin/bash
-
+#sh condor/makeplots/haddplotter.sh /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/plots/
 dir=$1
 target=${dir}/plotter.root
 sources=""

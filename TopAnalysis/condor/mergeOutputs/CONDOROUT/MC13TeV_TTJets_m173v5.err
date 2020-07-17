@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_13500/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_22819/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/28/18 14:46:30  12/29/18 15:46:30  krbtgt/CERN.CH@CERN.CH
-	renew until 01/02/19 13:48:55
-12/28/18 15:09:34  12/29/18 15:46:30  afs/cern.ch@CERN.CH
-	renew until 01/02/19 13:48:55
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:26:30  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,21 +32,21 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/85.74MB][ 18%][=========>                                        ][16MB/s]  [80MB/85.74MB][ 93%][==============================================>   ][80MB/s]  [85.74MB/85.74MB][100%][==================================================][42.87MB/s]  [85.74MB/85.74MB][100%][==================================================][28.58MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks: Is a directory
+[16MB/85.69MB][ 18%][=========>                                        ][16MB/s]  [80MB/85.69MB][ 93%][==============================================>   ][80MB/s]  [85.69MB/85.69MB][100%][==================================================][85.69MB/s]  [85.69MB/85.69MB][100%][==================================================][85.69MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDChunks/MC13TeV_TTJets_m173v5.root
 file is good
 Sanity test done
-[16MB/438.6MB][  3%][=>                                                ][16MB/s]  [80MB/438.6MB][ 18%][=========>                                        ][80MB/s]  [112MB/438.6MB][ 25%][============>                                     ][56MB/s]  [192MB/438.6MB][ 43%][=====================>                            ][64MB/s]  [224MB/438.6MB][ 51%][=========================>                        ][56MB/s]  [272MB/438.6MB][ 62%][===============================>                  ][54.4MB/s]  [320MB/438.6MB][ 72%][====================================>             ][53.33MB/s]  [352MB/438.6MB][ 80%][========================================>         ][50.29MB/s]  [400MB/438.6MB][ 91%][=============================================>    ][50MB/s]  [438.6MB/438.6MB][100%][==================================================][48.73MB/s]  [438.6MB/438.6MB][100%][==================================================][43.86MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration: Is a directory
+[16MB/438.6MB][  3%][=>                                                ][16MB/s]  [96MB/438.6MB][ 21%][==========>                                       ][96MB/s]  [176MB/438.6MB][ 40%][====================>                             ][88MB/s]  [256MB/438.6MB][ 58%][=============================>                    ][85.33MB/s]  [336MB/438.6MB][ 76%][======================================>           ][84MB/s]  [432MB/438.6MB][ 98%][=================================================>][86.4MB/s]  [438.6MB/438.6MB][100%][==================================================][87.72MB/s]  [438.6MB/438.6MB][100%][==================================================][73.1MB/s]  
 checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets/HADDmigration/migration_MC13TeV_TTJets_m173v5.root
 file is good
 Sanity test done

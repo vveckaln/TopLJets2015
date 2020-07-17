@@ -1,52 +1,0 @@
-klist
-Ticket cache: FILE:/pool/condor/dir_7086/vveckaln.cc
-Default principal: vveckaln@CERN.CH
-
-Valid starting     Expires            Service principal
-12/26/18 07:54:33  12/27/18 08:54:33  krbtgt/CERN.CH@CERN.CH
-	renew until 12/31/18 07:54:33
-12/26/18 07:54:33  12/27/18 08:54:33  afs/cern.ch@CERN.CH
-	renew until 12/31/18 07:54:33
-end klist
-ls EOS
-analysis_MC13TeV_TTJets
-analysis_MC13TeV_TTJets_cflip
-analysis_MC13TeV_TTJets_herwig
-anothercomparison.cc
-bins
-cernbox
-Chunks
-Chunks_test
-copy_test
-data
-flipped
-flipped_old
-LSF
-merged_plots
-migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
-processing
-reserve
-rivet
-rivet_results_23_March
-rivet_test
-rivet_test_21_March
-save.root
-SWAN_projects
-test
-testdir
-unfolding_cflip
-unfolding_nominal
-end ls EOS
-EXIT_CODE_SCRAM 0
-exit code in RunMethodPacked 0
-caught error code 0
-checking sanity of file /pool/condor/dir_7086/MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_up_76.root
-file is good
-Sanity test done
-checking sanity of file /pool/condor/dir_7086/migration_MC13TeV_TTJets_jec_CorrelationGroupUncorrelated_up_76.root
-file is good
-Sanity test done
-EXIT_CODE_PYTHON  0
-[16MB/81.82MB][ 19%][=========>                                        ][1.6MB/s]  [32MB/81.82MB][ 39%][===================>                              ][2.667MB/s]  [48MB/81.82MB][ 58%][=============================>                    ][3.429MB/s]  [64MB/81.82MB][ 78%][=======================================>          ][3.765MB/s]  [80MB/81.82MB][ 97%][================================================> ][4MB/s]  [81.82MB/81.82MB][100%][==================================================][4.091MB/s]  [81.82MB/81.82MB][100%][==================================================][3.719MB/s]  
-[16MB/28MB][ 57%][============================>                     ][16MB/s]  [28MB/28MB][100%][==================================================][14MB/s]  [28MB/28MB][100%][==================================================][9.334MB/s]  

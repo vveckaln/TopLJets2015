@@ -119,32 +119,46 @@ void CFAT_Core_cmssw::check(const char * intro) const
 CFAT_Core_cmssw::CFAT_Core_cmssw()
 {
  
-  leading_light_jet_ptr_          = NULL;
-  leading_light_jet_index_        = 65535;
+  leading_light_jet_ptr_                 = nullptr;
+  leading_light_jet_prtcl_all            = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  leading_light_jet_prtcl_charged        = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  leading_light_jet_index_               = 65535;
 
-  second_leading_light_jet_ptr_   = NULL;
-  second_leading_light_jet_index_ = 65535;
-  had_b_ptr_                      = NULL;
-  had_b_index_                    = 65535;
+  second_leading_light_jet_ptr_          = nullptr;
+  second_leading_light_jet_prtcl_all     = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  second_leading_light_jet_prtcl_charged = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  second_leading_light_jet_index_        = 65535;
+
+  had_b_ptr_                             = nullptr;
+  had_b_prtcl_all                        = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  had_b_prtcl_charged                    = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  had_b_index_                           = 65535;
   
-  lepton_ptr_                     = NULL;
-  neutrino_ptr_                   = NULL;
-  lept_b_ptr_                     = NULL;
-  lept_b_index_                   = 65535;
-  leading_b_                      = nullptr;
-  leading_b_index_                = 65535;
+  lepton_ptr_                            = nullptr;
+  neutrino_ptr_                          = nullptr;
+  lept_b_ptr_                            = nullptr;
+  lept_b_prtcl_all                       = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  lept_b_prtcl_charged                   = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  lept_b_index_                          = 65535;
+  leading_b_                             = nullptr;
+  leading_b_prtcl_all                    = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  leading_b_prtcl_charged                = TLorentzVector(0.0, 0.0, 0.0, 0.0);
 
-  scnd_leading_b_                 = nullptr;
-  scnd_leading_b_index_           = 65535;
+  leading_b_index_                       = 65535;
 
-  PF.size      = 65535;
-  PF.jet_index = NULL;
-  PF.id        = NULL; 
-  PF.charge    = NULL;
-  PF.pt        = NULL;
-  PF.eta       = NULL; 
-  PF.phi       = NULL; 
-  PF.mass      = NULL;
+  scnd_leading_b_                        = nullptr;
+  scnd_leading_b_prtcl_all               = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  scnd_leading_b_prtcl_charged           = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  scnd_leading_b_index_                  = 65535;
+
+  PF.size                                = 65535;
+  PF.jet_index                           = nullptr;
+  PF.id                                  = nullptr; 
+  PF.charge                              = nullptr;
+  PF.pt                                  = nullptr;
+  PF.eta                                 = nullptr; 
+  PF.phi                                 = nullptr; 
+  PF.mass                                = nullptr;
 }
 
 
@@ -325,11 +339,260 @@ const TLorentzVector *& CFAT_Core_cmssw::GetVectorRef(VectorCode_t code)
     }
 }
 
-const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code)
+const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code, const char * particle, ChargeCode_t charge_code)
 {
-    return (const TLorentzVector * const) const_cast< CFAT_Core_cmssw * >(this) -> GetVectorRef(vector_code);
+  //  printf("vectore_code %u particle %s, charge code %u\n", vector_code, particle, charge_code);
+  // printf("particle [%p]\n", particle);
+  // printf("particle [%s]\n", particle);
+  switch(vector_code)
+    {
+    case LEADING_JET:
+      if (particle == nullptr)
+	{
+	  return leading_light_jet_ptr_;
+	}
+      else if (string(particle).compare("particle") == 0)
+	{
+	  switch(charge_code)
+	    {
+	    case ALLCOMP:
+	      if (leading_light_jet_prtcl_all == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & leading_light_jet_prtcl_all;
+		}
+	      
+	    case CHARGED:
+	      if (leading_light_jet_prtcl_charged == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & leading_light_jet_prtcl_charged;
+		}
+	    }
+	}
+      else
+	{
+	  char error[256];
+	  sprintf(error, "const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code): incorrect option %s", particle);
+	  throw error;
+	}
+    case SCND_LEADING_JET:
+      if (particle == nullptr)
+	{
+	  return second_leading_light_jet_ptr_;
+	}
+      else if (string(particle).compare("particle") == 0)
+	{
+	  switch(charge_code)
+	    {
+	    case ALLCOMP:
+	      if (second_leading_light_jet_prtcl_all == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & second_leading_light_jet_prtcl_all;
+		}
+	      
+	    case CHARGED:
+	      if (second_leading_light_jet_prtcl_charged == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & second_leading_light_jet_prtcl_charged;
+		}
+	    }
+	}
+      else
+	{
+	  char error[256];
+	  sprintf(error, "const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code): incorrect option %s", particle);
+	  throw error;
+	}
+    case HAD_B:
+      if (particle == nullptr)
+	{
+	  return had_b_ptr_;
+	}
+      else if (string(particle).compare("particle") == 0)
+	{
+	  switch(charge_code)
+	    {
+	    case ALLCOMP:
+	      if (had_b_prtcl_all == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & had_b_prtcl_all;
+		}
+	      
+	    case CHARGED:
+	      if (had_b_prtcl_charged == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & had_b_prtcl_charged;
+		}
+	    }
+	}
+      else
+	{
+	  char error[256];
+	  sprintf(error, "const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code): incorrect option %s", particle);
+	  throw error;
+	}
+
+    case LEPTON:
+      return lepton_ptr_;
+    case NEUTRINO:
+      return neutrino_ptr_;
+    case LEPT_B:
+      if (particle == nullptr)
+	{
+	  return lept_b_ptr_;
+	}
+      else if (string(particle).compare("particle") == 0)
+	{
+	  switch(charge_code)
+	    {
+	    case ALLCOMP:
+	      if (lept_b_prtcl_all == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & lept_b_prtcl_all;
+		}
+	      
+	    case CHARGED:
+	      if (lept_b_prtcl_charged == TLorentzVector(0.0, 0.0, 0.0, 0.0))
+		{
+		  return nullptr;
+		}
+	      else
+		{
+		  return & lept_b_prtcl_charged;
+		}
+	    }
+	}
+      else
+	{
+	  char error[256];
+	  sprintf(error, "const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code): incorrect option %s", particle);
+	  throw error;
+	}
+    case LEADING_B:
+      if (particle == nullptr)
+	{
+	  return leading_b_;
+	}
+      else if (string(particle).compare("particle") == 0)
+	{
+	  switch(charge_code)
+	    {
+	    case ALLCOMP:
+	      return & leading_b_prtcl_all;
+	    case CHARGED:
+	      return & leading_b_prtcl_charged;
+	    }
+	}
+      else
+	{
+	  char error[256];
+	  sprintf(error, "const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code): incorrect option %s", particle);
+	  throw error;
+	}
+    case SCND_LEADING_B:
+      if (particle == nullptr)
+	{
+	  return scnd_leading_b_;
+	}
+      else if (string(particle).compare("particle") == 0)
+	{
+	  switch(charge_code)
+	    {
+	    case ALLCOMP:
+	      return & scnd_leading_b_prtcl_all;
+	    case CHARGED:
+	      return & scnd_leading_b_prtcl_charged;
+	    }
+	}
+      else
+	{
+	  char error[256];
+	  sprintf(error, "const TLorentzVector * CFAT_Core_cmssw::GetVector(VectorCode_t vector_code): incorrect option %s", particle);
+	  throw error;
+	}
+    default:
+      //printf("TLorentzVector *& CFAT_Core_cmssw::GetVectorRef(VectorCode_t) : check vector code %u ", code);
+      throw "TLorentzVector *& CFAT_Core_cmssw::GetVectorRef(VectorCode_t) : check vector code";
+    }
 } 
 
+void CFAT_Core_cmssw::Reset()
+{
+  leading_light_jet_ptr_                  = nullptr;
+  leading_light_jet_prtcl_all             = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  leading_light_jet_prtcl_charged         = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  leading_light_jet_index_                = 65535;
+
+  second_leading_light_jet_ptr_           = nullptr;
+  second_leading_light_jet_prtcl_all      = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  second_leading_light_jet_prtcl_charged  = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  second_leading_light_jet_index_         = 65535;
+  
+  had_b_ptr_                              = nullptr;
+  had_b_prtcl_all                         = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  had_b_prtcl_charged                     = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  had_b_index_                            = 65535;
+  
+  lepton_ptr_                             = nullptr;
+  neutrino_ptr_                           = nullptr;
+  lept_b_ptr_                             = nullptr;
+  lept_b_prtcl_all                        = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  lept_b_prtcl_charged                    = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  lept_b_index_                           = 65535;
+
+  leading_b_                              = nullptr;
+  leading_b_prtcl_all                     = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  leading_b_prtcl_charged                 = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  leading_b_index_                        = 65535;
+
+  scnd_leading_b_                         = nullptr;
+  scnd_leading_b_prtcl_all                = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  scnd_leading_b_prtcl_charged            = TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  scnd_leading_b_index_                   = 65535;
+}
+
+void CFAT_Core_cmssw::RecomputeJetsFromParticles()
+{
+  leading_light_jet_prtcl_all             = GetJetFromParticles(LEADING_JET, ALLCOMP);
+  leading_light_jet_prtcl_charged         = GetJetFromParticles(LEADING_JET, CHARGED);
+  second_leading_light_jet_prtcl_all      = GetJetFromParticles(SCND_LEADING_JET, ALLCOMP);
+  second_leading_light_jet_prtcl_charged  = GetJetFromParticles(SCND_LEADING_JET, CHARGED);
+  had_b_prtcl_all                         = GetJetFromParticles(HAD_B, ALLCOMP);
+  had_b_prtcl_charged                     = GetJetFromParticles(HAD_B, CHARGED);
+  lept_b_prtcl_all                        = GetJetFromParticles(LEPT_B, ALLCOMP);
+  lept_b_prtcl_charged                    = GetJetFromParticles(LEPT_B, CHARGED);
+  leading_b_prtcl_all                     = GetJetFromParticles(LEADING_B, ALLCOMP);
+  leading_b_prtcl_charged                 = GetJetFromParticles(LEADING_B, CHARGED);
+  scnd_leading_b_prtcl_all                = GetJetFromParticles(SCND_LEADING_B, ALLCOMP);
+  scnd_leading_b_prtcl_charged            = GetJetFromParticles(SCND_LEADING_B, CHARGED);
+}
 
 void CFAT_Core_cmssw::AddLightJets(const vector<TLorentzVector> & light_jets, const vector<unsigned short> & light_jets_indices)
 {
@@ -380,19 +643,19 @@ void CFAT_Core_cmssw::AddBJets(const vector<TLorentzVector> & b_jets, const vect
 	}
     }
   if (b_jets.at(0) . Pt() >= b_jets.at(1) . Pt())
-	{
-	  GetVectorRef(LEADING_B)                = &b_jets.at(0);
-	  leading_b_index_                       = b_jets_indices.at(0);
-	  GetVectorRef(SCND_LEADING_B)           = &b_jets.at(1);
-	  scnd_leading_b_index_                  = b_jets_indices.at(1);
-	}
-      else
-	{
-	  GetVectorRef(LEADING_B)                = &b_jets.at(1);
-	  leading_b_index_                       = b_jets_indices.at(1);
-	  GetVectorRef(SCND_LEADING_B)           = &b_jets.at(0);
-	  scnd_leading_b_index_                  = b_jets_indices.at(0);
-	}
+    {
+      GetVectorRef(LEADING_B)                = &b_jets.at(0);
+      leading_b_index_                       = b_jets_indices.at(0);
+      GetVectorRef(SCND_LEADING_B)           = &b_jets.at(1);
+      scnd_leading_b_index_                  = b_jets_indices.at(1);
+    }
+  else
+    {
+      GetVectorRef(LEADING_B)                = &b_jets.at(1);
+      leading_b_index_                       = b_jets_indices.at(1);
+      GetVectorRef(SCND_LEADING_B)           = &b_jets.at(0);
+      scnd_leading_b_index_                  = b_jets_indices.at(0);
+    }
     
   //  printf("leading b %p sec lb %p hb %p lb%p\n", GetVector(LEADING_B) , GetVector(SCND_LEADING_B), GetVector(HAD_B), GetVector(LEPT_B) );
 }

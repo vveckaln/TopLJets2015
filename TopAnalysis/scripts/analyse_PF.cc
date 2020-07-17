@@ -147,8 +147,8 @@ int main(int argc, char *argv[])
 			  //   }
 			  //			  h_chi -> Scale(1.0 / h_chi -> Integral());
 			  Int[charge_ind][pair_ind] = CalculateResult(h_chi, h_chi_syst, R);
-			  if (flow_ind == 0 and charge_ind == 0)
-			    printf("Int[charge_ind][pair_ind].value %f\n", Int[charge_ind][pair_ind].value);
+			  // if (flow_ind == 0 and charge_ind == 0)
+			  //   printf("Int[charge_ind][pair_ind].value %f\n", Int[charge_ind][pair_ind].value);
 			}
 
 		    }

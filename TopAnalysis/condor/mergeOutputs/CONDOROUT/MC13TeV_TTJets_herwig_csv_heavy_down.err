@@ -1,29 +1,30 @@
 klist
-Ticket cache: FILE:/pool/condor/dir_8070/vveckaln.cc
+Ticket cache: FILE:/pool/condor/dir_5490/vveckaln.cc
 Default principal: vveckaln@CERN.CH
 
-Valid starting     Expires            Service principal
-12/31/18 15:18:29  01/01/19 16:18:29  krbtgt/CERN.CH@CERN.CH
-	renew until 01/05/19 15:10:18
-12/31/18 15:32:19  01/01/19 16:18:29  afs/cern.ch@CERN.CH
-	renew until 01/05/19 15:10:18
+Valid starting       Expires              Service principal
+01/21/2020 22:38:09  01/22/2020 23:38:09  krbtgt/CERN.CH@CERN.CH
+	renew until 01/26/2020 21:54:48
+01/22/2020 13:26:32  01/22/2020 23:38:09  afs/cern.ch@CERN.CH
+	renew until 01/26/2020 21:54:48
 end klist
 ls EOS
 analysis_MC13TeV_TTJets
 analysis_MC13TeV_TTJets_cflip
+analysis_MC13TeV_TTJets_dire2002
 analysis_MC13TeV_TTJets_herwig
+analysis_MC13TeV_TTJets_herwig7
+analysis_MC13TeV_TTJets_sherpa
 bins
 cernbox
-Chunks
-Chunks_test
+chunksMC13TeV_TTHets
 copy_test
 data
 flipped
 flipped_old
-LSF
 merged_plots
 migration
-migration_MC13TeV_TTJets_jec_CorrelationGroupMPFInSitu_up_27.root
+migrationMC13TeV_TTHets
 moved.cc
 processing
 reserve
@@ -31,22 +32,22 @@ rivet
 rivet_results_23_March
 rivet_test
 rivet_test_21_March
-save.root
 SWAN_projects
 test
 testdir
 unfolding_cflip
+unfolding_dire2002
+unfolding_herwig7
 unfolding_nominal
+unfolding_sherpa
 end ls EOS
 EXIT_CODE_SCRAM 0
-[16MB/62.25MB][ 25%][============>                                     ][16MB/s]  [32MB/62.25MB][ 51%][=========================>                        ][16MB/s]  [62.25MB/62.25MB][100%][==================================================][31.12MB/s]  [62.25MB/62.25MB][100%][==================================================][15.56MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDChunks/MC13TeV_TTJets_herwig_csv_heavy_down.root
+[16MB/62.23MB][ 25%][============>                                     ][16MB/s]  [62.23MB/62.23MB][100%][==================================================][62.23MB/s]  [62.23MB/62.23MB][100%][==================================================][62.23MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDChunks/MC13TeV_TTJets_herwig_csv_heavy_down.root
 file is good
 Sanity test done
-[16MB/651.5MB][  2%][=>                                                ][16MB/s]  [64MB/651.5MB][  9%][====>                                             ][32MB/s]  [96MB/651.5MB][ 14%][=======>                                          ][32MB/s]  [112MB/651.5MB][ 17%][========>                                         ][28MB/s]  [144MB/651.5MB][ 22%][===========>                                      ][28.8MB/s]  [160MB/651.5MB][ 24%][============>                                     ][26.67MB/s]  [224MB/651.5MB][ 34%][=================>                                ][32MB/s]  [256MB/651.5MB][ 39%][===================>                              ][32MB/s]  [288MB/651.5MB][ 44%][======================>                           ][32MB/s]  [304MB/651.5MB][ 46%][=======================>                          ][30.4MB/s]  [336MB/651.5MB][ 51%][=========================>                        ][30.55MB/s]  [368MB/651.5MB][ 56%][============================>                     ][30.67MB/s]  [416MB/651.5MB][ 63%][===============================>                  ][32MB/s]  [464MB/651.5MB][ 71%][===================================>              ][33.14MB/s]  [560MB/651.5MB][ 85%][==========================================>       ][37.33MB/s]  [651.5MB/651.5MB][100%][==================================================][40.72MB/s]  [651.5MB/651.5MB][100%][==================================================][40.72MB/s]  
-md5sum: /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration: Is a directory
-checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig//HADDmigration/migration_MC13TeV_TTJets_herwig_csv_heavy_down.root
+[16MB/662.2MB][  2%][=>                                                ][16MB/s]  [208MB/662.2MB][ 31%][===============>                                  ][208MB/s]  [400MB/662.2MB][ 60%][==============================>                   ][200MB/s]  [592MB/662.2MB][ 89%][============================================>     ][197.3MB/s]  [662.2MB/662.2MB][100%][==================================================][220.7MB/s]  [662.2MB/662.2MB][100%][==================================================][165.6MB/s]  
+checking sanity of file /eos/user/v/vveckaln/analysis_MC13TeV_TTJets_herwig/HADDmigration/migration_MC13TeV_TTJets_herwig_csv_heavy_down.root
 file is good
 Sanity test done
 EXIT_CODE_PYTHON  0

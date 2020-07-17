@@ -74,7 +74,7 @@ TString assignRunPeriod(std::vector<RunPeriod_t> & runPeriods, TRandom * rand)
 
 
 //
-std::vector<TGraph *> getPileupWeights(TString era, TH1 *genPU,TString period)
+std::vector<TGraph *> getPileupWeights(TString era, TH1 *genPU, TString period)
 {
   std::vector<TGraph *>puWgtGr;
   if(genPU==0) return  puWgtGr;
@@ -112,7 +112,7 @@ std::vector<TGraph *> getPileupWeights(TString era, TH1 *genPU,TString period)
 
 
 //
-std::map<TString, std::vector<TGraph *> > getPileupWeightsMap(TString era, TH1 *genPU)
+std::map<TString, std::vector<TGraph *> > getPileupWeightsMap(TString era, TH1 * genPU)
 {
   std::map<TString, std::vector<TGraph *> > puWgtGr;
   if(genPU==0) return puWgtGr;
