@@ -23,6 +23,10 @@ std::vector<float> getJetResolutionScales(float pt, float eta, float genjpt);
 float getLeptonEnergyScaleUncertainty(int l_id,float l_pt,float l_eta);
 inline void fill_selection_histo(std::map<TString, TH1 *> & plots, TString ch, const char * level, const char * bin, double  wgt)
 {
+  /* if (TString(level) == "reco") */
+  /*   { */
+  /*     printf("fill sel histo %s\n", bin); */
+  /*   } */
   {
     const TString key(ch + "_" + level + "_selection");
     plots[key] -> Fill(bin, wgt);

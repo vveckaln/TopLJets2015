@@ -9,10 +9,23 @@
 
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
 #include "TopLJets2015/TopAnalysis/interface/ObjectTools.h"
+using namespace std;
+class SelectionTool
+{
+private:
+  bool hasTriggerBit(TString triggerName,unsigned int word);
+  bool isSingleElectronPD_,isSingleMuonPD_,isDoubleEGPD_,isDoubleMuonPD_,isMuonEGPD_;
+  std::vector<Particle> leptons_,vetoLeptons_,genLeptons_;
+  vector<Jet> jets_;
+  vector<Jet> genJets_;
+  vector<unsigned int> jet_indices_;
+  vector<unsigned int> gen_jet_indices_;
 
-class SelectionTool {
+  TLorentzVector met_;
+  bool debug_;
+  std::map<TString,unsigned int> triggerBits_;
 
- public:
+public:
   SelectionTool(TString dataset="",bool debug=false,TH1 *triggerList=0);
   ~SelectionTool() {}
 
@@ -23,16 +36,30 @@ class SelectionTool {
   TString flagFinalState(MiniEvent_t &ev, std::vector<Particle> preselleptons={});
   std::vector<Particle> &getSelLeptons()  { return leptons_; }
   std::vector<Particle> &getVetoLeptons() { return vetoLeptons_; }
-  std::vector<Jet>      &getJets()        { return jets_; }
-  std::vector<unsigned int> & getJetIndices() {return jet_indices_;};
-  std::vector<unsigned int> & getGenJetIndices() {return gen_jet_indices_;};
+  vector<Jet>           & getJets()
+    {
+      return jets_;
+    };
+  vector<Jet>          & getJetsSelect();
+  vector<unsigned int> & getJetIndices() 
+    {
+      return jet_indices_;
+    }
+  vector<unsigned int> & getGenJetIndices() 
+    {
+      return gen_jet_indices_;
+    }
 
   TLorentzVector        &getMET()         { return met_; }
 
   //selection at particle level
   TString flagGenFinalState(MiniEvent_t &ev, std::vector<Particle> preselleptons={});
   std::vector<Particle> &getGenLeptons()  { return genLeptons_; }
-  std::vector<Jet>      &getGenJets()     { return genJets_; }
+  vector<Jet>           & getGenJets()
+    {
+      return genJets_;
+    };
+  vector<Jet>           & getGenJetsSelect();
  
  //object selection can also be customized with the following functions
   std::vector<Particle> getTopFlaggedLeptons(MiniEvent_t &ev);
@@ -48,17 +75,6 @@ class SelectionTool {
 
   void setDebug(bool flag) { debug_=flag; }
 
- private:
-  bool hasTriggerBit(TString triggerName,unsigned int word);
-  bool isSingleElectronPD_,isSingleMuonPD_,isDoubleEGPD_,isDoubleMuonPD_,isMuonEGPD_;
-  std::vector<Particle> leptons_,vetoLeptons_,genLeptons_;
-  std::vector<Jet> jets_,genJets_;
-  std::vector<unsigned int> jet_indices_;
-  std::vector<unsigned int> gen_jet_indices_;
-
-  TLorentzVector met_;
-  bool debug_;
-  std::map<TString,unsigned int> triggerBits_;
 };
 
 #endif

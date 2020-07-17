@@ -24,23 +24,35 @@ public:
 class CFAT_Core_cmssw: public CFAT_Core
 {
   const TLorentzVector           * leading_light_jet_ptr_;
+  TLorentzVector                   leading_light_jet_prtcl_all;
+  TLorentzVector                   leading_light_jet_prtcl_charged;
   unsigned short                   leading_light_jet_index_;
 
   const TLorentzVector           * second_leading_light_jet_ptr_;
+  TLorentzVector                   second_leading_light_jet_prtcl_all;
+  TLorentzVector                   second_leading_light_jet_prtcl_charged;
   unsigned short                   second_leading_light_jet_index_;
   
   const TLorentzVector           * had_b_ptr_;
+  TLorentzVector                   had_b_prtcl_all;
+  TLorentzVector                   had_b_prtcl_charged;
   unsigned short                   had_b_index_;
   
   const TLorentzVector           * lepton_ptr_;
   const TLorentzVector           * neutrino_ptr_;
   const TLorentzVector           * lept_b_ptr_;
+  TLorentzVector                   lept_b_prtcl_all;
+  TLorentzVector                   lept_b_prtcl_charged;
   unsigned short                   lept_b_index_;
 
   const TLorentzVector           * leading_b_;
+  TLorentzVector                   leading_b_prtcl_all;
+  TLorentzVector                   leading_b_prtcl_charged;
   unsigned short                   leading_b_index_;
 
   const TLorentzVector           * scnd_leading_b_;
+  TLorentzVector                   scnd_leading_b_prtcl_all;
+  TLorentzVector                   scnd_leading_b_prtcl_charged;
   unsigned short                   scnd_leading_b_index_;
 
   friend class pf_cmssw;
@@ -85,7 +97,7 @@ protected:
 
   unsigned short                   GetIndex(VectorCode_t) const;
   
-  virtual const TLorentzVector * GetVector(VectorCode_t);
+  virtual const TLorentzVector * GetVector(VectorCode_t, const char * = nullptr, ChargeCode_t = ALLCOMP);
   virtual pf_iter begin(VectorCode_t);
   virtual pf_iter end(VectorCode_t);
   virtual pf_iter begin();
@@ -94,6 +106,8 @@ protected:
 public:
   void SetEvent(const MiniEvent_t &);
   CFAT_Core_cmssw();
+  virtual      void                Reset(); 
+  virtual      void                RecomputeJetsFromParticles();
   void                             AddLightJets(const vector<TLorentzVector> &, const vector<unsigned short> &);
   void                             AddBJets(const vector<TLorentzVector> &, const vector<unsigned short> &);
   void                             AddVector(VectorCode_t, const TLorentzVector *);

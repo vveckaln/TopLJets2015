@@ -12,11 +12,13 @@ class CFAT_cmssw: public ColourFlowAnalysisTool
   bool               fill_[2][4];
   float              pvmag_[2][2][4];
   TString            file_tag_;
-
+  TString            _period;
 public:
   CFAT_cmssw();
+  void SetPeriod(TString period);
   TTree * migration_tree_[N_channels_types - 1][2][4];
   TFile * migration_file_;
+  //  virtual void Reset();
   void SetMigrationOutput(const char *);
   void WriteMigrationTree();
   void ResetMigrationValues();
